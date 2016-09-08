@@ -1,0 +1,90 @@
+/* spa-app: release */
+html, body {
+    height: 576px;
+    width: 720px;
+    font-size: 18px;
+    font-family: Ubuntu, sans-serif;
+    overflow: hidden;
+    margin: 0;
+    padding: 0; }
+
+table {
+    border: 0;
+    border-collapse: collapse;
+    border-spacing: 0; }
+    table td {
+        padding: 0; }
+
+.maxh {
+    height: 100%; }
+
+.maxw {
+    width: 100%; }
+
+a {
+    text-decoration: none; }
+
+/* spa-app: develop */
+body.develop {
+    outline: 1px solid yellow;
+    outline-offset: -1px; }
+
+/* stb-app: release */
+html, body {
+    -webkit-user-select: none; }
+
+/* stb-app: develop */
+html, body {
+    -webkit-user-select: text; }
+
+body > canvas {
+    cursor: none;
+    visibility: hidden;
+    position: absolute; }
+    body > canvas.active {
+        visibility: visible; }
+
+/* spa-component: release */
+.component {
+    box-sizing: border-box; }
+    .component.hidden {
+        display: none !important; }
+
+/* spa-component: develop */
+body.develop .component {
+    outline: 1px dashed #005000;
+    outline-offset: -1px; }
+    body.develop .component.focus {
+        outline: 1px dashed red; }
+
+/* stb-component: release */
+.component div {
+    -webkit-box-sizing: border-box; }
+
+/* spa-component-page: release */
+.component.page {
+    width: 720px;
+    height: 576px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+    overflow: hidden; }
+    .component.page.active {
+        visibility: inherit; }
+
+/* application: develop */
+#pageInit {
+    display: table; }
+    #pageInit > .cell {
+        display: table-cell;
+        position: relative;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 150%; }
+        #pageInit > .cell > .version {
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            font-size: 50%; }
+
