@@ -1,5 +1,5 @@
 {
-    "name": "stb-boilerplate",
+    "name": "mag-boilerplate",
     "version": "1.0.0",
     "description": "Application template.",
     "author": {
@@ -17,7 +17,7 @@
         "serve": "magsdk serve"
     },
     "dependencies": {
-        "mag-app": "magsdk/app",
+        "mag-app": "git+ssh://git@192.168.1.222:/web/magsdk/app.git",
         "stb-rc": "stbsdk/rc",
         "stb-component-page": "stbsdk/component-page"
     },
