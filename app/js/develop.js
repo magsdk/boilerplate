@@ -53,19 +53,15 @@
 	
 	'use strict';
 	
-	var app = __webpack_require__(/*! stb-app */ 1);
+	var app = __webpack_require__(/*! mag-app */ 1);
 	
 	
 	// everything is ready
 	app.once('load', function () {
 	    // load pages
 	    app.pages = {
-	        init: __webpack_require__(/*! ./pages/init */ 32),
-	        main: __webpack_require__(/*! ./pages/main */ 36)
+	        main: __webpack_require__(/*! ./pages/main */ 34)
 	    };
-	
-	    // show splash screen
-	    //app.route(app.pages.init);
 	
 	    // show main page
 	    app.route(app.pages.main);
@@ -74,9 +70,9 @@
 
 /***/ },
 /* 1 */
-/*!***********************!*\
-  !*** ../app/index.js ***!
-  \***********************/
+/*!*******************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/magsdk/app/index.js ***!
+  \*******************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -92,52 +88,164 @@
 	    events = __webpack_require__(/*! spa-app/lib/events */ 6);
 	
 	
-	// extract key codes
-	// for ( key in codes ) {
-	//     if ( key === 'volumeUp' || key === 'volumeDown' ) {
-	//         continue;
-	//     }
-	//     // no need to save key names
-	//     keyCodes[codes[key]] = true;
-	// }
+	// get instance
+	window.core = window.parent.getCoreInstance(window, app);
 	
+	// shims
+	__webpack_require__(/*! stb-shim-classlist */ 7);
 	
 	// apply geometry
-	__webpack_require__(/*! ./lib/metrics */ 7);
+	__webpack_require__(/*! stb-app/lib/metrics */ 8);
+	
+	// load theme css
+	__webpack_require__(/*! ./lib/css */ 10);
 	
 	// load app css
-	__webpack_require__(/*! ./lib/css */ 9);
+	__webpack_require__(/*! stb-app/lib/css */ 11);
 	
 	
-	// set max browser window size
-	window.moveTo(0, 0);
-	window.resizeTo(app.metrics.width, app.metrics.height);
+	/**
+	 * Show app.
+	 */
+	app.ready = function () {
+	    // if ( this.events['show'] ) {
+	    //     this.emit('show');
+	    // }
+	    window.core.call('app:ready');
+	};
 	
 	
-	// create stbEvent global object
-	window.stbEvent = __webpack_require__(/*! ./lib/events */ 10);
+	/**
+	 * Exit from app.
+	 * Destroy all application instance.
+	 * If callback function provided, and callback returns boolean 'true', application will stay alive.
+	 *
+	 * @fires module:/stb/app#exit
+	 *
+	 * @param [callback] provide callback if u want to handle exit result, or cancel it
+	 */
+	app.exit = function ( callback ) {
+	    var ModalMessage = __webpack_require__(/*! mag-component-modal */ 12),
+	        LayoutList   = __webpack_require__(/*! mag-component-layout-list */ 15),
+	        rc           = __webpack_require__(/*! stb-rc */ 18),
+	        previousFocus = app.activePage.activeComponent,
+	        exitModal;
+	
+	    app.activePage.add(exitModal = new ModalMessage({
+	        title: _('Exit'),
+	        events:{
+	            show: function () {
+	                this.children[0].focus();
+	            },
+	            hide: function () {
+	                previousFocus.focus();
+	            }
+	        },
+	        children:[
+	            new LayoutList({
+	                size:2,
+	                focusIndex:0,
+	                data:[
+	                    {
+	                        items: [
+	                            {
+	                                value: _('Exit')
+	                            }
+	                        ],
+	                        click: function () {
+	                            if ( typeof callback === 'function' ) {
+	                                if ( callback(true) ) {
+	                                    exitModal.hide();
+	                                    exitModal.remove();
+	                                    return;
+	                                }
+	                            }
+	                            if ( app.events['exit'] ) {
+	                                app.emit('exit');
+	                            }
+	
+	                            exitModal.hide();
+	                            exitModal.remove();
+	                            core.call('exit');
+	                        }
+	                    },
+	                    {
+	                        items: [
+	                            {
+	                                value: _('Cancel')
+	                            }
+	                        ],
+	                        click: function () {
+	                            if ( typeof callback === 'function' ) {
+	                                callback(false);
+	                            }
+	                            exitModal.hide();
+	                            exitModal.remove();
+	                        }
+	                    }
+	                ],
+	                events: {
+	                    keydown: function ( event ) {
+	                        LayoutList.prototype.defaultEvents.keydown.call(this, event);
+	                        if ( event.keyCode === rc.codes.back ) {
+	                            event.stop = true;
+	                            if ( typeof callback === 'function' ) {
+	                                callback(false);
+	                            }
+	                            exitModal.hide();
+	                            exitModal.remove();
+	                        }
+	                    }
+	                }
+	            })
+	        ]
+	    }));
+	
+	    exitModal.show();
+	    exitModal.focus();
+	};
+	
+	
+	events.load = function ( event ) {
+	    window.core = window.parent.getCoreInstanse(window, app);
+	
+	    if ( core.ready ) {
+	        if ( app.events['load'] ) {
+	            // notify listeners
+	            app.emit('load', {});
+	        }
+	    } else {
+	        core.once('load', function () {
+	            core.ready = true;
+	            if ( app.events[event.type] ) {
+	                // notify listeners
+	                app.emit(event.type, event);
+	            }
+	        });
+	    }
+	};
+	
+	
+	// activate development mechanisms and tools
+	if ( true ) {
+	    //require('stb-develop');
+	    __webpack_require__(/*! ./lib/develop/main */ 20);
+	}
+	
+	
+	//apply DOM events
+	Object.keys(events).forEach(function ( name ) {
+	    window.addEventListener(name, events[name]);
+	});
 	
 	
 	// new way of string handling
 	// all strings are in UTF-16
 	// since stbapp 2.18
-	if ( window.gSTB && gSTB.SetNativeStringMode ) {
-	    /* eslint new-cap: 0 */
-	    gSTB.SetNativeStringMode(true);
-	}
-	
-	
-	// activate development mechanisms and tools
-	if ( true ) {
-	    __webpack_require__(/*! ./lib/develop/main */ 11);
-	}
-	
-	
-	// apply DOM events
-	Object.keys(events).forEach(function ( name ) {
-	    window.addEventListener(name, events[name]);
-	});
-	
+	// if ( window.gSTB && gSTB.SetNativeStringMode ) {
+	//     /* eslint new-cap: 0 */
+	//     gSTB.SetNativeStringMode(true);
+	// }
 	
 	// public
 	module.exports = app;
@@ -145,9 +253,9 @@
 
 /***/ },
 /* 2 */
-/*!****************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/app/lib/core.js ***!
-  \****************************************************/
+/*!**********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/app/lib/core.js ***!
+  \**********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
@@ -301,13 +409,13 @@
 	// public
 	module.exports = app;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/core.js"))
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/spasdk/app/lib/core.js"))
 
 /***/ },
 /* 3 */
-/*!*****************************************************!*\
-  !*** /home/dp/Projects/sdk/cjssdk/emitter/index.js ***!
-  \*****************************************************/
+/*!***********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/cjssdk/emitter/index.js ***!
+  \***********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
@@ -562,13 +670,13 @@
 	// public
 	module.exports = Emitter;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, "../../cjssdk/emitter/index.js"))
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/cjssdk/emitter/index.js"))
 
 /***/ },
 /* 4 */
-/*!***************************************************!*\
-  !*** /home/dp/Projects/sdk/cjssdk/query/index.js ***!
-  \***************************************************/
+/*!*********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/cjssdk/query/index.js ***!
+  \*********************************************************/
 /***/ function(module, exports) {
 
 	/**
@@ -642,9 +750,9 @@
 
 /***/ },
 /* 6 */
-/*!******************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/app/lib/events.js ***!
-  \******************************************************/
+/*!************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/app/lib/events.js ***!
+  \************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
@@ -740,7 +848,6 @@
 	     */
 	    unload: function ( event ) {
 	        //debug.event(event);
-	        console.log(event);
 	
 	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
 	
@@ -971,635 +1078,13 @@
 	    }
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/events.js"))
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/spasdk/app/lib/events.js"))
 
 /***/ },
 /* 7 */
-/*!*****************************!*\
-  !*** ../app/lib/metrics.js ***!
-  \*****************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	/* eslint no-path-concat: 0 */
-	
-	'use strict';
-	
-	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
-	    metrics = __webpack_require__(/*! app:metrics */ 8);
-	
-	
-	// global link
-	app.metrics = metrics[app.query.screenHeight] || metrics[screen.height] || metrics[720];
-	
-	// calculate and extend
-	app.metrics.availHeight = app.metrics.height - (app.metrics.availTop  + app.metrics.availBottom);
-	app.metrics.availWidth  = app.metrics.width  - (app.metrics.availLeft + app.metrics.availRight);
-	
-	
-	// public
-	//module.exports = app;
-
-
-/***/ },
-/* 8 */
-/*!***************************!*\
-  !*** ./src/js/metrics.js ***!
-  \***************************/
-/***/ function(module, exports) {
-
-	/**
-	 * Application geometry options.
-	 * Automatically loaded on application initialization and available as app.metrics.
-	 */
-	
-	'use strict';
-	
-	// public
-	module.exports = {
-	    480: {
-	        // screen base dimension
-	        height: 480,
-	        width:  720,
-	        // safe zone margins
-	        availTop:    24,
-	        availBottom: 24,
-	        availRight:  32,
-	        availLeft:   48
-	        // project-specific vars
-	        // put here ...
-	    },
-	
-	    576: {
-	        // screen base dimension
-	        height: 576,
-	        width:  720,
-	        // safe zone margins
-	        availTop:    24,
-	        availBottom: 24,
-	        availRight:  26,
-	        availLeft:   54
-	        // project-specific vars
-	        // put here ...
-	    },
-	
-	    720: {
-	        // screen base dimension
-	        height: 720,
-	        width:  1280,
-	        // safe zone margins
-	        availTop:    30,
-	        availBottom: 30,
-	        availRight:  40,
-	        availLeft:   40
-	        // project-specific vars
-	        // put here ...
-	    },
-	
-	    1080: {
-	        // screen base dimension
-	        height: 1080,
-	        width:  1920,
-	        // safe zone margins
-	        availTop:    45,
-	        availBottom: 45,
-	        availRight:  60,
-	        availLeft:   60
-	        // project-specific vars
-	        // put here ...
-	    }
-	};
-
-
-/***/ },
-/* 9 */
-/*!*************************!*\
-  !*** ../app/lib/css.js ***!
-  \*************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	/* eslint no-path-concat: 0 */
-	
-	'use strict';
-	
-	var app = __webpack_require__(/*! spa-app/lib/core */ 2),
-	    //metrics = require('app:metrics'),
-	    linkCSS;
-	
-	
-	// global link
-	//app.metrics = metrics[app.query.screenHeight] || metrics[screen.height] || metrics[720];
-	
-	// calculate and extend
-	//app.metrics.availHeight = app.metrics.height - (app.metrics.availTop  + app.metrics.availBottom);
-	//app.metrics.availWidth  = app.metrics.width  - (app.metrics.availLeft + app.metrics.availRight);
-	
-	// // set max browser window size
-	// window.moveTo(0, 0);
-	// window.resizeTo(metrics.width, metrics.height);
-	
-	// load CSS file base on resolution
-	linkCSS = document.createElement('link');
-	linkCSS.rel  = 'stylesheet';
-	linkCSS.href = 'css/' + ( true ? 'develop.' : 'release.') + app.metrics.height + '.css' + ( true ? '?' + Date.now() : '');
-	document.head.appendChild(linkCSS);
-	
-	
-	// public
-	module.exports = linkCSS;
-
-
-/***/ },
-/* 10 */
-/*!****************************!*\
-  !*** ../app/lib/events.js ***!
-  \****************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	/* eslint no-path-concat: 0 */
-	
-	'use strict';
-	
-	var app = __webpack_require__(/*! spa-app/lib/core */ 2);
-	
-	
-	/**
-	 * Device media events.
-	 *
-	 * @event module:stb/app#media
-	 * @type object
-	 * @property {number} code of event
-	 */
-	
-	
-	/**
-	 * Event on messages from a window.
-	 *
-	 * @event module:stb/app#message
-	 * @type object
-	 * @property {boolean} broadcast message flag
-	 * @property {string} message received from window
-	 * @property {object} data received from window
-	 */
-	
-	
-	// public
-	module.exports = {
-	    /**
-	     * The player reached the end of the media content or detected a discontinuity of the stream.
-	     */
-	    EVENT_END_OF_FILE: 1,
-	
-	    /**
-	     * Information on audio and video tracks of the media content is received. It's now possible to call gSTB.GetAudioPIDs etc.
-	     */
-	    EVENT_GET_MEDIA_INFO: 2,
-	
-	    /**
-	     * Video and/or audio playback has begun.
-	     */
-	    EVENT_PLAYBACK_BEGIN: 4,
-	
-	    /**
-	     * Error when opening the content: content not found on the server or connection with the server was rejected
-	     */
-	    EVENT_CONTENT_ERROR: 5,
-	
-	    /**
-	     * Detected DualMono AC-3 sound
-	     */
-	    EVENT_DUAL_MONO_DETECT: 6,
-	
-	    /**
-	     * The decoder has received info about the content and started to play. It's now possible to call gSTB.GetVideoInfo
-	     */
-	    EVENT_INFO_GET: 7,
-	
-	    /**
-	     * Error occurred while loading external subtitles
-	     */
-	    EVENT_SUBTITLE_LOAD_ERROR: 8,
-	
-	    /**
-	     * Found new teletext subtitles in stream
-	     */
-	    EVENT_SUBTITLE_FIND: 9,
-	
-	    /**
-	     * HDMI device has been connected
-	     */
-	    EVENT_HDMI_CONNECT: 32,
-	
-	    /**
-	     * HDMI device has been disconnected
-	     */
-	    EVENT_HDMI_DISCONNECT: 33,
-	
-	    /**
-	     * Recording task has been finished successfully. See appendix 13. JavaScript API for PVR subsystem
-	     */
-	    EVENT_RECORD_FINISH_SUCCESSFUL: 34,
-	
-	    /**
-	     * Recording task has been finished with error. See appendix 13. JavaScript API for PVR subsystem
-	     */
-	    EVENT_RECORD_FINISH_ERROR: 35,
-	
-	    /**
-	     * Scanning DVB Channel in progress
-	     */
-	    EVENT_DVB_SCANING: 40,
-	
-	    /**
-	     * Scanning DVB Channel found
-	     */
-	    EVENT_DVB_FOUND: 41,
-	
-	    /**
-	     * DVB Channel EPG update
-	     */
-	    EVENT_DVB_CHANNEL_EPG_UPDATE: 42,
-	
-	    /**
-	     * DVB antenna power off
-	     */
-	    EVENT_DVB_ANTENNA_OFF: 43,
-	
-	
-	    /**
-	     * Fires stb device media events.
-	     *
-	     * @param {number} event code
-	     * @param {string} info associated data in **JSON** format
-	     */
-	    onEvent: function ( event, info ) {
-	        // proxy to all frames
-	        Array.prototype.forEach.call(window.frames, function ( frame ) {
-	            // necessary global object is present
-	            if ( frame.stbEvent && frame.stbEvent.onEvent ) {
-	                // proxy call
-	                frame.stbEvent.onEvent(event, info);
-	            }
-	        });
-	
-	        // there are some listeners
-	        if ( app.events['media'] ) {
-	            // additional data
-	            if ( info ) {
-	                try {
-	                    info = JSON.parse(info);
-	                } catch ( e ) {
-	                    debug.log(e);
-	                }
-	            }
-	
-	            // notify listeners
-	            app.emit('media', {code: parseInt(event, 10), info: info});
-	        }
-	    },
-	
-	
-	    /**
-	     * Fires event on broadcast messages from a window.
-	     *
-	     * @param {number} windowId that sent message
-	     * @param {string} message text
-	     * @param {object} data in sent message
-	     * @fires module:/stb/app#message
-	     */
-	    onBroadcastMessage: function ( windowId, message, data ) {
-	        // proxy to all frames
-	        Array.prototype.forEach.call(window.frames, function ( frame ) {
-	            // necessary global object is present
-	            if ( frame.stbEvent && frame.stbEvent.onBroadcastMessage ) {
-	                // proxy call
-	                frame.stbEvent.onBroadcastMessage(windowId, message, data);
-	            }
-	        });
-	
-	        if ( app.events['message'] ) {
-	            // notify listeners
-	            app.emit('message', {
-	                broadcast: true,
-	                windowId: windowId,
-	                message: message,
-	                data: data
-	            });
-	        }
-	    },
-	
-	
-	    /**
-	     * Fires event on messages from a window.
-	     *
-	     * @param {number} windowId that sent message
-	     * @param {string} message text
-	     * @param {object} data in sent message
-	     * @fires module:/stb/app#message
-	     */
-	    onMessage: function ( windowId, message, data ) {
-	        // proxy to all frames
-	        Array.prototype.forEach.call(window.frames, function ( frame ) {
-	            // necessary global object is present
-	            if ( frame.stbEvent && frame.stbEvent.onMessage ) {
-	                // proxy call
-	                frame.stbEvent.onMessage(windowId, message, data);
-	            }
-	        });
-	
-	        if ( app.events['message'] ) {
-	            // notify listeners
-	            app.emit('message', {
-	                broadcast: false,
-	                windowId: windowId,
-	                message: message,
-	                data: data
-	            });
-	        }
-	    },
-	
-	
-	    /**
-	     * Event on device mount state.
-	     *
-	     * @event module:stb/app#mount
-	     * @type object
-	     * @property {boolean} state of mount device
-	     */
-	
-	
-	    /**
-	     * Fires device mount state event.
-	     *
-	     * @param {boolean} state of mount device
-	     * @fires module:/stb/app#mount
-	     */
-	    onMount: function ( state ) {
-	        // proxy to all frames
-	        Array.prototype.forEach.call(window.frames, function ( frame ) {
-	            // necessary global object is present
-	            if ( frame.stbEvent && frame.stbEvent.onMount ) {
-	                // proxy call
-	                frame.stbEvent.onMount(state);
-	            }
-	        });
-	
-	        if ( app.events['device:mount'] ) {
-	            // notify listeners
-	            app.emit('device:mount', {state: state});
-	        }
-	    },
-	
-	
-	    /**
-	     * Event on callback on internet browser link clicked.
-	     *
-	     * @event module:stb/app#media:available
-	     */
-	
-	
-	    /**
-	     * Fires event of callback on internet browser link clicked to ask user what to do with link: play or download.
-	     *
-	     * @param {string} mime file type
-	     * @param {string} url resource link
-	     *
-	     * @fires module:/stb/app#media:available
-	     */
-	    onMediaAvailable: function ( mime, url ) {
-	        // proxy to all frames
-	        Array.prototype.forEach.call(window.frames, function ( frame ) {
-	            // necessary global object is present
-	            if ( frame.stbEvent && frame.stbEvent.onMediaAvailable ) {
-	                // proxy call
-	                frame.stbEvent.onMediaAvailable(mime, url);
-	            }
-	        });
-	
-	        if ( app.events['media:available'] ) {
-	            // notify listeners
-	            app.emit('media:available', {mime: mime, url: url});
-	        }
-	    },
-	
-	
-	    /**
-	     * Event on internet connection state.
-	     *
-	     * @event module:stb/app#internet:state
-	     * @type object
-	     * @property {boolean} state of internet connection
-	     */
-	
-	
-	    /**
-	     * Fires new internet connection state event.
-	     *
-	     * @param {boolean} state of internet connection
-	     * @fires module:/stb/app#internet:state
-	     */
-	    onNetworkStateChange: function ( state ) {
-	        if ( app.events['internet:state'] ) {
-	            // notify listeners
-	            app.emit('internet:state', {state: state});
-	        }
-	    },
-	
-	
-	    /**
-	     * Event on document loading progress changes.
-	     *
-	     * @event module:stb/app#browser:progress
-	     * @type object
-	     * @property {number} progress of document loading
-	     */
-	
-	
-	    /**
-	     * Fires document loading progress changes event.
-	     *
-	     * @param {number} progress of document loading
-	     * fires module:/stb/app#browser:progress
-	     */
-	    onWebBrowserProgress: function ( progress ) {
-	        // proxy to all frames
-	        Array.prototype.forEach.call(window.frames, function ( frame ) {
-	            // necessary global object is present
-	            if ( frame.stbEvent && frame.stbEvent.onWebBrowserProgress ) {
-	                // proxy call
-	                frame.stbEvent.onWebBrowserProgress(progress);
-	            }
-	        });
-	
-	        if ( app.events['browser:progress'] ) {
-	            // notify listeners
-	            app.emit('browser:progress', {progress: progress});
-	        }
-	    },
-	
-	
-	    /**
-	     * Event on browser web window activation event.
-	     *
-	     * @event module:stb/app#window:focus
-	     */
-	
-	
-	    /**
-	     * Fires browser web window activation event.
-	     *
-	     * fires module:/stb/app#window:focus
-	     */
-	    onWindowActivated: function () {
-	        // proxy to all frames
-	        Array.prototype.forEach.call(window.frames, function ( frame ) {
-	            // necessary global object is present
-	            if ( frame.stbEvent && frame.stbEvent.onWindowActivated ) {
-	                // proxy call
-	                frame.stbEvent.onWindowActivated();
-	            }
-	        });
-	
-	        if ( app.events['window:focus'] ) {
-	            // notify listeners
-	            app.emit('window:focus');
-	        }
-	    }
-	};
-
-
-/***/ },
-/* 11 */
-/*!**********************************!*\
-  !*** ../app/lib/develop/main.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	'use strict';
-	
-	var app = __webpack_require__(/*! spa-app/lib/core */ 2);
-	
-	
-	// shims
-	__webpack_require__(/*! stb-shim-bind */ 12);
-	__webpack_require__(/*! stb-shim-classlist */ 13);
-	__webpack_require__(/*! stb-shim-frame */ 14);
-	
-	// public app instance
-	window.app = app;
-	
-	// all development tools placeholder
-	app.develop = {
-	    storage: window.localStorage || window.stbStorage
-	};
-	
-	// execution environment
-	// STB device or desktop browser
-	app.host = !!(window.gSTB || (window.parent && window.parent.gSTB));
-	
-	// browser logging
-	window.debug = __webpack_require__(/*! spa-app/lib/develop/debug */ 15);
-	// STB logging
-	//window.debug = app.host ? require('./debug') : require('spa-develop/debug');
-	
-	// universal storage
-	//window.localStorage = window.localStorage || window.stbStorage;
-	
-	// apply screen size, position, margins and styles
-	// app.setScreen(
-	//     app.metrics[localStorage.getItem('screen.height')] ||
-	//     app.metrics[screen.height] ||
-	//     app.metrics[720]
-	// );
-	
-	// inherit SPA tools
-	__webpack_require__(/*! spa-app/lib/develop/wamp */ 16);
-	__webpack_require__(/*! spa-app/lib/develop/events */ 19);
-	__webpack_require__(/*! spa-app/lib/develop/hooks */ 21);
-	__webpack_require__(/*! spa-app/lib/develop/static */ 22);
-	
-	// STB tools
-	if ( app.host ) {
-	    // web inspector
-	    __webpack_require__(/*! ./weinre */ 24);
-	}
-	
-	//require('./proxy');
-	__webpack_require__(/*! ./events */ 30);
-	
-	// the application itself
-	// "js" directory is resolved by webpack to
-	// path.join(process.env.PATH_ROOT, process.env.PATH_SRC, 'js')
-	//require('js/main');
-
-
-/***/ },
-/* 12 */
-/*!*****************************!*\
-  !*** ../shim-bind/index.js ***!
-  \*****************************/
-/***/ function(module, exports) {
-
-	/**
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	/* eslint-disable */
-	
-	'use strict';
-	
-	
-	if ( !Function.prototype.bind ) {
-	    Function.prototype.bind = function ( oThis ) {
-	        if ( typeof this !== 'function' ) {
-	            // closest thing possible to the ECMAScript 5
-	            // internal IsCallable function
-	            throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-	        }
-	
-	        var aArgs = Array.prototype.slice.call(arguments, 1),
-	            fToBind = this,
-	            fNOP = function () {},
-	            fBound = function () {
-	                return fToBind.apply(this instanceof fNOP && oThis
-	                        ? this
-	                        : oThis,
-	                    aArgs.concat(Array.prototype.slice.call(arguments)));
-	            };
-	
-	        fNOP.prototype = this.prototype;
-	        fBound.prototype = new fNOP();
-	
-	        return fBound;
-	    };
-	}
-
-
-/***/ },
-/* 13 */
-/*!**********************************!*\
-  !*** ../shim-classlist/index.js ***!
-  \**********************************/
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/shim-classlist/index.js ***!
+  \******************************************************************/
 /***/ function(module, exports) {
 
 	/**
@@ -1680,10 +1165,2592 @@
 
 
 /***/ },
+/* 8 */
+/*!*************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/app/lib/metrics.js ***!
+  \*************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
+	    metrics = __webpack_require__(/*! app:metrics */ 9);
+	
+	
+	// global link
+	app.metrics = metrics[app.query.screenHeight] || metrics[screen.height] || metrics[720];
+	
+	// calculate and extend
+	app.metrics.availHeight = app.metrics.height - (app.metrics.availTop  + app.metrics.availBottom);
+	app.metrics.availWidth  = app.metrics.width  - (app.metrics.availLeft + app.metrics.availRight);
+	
+	
+	// public
+	//module.exports = app;
+
+
+/***/ },
+/* 9 */
+/*!***************************!*\
+  !*** ./src/js/metrics.js ***!
+  \***************************/
+/***/ function(module, exports) {
+
+	/**
+	 * Application geometry options.
+	 * Automatically loaded on application initialization and available as app.metrics.
+	 */
+	
+	'use strict';
+	
+	// public
+	module.exports = {
+	    480: {
+	        // screen base dimension
+	        height: 480,
+	        width:  720,
+	        // safe zone margins
+	        availTop:    24,
+	        availBottom: 24,
+	        availRight:  32,
+	        availLeft:   48
+	        // project-specific vars
+	        // put here ...
+	    },
+	
+	    576: {
+	        // screen base dimension
+	        height: 576,
+	        width:  720,
+	        // safe zone margins
+	        availTop:    24,
+	        availBottom: 24,
+	        availRight:  26,
+	        availLeft:   54
+	        // project-specific vars
+	        // put here ...
+	    },
+	
+	    720: {
+	        // screen base dimension
+	        height: 720,
+	        width:  1280,
+	        // safe zone margins
+	        availTop:    30,
+	        availBottom: 30,
+	        availRight:  40,
+	        availLeft:   40
+	        // project-specific vars
+	        // put here ...
+	    },
+	
+	    1080: {
+	        // screen base dimension
+	        height: 1080,
+	        width:  1920,
+	        // safe zone margins
+	        availTop:    45,
+	        availBottom: 45,
+	        availRight:  60,
+	        availLeft:   60
+	        // project-specific vars
+	        // put here ...
+	    }
+	};
+
+
+/***/ },
+/* 10 */
+/*!*********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/magsdk/app/lib/css.js ***!
+  \*********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var app = __webpack_require__(/*! spa-app/lib/core */ 2),
+	    //metrics = require('app:metrics'),
+	    //head = document.head,
+	    linkCSS;
+	
+	
+	//window.core = window.parent.getCoreInstance(window, app);
+	
+	// linkCSS = document.createElement('link');
+	// linkCSS.rel  = 'stylesheet';
+	// linkCSS.href = window.core.theme.path + app.metrics.height + '.css?' + (DEVELOP ? '?' + Date.now() : '');
+	//
+	// // if custom link element is absent behaves as appendChild()
+	// head.insertBefore(linkCSS, head.lastElementChild);
+	
+	
+	linkCSS = document.createElement('link');
+	linkCSS.rel  = 'stylesheet';
+	linkCSS.href = window.core.theme.path + app.metrics.height + '.css' + ( true ? '?' + Date.now() : '');
+	document.head.appendChild(linkCSS);
+	
+	
+	// public
+	module.exports = linkCSS;
+
+
+/***/ },
+/* 11 */
+/*!*********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/app/lib/css.js ***!
+  \*********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var app = __webpack_require__(/*! spa-app/lib/core */ 2),
+	    //metrics = require('app:metrics'),
+	    linkCSS;
+	
+	
+	// global link
+	//app.metrics = metrics[app.query.screenHeight] || metrics[screen.height] || metrics[720];
+	
+	// calculate and extend
+	//app.metrics.availHeight = app.metrics.height - (app.metrics.availTop  + app.metrics.availBottom);
+	//app.metrics.availWidth  = app.metrics.width  - (app.metrics.availLeft + app.metrics.availRight);
+	
+	// // set max browser window size
+	// window.moveTo(0, 0);
+	// window.resizeTo(metrics.width, metrics.height);
+	
+	// load CSS file base on resolution
+	linkCSS = document.createElement('link');
+	linkCSS.rel  = 'stylesheet';
+	linkCSS.href = 'css/' + ( true ? 'develop.' : 'release.') + app.metrics.height + '.css' + ( true ? '?' + Date.now() : '');
+	document.head.appendChild(linkCSS);
+	
+	
+	// public
+	module.exports = linkCSS;
+
+
+/***/ },
+/* 12 */
+/*!*******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/magsdk/component-modal/index.js ***!
+  \*******************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	// TODO: switch to stb-component-modal
+	var Component = __webpack_require__(/*! stb-component */ 13);
+	
+	
+	/**
+	 * Modal window implementation.
+	 *
+	 * @constructor
+	 * @extends Component
+	 *
+	 * @param {Object} [config={}] init parameters (all inherited from the parent)
+	 * @param {Object} [config.title] message title
+	 * @param {Object} [config.className] message classname
+	 * @param {Object} [config.icon] icon at header
+	 * @param {Object} [config.visible] visibility flag
+	 * @param {Object} [config.children] content (inherited from the parent)
+	 */
+	function Modal ( config ) {
+	    var $overlay;
+	
+	    // sanitize
+	    config = config || {};
+	
+	    if ( true ) {
+	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        // init parameters checks
+	        if ( config.icon && typeof config.icon !== 'string' ) { throw new Error(__filename + ': wrong or empty config.icon'); }
+	        if ( config.title && typeof config.title !== 'string' ) { throw new Error(__filename + ': wrong or empty config.title'); }
+	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+	        if ( config.$body ) { throw new Error(__filename + ': config.$body should not be provided in Modal manually'); }
+	    }
+	
+	    // usually can't accept focus
+	    config.focusable = config.focusable || false;
+	    // set default className if classList property empty or undefined
+	    config.className = 'modalMessage ' + (config.className || '');
+	    // hide by default
+	    config.visible = config.visible || false;
+	    // create centered div
+	    config.$body = document.createElement('div');
+	    config.$body.className = 'body';
+	
+	    // parent constructor call
+	    Component.call(this, config);
+	
+	    // add table-cell wrappers
+	    this.$node.appendChild(document.createElement('div'));
+	    this.$node.firstChild.classList.add('alignBox');
+	    this.$node.firstChild.appendChild(document.createElement('div'));
+	
+	    // add header div
+	    this.$header = document.createElement('div');
+	    this.$header.className = 'header';
+	
+	    // insert caption placeholder
+	    this.$text = this.$header.appendChild(document.createElement('div'));
+	    this.$text.classList.add('text');
+	    this.$text.innerText = config.title || '';
+	
+	    // optional icon
+	    if ( config.icon ) {
+	        // insert icon
+	        this.$icon = this.$header.appendChild(document.createElement('div'));
+	        this.$icon.className = 'icon ' + config.icon;
+	    }
+	
+	    $overlay = document.createElement('div');
+	    $overlay.className = 'overlay';
+	
+	    // add to dom
+	    this.$node.firstChild.firstChild.appendChild(this.$header);
+	    this.$node.firstChild.firstChild.appendChild(this.$body);
+	    this.$node.firstChild.firstChild.appendChild($overlay);
+	}
+	
+	
+	// inheritance
+	Modal.prototype = Object.create(Component.prototype);
+	Modal.prototype.constructor = Modal;
+	
+	
+	/**
+	 * Redefine default component focus to set additional css
+	 */
+	Modal.prototype.focus = function () {
+	    this.$node.classList.add('active');
+	    Component.prototype.focus.call(this);
+	    if ( this.children[0] && this.children[0] instanceof Component ) {
+	        this.children[0].focus();
+	    }
+	};
+	
+	
+	/**
+	 * Blur message
+	 */
+	Modal.prototype.blur = function () {
+	    this.$node.classList.remove('active');
+	    Component.prototype.blur.call(this);
+	};
+	
+	
+	// public
+	module.exports = Modal;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/magsdk/component-modal/index.js"))
+
+/***/ },
+/* 13 */
+/*!*************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/component/index.js ***!
+  \*************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	'use strict';
+	
+	// public
+	module.exports = __webpack_require__(/*! spa-component */ 14);
+
+
+/***/ },
 /* 14 */
-/*!******************************!*\
-  !*** ../shim-frame/index.js ***!
-  \******************************/
+/*!*************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/component/index.js ***!
+  \*************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
+	    Emitter = __webpack_require__(/*! cjs-emitter */ 3),
+	    counter = 0;
+	
+	
+	/**
+	 * Base component implementation.
+	 *
+	 * Visual element that can handle sub-components.
+	 * Each component has a DOM element container $node with a set of classes:
+	 * "component" and some specific component class names depending on the hierarchy, for example "page".
+	 * Each component has a unique ID given either from $node.id or from data.id. If not given will generate automatically.
+	 *
+	 * @constructor
+	 * @extends Emitter
+	 *
+	 * @param {Object} [config={}] init parameters
+	 * @param {Element} [config.id] component unique identifier (generated if not set)
+	 * @param {string} [config.className] space-separated list of classes for "className" property of this.$node
+	 * @param {Element} [config.$node] DOM element/fragment to be a component outer container
+	 * @param {Element} [config.$body] DOM element/fragment to be a component inner container (by default is the same as $node)
+	 * @param {Component} [config.parent] link to the parent component which has this component as a child
+	 * @param {Array.<Component>} [config.children=[]] list of components in this component
+	 * @param {Object.<string, function>} [config.events={}] list of event callbacks
+	 * @param {boolean} [config.visible=true] component initial visibility state flag
+	 * @param {boolean} [config.focusable=true] component can accept focus or not
+	 * @param {boolean} [config.propagate=false] allow to emit events to the parent component
+	 *
+	 * @fires module:stb/component~Component#click
+	 *
+	 * @example
+	 * var component = new Component({
+	 *     $node: document.getElementById(id),
+	 *     className: 'bootstrap responsive',
+	 *     events: {
+	 *         click: function () { ... }
+	 *     }
+	 * });
+	 * component.add( ... );
+	 * component.focus();
+	 */
+	function Component ( config ) {
+	    // current execution context
+	    var self = this,
+	        name;
+	
+	    // sanitize
+	    config = config || {};
+	
+	    console.assert(typeof this === 'object', 'must be constructed via new');
+	
+	    if ( true ) {
+	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        // init parameters checks
+	        if ( config.id        && typeof config.id !== 'string'         ) { throw new Error(__filename + ': wrong or empty config.id'); }
+	        if ( config.className && typeof config.className !== 'string'  ) { throw new Error(__filename + ': wrong or empty config.className'); }
+	        if ( config.$node     && !(config.$node instanceof Element)    ) { throw new Error(__filename + ': wrong config.$node type'); }
+	        if ( config.$body     && !(config.$body instanceof Element)    ) { throw new Error(__filename + ': wrong config.$body type'); }
+	        if ( config.parent    && !(config.parent instanceof Component) ) { throw new Error(__filename + ': wrong config.parent type'); }
+	        if ( config.children  && !Array.isArray(config.children)       ) { throw new Error(__filename + ': wrong config.children type'); }
+	    }
+	
+	    /**
+	     * Component visibility state flag.
+	     *
+	     * @readonly
+	     * @type {boolean}
+	     */
+	    this.visible = true;
+	
+	    /**
+	     * Component can accept focus or not.
+	     *
+	     * @type {boolean}
+	     */
+	    this.focusable = true;
+	
+	    /**
+	     * DOM outer handle.
+	     *
+	     * @type {Element}
+	     */
+	    this.$node = null;
+	
+	    /**
+	     * DOM inner handle.
+	     * In simple cases is the same as $node.
+	     *
+	     * @type {Element}
+	     */
+	    this.$body = null;
+	
+	    /**
+	     * Link to the parent component which has this component as a child.
+	     *
+	     * @type {Component}
+	     */
+	    this.parent = null;
+	
+	    /**
+	     * List of all children components.
+	     *
+	     * @type {Component[]}
+	     */
+	    this.children = [];
+	
+	    /**
+	     * allow to emit events to the parent component
+	     *
+	     * @readonly
+	     * @type {boolean}
+	     */
+	    this.propagate = !!config.propagate;
+	
+	    // parent constructor call
+	    Emitter.call(this, config.data);
+	
+	    // outer handle - empty div in case nothing is given
+	    this.$node = config.$node || document.createElement('div');
+	
+	    // inner handle - the same as outer handler in case nothing is given
+	    this.$body = config.$body || this.$node;
+	
+	    // set CSS class names
+	    this.$node.className += ' component ' + (config.className || '');
+	
+	    // apply component id if given, generate otherwise
+	    this.id = config.id || this.$node.id || 'cid' + counter++;
+	
+	    // apply hierarchy
+	    if ( config.parent ) {
+	        // add to parent component
+	        config.parent.add(this);
+	    }
+	
+	    // apply given visibility
+	    if ( config.visible === false ) {
+	        // default state is visible
+	        this.hide();
+	    }
+	
+	    // apply focus handling method
+	    if ( config.focusable === false ) {
+	        // can't accept focus
+	        this.focusable = false;
+	    }
+	
+	    // a descendant defined own events
+	    if ( this.defaultEvents ) {
+	        // sanitize
+	        config.events = config.events || {};
+	
+	        if ( true ) {
+	            if ( typeof config.events !== 'object' ) { throw new Error(__filename + ': wrong config.events type'); }
+	            if ( typeof this.defaultEvents !== 'object' ) { throw new Error(__filename + ': wrong this.defaultEvents type'); }
+	        }
+	
+	        for ( name in this.defaultEvents ) {
+	            // overwrite default events with user-defined
+	            config.events[name] = config.events[name] || this.defaultEvents[name];
+	        }
+	    }
+	
+	    if ( config.events ) {
+	        // apply all given events
+	        Object.keys(config.events).forEach(function ( name ) {
+	            self.addListener(name, config.events[name]);
+	        });
+	    }
+	
+	    // apply the given children components
+	    if ( config.children ) {
+	        // apply
+	        this.add.apply(this, config.children);
+	    }
+	
+	    // component activation by mouse
+	    this.$node.addEventListener('click', function ( event ) {
+	        // left mouse button
+	        //if ( event.button === 0 ) {
+	        // activate if possible
+	        self.focus();
+	
+	        // there are some listeners
+	        if ( self.events['click'] ) {
+	            /**
+	             * Mouse click event.
+	             *
+	             * @event module:stb/component~Component#click
+	             *
+	             * @type {Object}
+	             * @property {Event} event click event data
+	             */
+	            self.emit('click', event);
+	        }
+	        //}
+	
+	        if ( true ) {
+	            // middle mouse button
+	            if ( event.button === 1 ) {
+	                //debug.inspect(self, 0);
+	                debug.info('"window.link" or "' + self.id + '.component"', 'this component is now available in global scope');
+	                window.link = self;
+	                self.$node.classList.toggle('wired');
+	            }
+	        }
+	
+	        event.stopPropagation();
+	    });
+	
+	    if ( true ) {
+	        // expose inner ID to global scope
+	        window[self.id] = self.$node;
+	
+	        // expose a link
+	        this.$node.component = this.$body.component = this;
+	        this.$node.title = 'component ' + this.constructor.name + '#' + this.id + ' (outer)';
+	        this.$body.title = 'component ' + this.constructor.name + '#' + this.id + ' (inner)';
+	    }
+	
+	    debug.info('create component ' + this.constructor.name + '#' + this.id, null, {
+	        tags: ['create', 'component', this.constructor.name, this.id]
+	    });
+	}
+	
+	
+	// inheritance
+	Component.prototype = Object.create(Emitter.prototype);
+	Component.prototype.constructor = Component;
+	
+	
+	/**
+	 * List of all default event callbacks.
+	 *
+	 * @type {Object.<string, function>}
+	 */
+	Component.prototype.defaultEvents = null;
+	
+	
+	/**
+	 * Add a new component as a child.
+	 *
+	 * @param {...Component} [child] variable number of elements to append
+	 *
+	 * @files Component#add
+	 *
+	 * @example
+	 * panel.add(
+	 *     new Button( ... ),
+	 *     new Button( ... )
+	 * );
+	 */
+	Component.prototype.add = function ( child ) {
+	    var index;
+	
+	    // walk through all the given elements
+	    for ( index = 0; index < arguments.length; index++ ) {
+	        child = arguments[index];
+	
+	        if ( true ) {
+	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+	        }
+	
+	        // apply
+	        this.children.push(child);
+	        child.parent = this;
+	
+	        // correct DOM parent/child connection if necessary
+	        if ( child.$node && child.$node.parentNode === null ) {
+	            this.$body.appendChild(child.$node);
+	        }
+	
+	        debug.info('add component ' + child.constructor.name + '#' + child.id + ' to ' + this.constructor.name + '#' + this.id, null, {
+	            tags: ['add', 'component', this.constructor.name, this.id, child.constructor.name, child.id]
+	        });
+	
+	        // there are some listeners
+	        if ( this.events['add'] ) {
+	            /**
+	             * A child component is added.
+	             *
+	             * @event module:stb/component~Component#add
+	             *
+	             * @type {Object}
+	             * @property {Component} item new component added
+	             */
+	            this.emit('add', {item: child});
+	        }
+	
+	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' new child: ' + child.constructor.name + '#' + child.id);
+	    }
+	};
+	
+	
+	/* @todo: consider activation in future */
+	///**
+	// * Insert component into the specific position.
+	// *
+	// * @param {Component} child component instance to insert
+	// * @param {number} index insertion position
+	// */
+	//Component.prototype.insert = function ( child, index ) {
+	//    var prevIndex = this.children.indexOf(child);
+	//
+	//    if ( DEVELOP ) {
+	//        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+	//        if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+	//    }
+	//
+	//    if ( prevIndex !== -1 ) {
+	//        this.children.splice(prevIndex, 1);
+	//        this.$body.removeChild(child.$node);
+	//    }
+	//
+	//    if ( index === this.children.length ) {
+	//        this.$body.appendChild(child.$node);
+	//    } else {
+	//        this.$body.insertBefore(child.$node, this.$body.children[index]);
+	//    }
+	//    this.children.splice(index, 0, child);
+	//
+	//    if ( !child.parent ) {
+	//        child.parent = this;
+	//    }
+	//};
+	
+	
+	/**
+	 * Delete this component and clear all associated events.
+	 *
+	 * @fires module:stb/component~Component#remove
+	 */
+	Component.prototype.remove = function () {
+	    // really inserted somewhere
+	    if ( this.parent ) {
+	        if ( true ) {
+	            if ( !(this.parent instanceof Component) ) { throw new Error(__filename + ': wrong this.parent type'); }
+	        }
+	
+	        // active at the moment
+	        if ( app.activePage.activeComponent === this ) {
+	            this.blur();
+	            this.parent.focus();
+	        }
+	        this.parent.children.splice(this.parent.children.indexOf(this), 1);
+	    }
+	
+	    // remove all children
+	    this.children.forEach(function ( child ) {
+	        if ( true ) {
+	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+	        }
+	
+	        child.remove();
+	    });
+	
+	    // remove all listeners
+	    this.events = {};
+	
+	    this.$node.parentNode.removeChild(this.$node);
+	
+	    // there are some listeners
+	    if ( this.events['remove'] ) {
+	        /**
+	         * Delete this component.
+	         *
+	         * @event module:stb/component~Component#remove
+	         */
+	        this.emit('remove');
+	    }
+	
+	    //debug.log('component ' + this.constructor.name + '#' + this.id + ' remove', 'red');
+	    debug.info('remove component ' + this.constructor.name + '#' + this.id, null, {
+	        tags: ['remove', 'component', this.constructor.name, this.id]
+	    });
+	};
+	
+	
+	/**
+	 * Activate the component.
+	 * Notify the owner-page and apply CSS class.
+	 *
+	 * @param {Object} [data] custom data which passed into handlers
+	 *
+	 * @return {boolean} operation status
+	 *
+	 * @fires module:stb/component~Component#focus
+	 */
+	Component.prototype.focus = function ( data ) {
+	    var activePage = app.activePage,
+	        activeItem = activePage.activeComponent;
+	
+	    // this is a visual component on a page
+	    // not already focused and can accept focus
+	    if ( this.focusable && this !== activeItem ) {
+	        // notify the current active component
+	        if ( activeItem ) { activeItem.blur(); }
+	
+	        /* eslint consistent-this: 0 */
+	
+	        // apply
+	        activePage.activeComponent = activeItem = this;
+	        activeItem.$node.classList.add('focus');
+	
+	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' focus');
+	        debug.info('focus component ' + this.constructor.name + '#' + this.id, null, {
+	            tags: ['focus', 'component', this.constructor.name, this.id]
+	        });
+	
+	        // there are some listeners
+	        if ( activeItem.events['focus'] ) {
+	            /**
+	             * Make this component focused.
+	             *
+	             * @event module:stb/component~Component#focus
+	             */
+	            activeItem.emit('focus', data);
+	        }
+	
+	        return true;
+	    }
+	
+	    // nothing was done
+	    return false;
+	};
+	
+	
+	/**
+	 * Remove focus.
+	 * Change page.activeComponent and notify subscribers.
+	 *
+	 * @return {boolean} operation status
+	 *
+	 * @fires module:stb/component~Component#blur
+	 */
+	Component.prototype.blur = function () {
+	    var activePage = app.activePage,
+	        activeItem = activePage.activeComponent;
+	
+	    // apply visuals anyway
+	    this.$node.classList.remove('focus');
+	
+	    // this is the active component
+	    if ( this === activeItem ) {
+	        activePage.activeComponent = null;
+	
+	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' blur', 'grey');
+	        debug.info('blur component ' + this.constructor.name + '#' + this.id, null, {
+	            tags: ['blur', 'component', this.constructor.name, this.id]
+	        });
+	
+	        // there are some listeners
+	        if ( this.events['blur'] ) {
+	            /**
+	             * Remove focus from this component.
+	             *
+	             * @event module:stb/component~Component#blur
+	             */
+	            this.emit('blur');
+	        }
+	
+	        return true;
+	    }
+	
+	    debug.warn('component ' + this.constructor.name + '#' + this.id + ' attempt to blur without link to a page', null, {
+	        tags: ['blur', 'component', this.constructor.name, this.id]
+	    });
+	
+	    // nothing was done
+	    return false;
+	};
+	
+	
+	/**
+	 * Make the component visible and notify subscribers.
+	 *
+	 * @param {Object} [data] custom data which passed into handlers
+	 *
+	 * @return {boolean} operation status
+	 *
+	 * @fires module:stb/component~Component#show
+	 */
+	Component.prototype.show = function ( data ) {
+	    // is it hidden
+	    if ( !this.visible ) {
+	        // correct style
+	        this.$node.classList.remove('hidden');
+	        // flag
+	        this.visible = true;
+	
+	        debug.info('show component ' + this.constructor.name + '#' + this.id, null, {
+	            tags: ['show', 'component', this.constructor.name, this.id]
+	        });
+	
+	        // there are some listeners
+	        if ( this.events['show'] ) {
+	            /**
+	             * Make the component visible.
+	             *
+	             * @event module:stb/component~Component#show
+	             */
+	            this.emit('show', data);
+	        }
+	
+	        return true;
+	    }
+	
+	    // nothing was done
+	    return true;
+	};
+	
+	
+	/**
+	 * Make the component hidden and notify subscribers.
+	 *
+	 * @return {boolean} operation status
+	 *
+	 * @fires module:stb/component~Component#hide
+	 */
+	Component.prototype.hide = function () {
+	    // is it visible
+	    if ( this.visible ) {
+	        // correct style
+	        this.$node.classList.add('hidden');
+	        // flag
+	        this.visible = false;
+	
+	        debug.info('hide component ' + this.constructor.name + '#' + this.id, null, {
+	            tags: ['hide', 'component', this.constructor.name, this.id]
+	        });
+	
+	        // there are some listeners
+	        if ( this.events['hide'] ) {
+	            /**
+	             * Make the component hidden.
+	             *
+	             * @event module:stb/component~Component#hide
+	             */
+	            this.emit('hide');
+	        }
+	
+	        return true;
+	    }
+	
+	    // nothing was done
+	    return true;
+	};
+	
+	
+	// public
+	module.exports = Component;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/spasdk/component/index.js"))
+
+/***/ },
+/* 15 */
+/*!*************************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/magsdk/component-layout-list/index.js ***!
+  \*************************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var List = __webpack_require__(/*! stb-component-list */ 16),
+	    Layout = __webpack_require__(/*! mag-component-layout */ 19);
+	
+	/**
+	 *  Layout list contains array of layout components
+	 *
+	 * @constructor
+	 * @extends List
+	 *
+	 * @param {Object} config object
+	 * @param {Element} [config.noData=''] element or string to display if set empty data
+	 *
+	 * @example
+	 * var CheckList = require('../stb/ui/layout.list'),
+	 *     list = new LayoutList({
+	 *         propagate: true,
+	 *         size: 7,
+	 *         focusIndex: 0,
+	 *         noData: 'No channels'
+	 *         data: [
+	 *                 {
+	 *                     items: [
+	 *                         {
+	 *                             className: 'star'
+	 *                         },
+	 *                         'Some text'
+	 *                     ],
+	 *                     click: function () {
+	 *                         // do something
+	 *                     }
+	 *                 },
+	 *                 {
+	 *                     items: [
+	 *                         'Hello world',
+	 *                         {
+	 *                             value: 'hi',
+	 *                             className: 'status'
+	 *                         }
+	 *                     ],
+	 *                     value:{
+	 *                         uri: 'http://55.55.55.55/some'
+	 *                     },
+	 *                     click: someHandler
+	 *                 },
+	 *                 {
+	 *                     items: [
+	 *                         {
+	 *                             className: 'big',
+	 *                             value: ' Some'
+	 *                         },
+	 *                         {
+	 *                             value: new Input()
+	 *                         }
+	 *                     ]
+	 *                 },
+	 *                 {
+	 *                     items: [
+	 *                         new Button({value: 'Ok'}),
+	 *                         new Button({value: 'Cancel'}),
+	 *                         new Button({value: 'Exit'})
+	 *                     ]
+	 *                 }
+	 *             ]
+	 * });
+	 */
+	function LayoutList ( config ) {
+	    var self = this;
+	
+	    config = config || {};
+	
+	    /**
+	     * Elements handlers
+	     */
+	    this.handlers = {};
+	
+	    /**
+	     * No data placeholder
+	     *
+	     * @type {Element}
+	     */
+	    this.$noData = null;
+	
+	    config.className = 'layoutList ' + (config.className || '');
+	
+	    config.propagate = config.propagate || true;
+	
+	    /**
+	     * Set data layout to be fixed to cache HTML elements
+	     *
+	     * @type {boolean|*}
+	     */
+	    this.fixedData = config.fixedData || false;
+	
+	    //config.$body = document.createElement('div');
+	
+	    config.$body = document.createElement('div');
+	    config.$body.className = 'body';
+	
+	    this.$noData = document.createElement('div');
+	    this.$noData.className = 'noData hidden';
+	
+	    List.call(this, config);
+	
+	    this.$node.appendChild(this.$body);
+	    this.$node.appendChild(this.$noData);
+	
+	    // add handler to focus inner layout
+	    this.addListener('click:item', function ( event ) {
+	        // focus inner layout of item
+	        if ( event.$item.layout.children.length && !event.inner ) {
+	            event.$item.layout.children[event.$item.layout.focusIndex].focus();
+	        }
+	
+	        // only focus item if we click mouse
+	        if ( event.inner ) {
+	            self.focus();
+	            self.focusItem(event.$item);
+	        }
+	        // do click callback if it present
+	        if ( self.handlers[event.$item.index] ) {
+	            self.handlers[event.$item.index](event.$item);
+	        }
+	    });
+	}
+	
+	
+	LayoutList.prototype = Object.create(List.prototype);
+	LayoutList.prototype.constructor = LayoutList;
+	
+	/*eslint id-length:0*/
+	/**
+	 * Default render function
+	 *
+	 * @param {Element} $item in list
+	 * @param {Object} config to render layout element
+	 */
+	LayoutList.prototype.renderItemDefault = function ( $item, config ) {
+	    var layout, i;
+	
+	    if ( $item.ready && this.fixedData && !$item.innerHTML.length ) {
+	        for ( i = 0; i < config.items.length; i++ ) {
+	            if ( typeof config.items[i].value === 'string' ) {
+	                $item.layout.$node.childNodes[i].innerText = config.items[i].value;
+	                $item.layout.$node.childNodes[i].className = config.items[i].className;
+	            }
+	        }
+	    } else {
+	        // clear inner content
+	        while ( $item.firstChild ) {
+	            $item.removeChild($item.firstChild);
+	        }
+	
+	        layout = new Layout({
+	            focusable: false,
+	            data: config.items
+	        });
+	
+	        $item.appendChild(layout.$node);
+	        $item.layout = layout;
+	        layout.parent = this;
+	        layout.$parentItem = $item;
+	
+	        // focus layoutList if click on layout
+	        layout.addListener('click', function () {
+	            // add inner property to set that event comes from inner component
+	            this.parent.emit('click:item', {$item: $item, inner: true});
+	        });
+	
+	        if ( config.click ) {
+	            this.handlers[$item.index] = config.click;
+	        }
+	        // item is rendered
+	        $item.ready = true;
+	    }
+	    $item.value = config.value || {};
+	
+	};
+	
+	
+	// LayoutList.prototype.setData = function ( config ) {
+	//     List.prototype.setData.call(this, config);
+	//
+	//     if ( config.data && config.data.length ) {
+	//         this.$noData.classList.add('hidden');
+	//     } else {
+	//         this.$noData.classList.remove('hidden');
+	//     }
+	// };
+	
+	
+	LayoutList.prototype.init = function ( config ) {
+	    var $wrap;
+	
+	    List.prototype.init.call(this, config);
+	    if ( config.noData ) {
+	        if ( true ) {
+	            if ( typeof config.noData !== 'string' && !(config.noData instanceof Element) ) {
+	                throw new Error(__filename + ': wrong config.$noData type');
+	            }
+	        }
+	        this.$noData.innerHTML = '';
+	        if ( config.noData instanceof Element ) {
+	            this.$noData.appendChild(config.noData);
+	        } else if ( typeof config.noData === 'string' ) {
+	            $wrap = document.createElement('div');
+	            $wrap.innerText = config.noData;
+	            this.$noData.appendChild($wrap);
+	        }
+	    }
+	
+	    if ( config.data && config.data.length ) {
+	       this.$noData.classList.add('hidden');
+	    } else {
+	       this.$noData.classList.remove('hidden');
+	    }
+	};
+	
+	LayoutList.prototype.renderItem = LayoutList.prototype.renderItemDefault;
+	
+	
+	module.exports = LayoutList;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/magsdk/component-layout-list/index.js"))
+
+/***/ },
+/* 16 */
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/component-list/index.js ***!
+  \******************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	'use strict';
+	
+	// public
+	module.exports = __webpack_require__(/*! spa-component-list */ 17);
+
+
+/***/ },
+/* 17 */
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/component-list/index.js ***!
+  \******************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var Component = __webpack_require__(/*! spa-component */ 14),
+	    codes     = __webpack_require__(/*! stb-rc */ 18).codes;
+	
+	
+	/**
+	 * Mouse click event.
+	 *
+	 * @event module:stb/ui/list~List#click:item
+	 *
+	 * @type {Object}
+	 * @property {Element} $item clicked HTML item
+	 * @property {Event} event click event data
+	 */
+	
+	
+	/**
+	 * Base list implementation.
+	 *
+	 * Each data item can be either a primitive value or an object with these fields:
+	 *
+	 *  Name    | Description
+	 * ---------|-------------
+	 *  value   | actual cell value to render
+	 *  mark    | is it necessary or not to render this cell as marked
+	 *
+	 * @constructor
+	 * @extends Component
+	 *
+	 * @param {Object}   [config={}]          init parameters (all inherited from the parent)
+	 * @param {Array}    [config.data=[]]     component data to visualize
+	 * @param {function} [config.render]      method to build each grid cell content
+	 * @param {function} [config.navigate]    method to move focus according to pressed keys
+	 * @param {number}   [config.size=5]      amount of visible items on a page
+	 * @param {number}   [config.viewIndex=0] move view window to this position on init
+	 * @param {number}   [config.focusIndex]  list item index to make item focused (move view window to this position)
+	 * @param {boolean}  [config.cycle=true]  allow or not to jump to the opposite side of a list when there is nowhere to go next
+	 * @param {boolean}  [config.scroll=null] associated ScrollBar component link
+	 * @param {object}   [config.provider]      data provider
+	 *
+	 * @fires module:stb/ui/list~List#click:item
+	 */
+	function List ( config ) {
+	    // current execution context
+	    //var self = this;
+	
+	    // sanitize
+	    config = config || {};
+	
+	    console.assert(typeof this === 'object', 'must be constructed via new');
+	
+	    if ( true ) {
+	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        // init parameters checks
+	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+	        if ( config.type      && Number(config.type) !== config.type  ) { throw new Error(__filename + ': config.type must be a number'); }
+	    }
+	
+	    /**
+	     * Link to the currently focused DOM element.
+	     *
+	     * @type {Element}
+	     */
+	    this.$focusItem = null;
+	
+	    /**
+	     * Position of the visible window to render.
+	     *
+	     * @type {number}
+	     */
+	    this.viewIndex = null;
+	
+	    /**
+	     * Component data to visualize.
+	     *
+	     * @type {Array}
+	     */
+	    this.data = [];
+	
+	    /**
+	     * Component orientation.
+	     *
+	     * @type {number}
+	     */
+	    this.type = this.TYPE_VERTICAL;
+	
+	    /**
+	     * Amount of visible items on a page.
+	     *
+	     * @type {number}
+	     */
+	    this.size = 5;
+	
+	    /**
+	     * Allow or not to jump to the opposite side of a list when there is nowhere to go next.
+	     *
+	     * @type {boolean}
+	     */
+	    this.cycle = false;
+	
+	    /**
+	     * Associated ScrollBar component link.
+	     *
+	     * @type {ScrollBar}
+	     */
+	    this.scroll = null;
+	
+	    // horizontal or vertical
+	    if ( config.type ) {
+	        // apply
+	        this.type = config.type;
+	    }
+	
+	    /**
+	     * Associated data provider
+	     *
+	     * @type {Provider}
+	     */
+	    this.provider = null;
+	
+	
+	    // set default className if classList property empty or undefined
+	    config.className = 'list ' + (config.className || '');
+	
+	    if ( this.type === this.TYPE_HORIZONTAL ) {
+	        config.className += ' horizontal';
+	    }
+	
+	    // parent constructor call
+	    Component.call(this, config);
+	
+	    // component setup
+	    this.init(config);
+	}
+	
+	
+	// inheritance
+	List.prototype = Object.create(Component.prototype);
+	List.prototype.constructor = List;
+	
+	
+	List.prototype.TYPE_VERTICAL   = 1;
+	List.prototype.TYPE_HORIZONTAL = 2;
+	
+	
+	/**
+	 * Fill the given item with data.
+	 *
+	 * @param {Element} $item item DOM link
+	 * @param {*} data associated with this item data
+	 */
+	List.prototype.renderItemDefault = function ( $item, data ) {
+	    $item.innerText = data.value;
+	};
+	
+	
+	/**
+	 * Method to build each list item content.
+	 * Can be redefined to provide custom rendering.
+	 *
+	 * @type {function}
+	 */
+	List.prototype.renderItem = List.prototype.renderItemDefault;
+	
+	
+	/**
+	 * List of all default event callbacks.
+	 *
+	 * @type {Object.<string, function>}
+	 */
+	List.prototype.defaultEvents = {
+	    /**
+	     * Default method to handle mouse wheel events.
+	     *
+	     * @param {Event} event generated event
+	     */
+	    mousewheel: function ( event ) {
+	        // scrolling by Y axis
+	        if ( this.type === this.TYPE_VERTICAL && event.wheelDeltaY ) {
+	            this.move(event.wheelDeltaY > 0 ? codes.up : codes.down);
+	        }
+	
+	        // scrolling by X axis
+	        if ( this.type === this.TYPE_HORIZONTAL && event.wheelDeltaX ) {
+	            this.move(event.wheelDeltaX > 0 ? codes.left : codes.right);
+	        }
+	    },
+	
+	    /**
+	     * Default method to handle keyboard keydown events.
+	     *
+	     * @param {Event} event generated event
+	     */
+	    keydown: function ( event ) {
+	        switch ( event.keyCode ) {
+	            case codes.up:
+	            case codes.down:
+	            case codes.right:
+	            case codes.left:
+	            case codes.pageUp:
+	            case codes.pageDown:
+	            case codes.home:
+	            case codes.end:
+	                // cursor move only on arrow keys
+	                this.move(event.keyCode);
+	                break;
+	            case codes.ok:
+	                // there are some listeners
+	                if ( this.events['click:item'] && this.$focusItem ) {
+	                    // notify listeners
+	                    this.emit('click:item', {$item: this.$focusItem, event: event});
+	                }
+	                break;
+	        }
+	    }
+	};
+	
+	
+	/**
+	 * Make all the data items identical.
+	 * Wrap to objects if necessary.
+	 *
+	 * @param {Array} data incoming array
+	 * @return {Array} reworked incoming data
+	 */
+	function normalize ( data ) {
+	    var i, item;
+	
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+	        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+	    }
+	
+	    // rows
+	    for ( i = 0; i < data.length; i++ ) {
+	        // cell value
+	        item = data[i];
+	        // primitive value
+	        if ( typeof item !== 'object' ) {
+	            // wrap with defaults
+	            item = data[i] = {
+	                value: data[i]
+	            };
+	        }
+	
+	        if ( true ) {
+	            //if ( !('value' in item) ) { throw new Error(__filename + ': field "value" is missing'); }
+	            if ( ('mark' in item) && Boolean(item.mark) !== item.mark ) { throw new Error(__filename + ': item.mark must be boolean'); }
+	        }
+	    }
+	
+	    return data;
+	}
+	
+	
+	/**
+	 * Init or re-init of the component inner structures and HTML.
+	 *
+	 * @param {Object} config init parameters (subset of constructor config params)
+	 */
+	List.prototype.init = function ( config ) {
+	    var self     = this,
+	        currSize = this.$body.children.length,
+	        /**
+	         * Item mouse click handler.
+	         *
+	         * @param {Event} event click event data
+	         *
+	         * @this Element
+	         *
+	         * @fires module:stb/ui/list~List#click:item
+	         */
+	        onClick = function ( event ) {
+	            if ( this.data ) {
+	                self.focusItem(this);
+	
+	                // there are some listeners
+	                if ( self.events['click:item'] ) {
+	                    // notify listeners
+	                    self.emit('click:item', {$item: this, event: event});
+	                }
+	            }
+	        },
+	        item, i;
+	
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	    }
+	
+	    // apply cycle behaviour
+	    if ( config.cycle !== undefined ) { this.cycle = config.cycle; }
+	
+	    // apply ScrollBar link
+	    if ( config.scroll ) { this.scroll = config.scroll; }
+	
+	    // apply data provider
+	    if ( config.provider ) { this.provider = config.provider; }
+	
+	
+	    // custom render method
+	    if ( config.render ) {
+	        if ( true ) {
+	            if ( typeof config.render !== 'function' ) { throw new Error(__filename + ': wrong config.render type'); }
+	        }
+	        // apply
+	        this.renderItem = config.render;
+	    }
+	
+	    // list items amount on page
+	    if ( config.size ) {
+	        if ( true ) {
+	            if ( Number(config.size) !== config.size ) { throw new Error(__filename + ': config.size must be a number'); }
+	            if ( config.size <= 0 ) { throw new Error(__filename + ': config.size should be positive'); }
+	        }
+	        // apply
+	        this.size = config.size;
+	    }
+	
+	    // geometry has changed or initial draw
+	    if ( this.size !== currSize ) {
+	        // non-empty list
+	        if ( currSize > 0 ) {
+	            // clear old items
+	            this.$body.innerText = null;
+	        }
+	
+	        // create new items
+	        for ( i = 0; i < this.size; i++ ) {
+	            item = document.createElement('div');
+	            item.index = i;
+	            item.className = 'item';
+	
+	            item.addEventListener('click', onClick);
+	            this.$body.appendChild(item);
+	        }
+	    }
+	
+	    if ( this.provider ) {
+	        this.provider.get( null, function ( error, data ) {
+	            if ( error ) {
+	                if ( self.events['data:error'] ) {
+	                    /**
+	                     * Provider get error while take new data
+	                     *
+	                     * @event module:stb/ui/list~List#data:error
+	                     */
+	                    self.emit('data:error', error);
+	                }
+	            } else {
+	                if ( data ) {
+	                    config.data = data;
+	                    self.setData(config);
+	                    if ( self.scroll ) {
+	                        self.scroll.init({
+	                            realSize: self.provider.maxCount,
+	                            viewSize: self.provider.size,
+	                            value: self.provider.head + self.provider.pos
+	                        });
+	                    }
+	                }
+	                if ( self.events['data:get'] ) {
+	                    /**
+	                     * Provider request new data
+	                     *
+	                     * @event module:stb/ui/list~List#data:get
+	                     *
+	                     * @type {Object}
+	                     */
+	                    self.emit('data:get');
+	                }
+	            }
+	        });
+	    } else if ( config.data ) {
+	        this.setData(config);
+	    }
+	
+	};
+	
+	/**
+	 * Set data and render inner structures and HTML.
+	 *
+	 * @param {Object} config init parameters (subset of constructor config params)
+	 */
+	List.prototype.setData = function ( config ) {
+	    // apply list of items
+	
+	    if ( config.data ) {
+	        if ( false ) {
+	            if ( !Array.isArray(config.data) ) { throw new Error(__filename + ': wrong config.data type'); }
+	        }
+	        // prepare user data
+	        this.data = normalize(config.data);
+	    }
+	
+	    // view window position
+	    if ( true ) {
+	        if ( config.viewIndex !== undefined ) {
+	            if ( Number(config.viewIndex) !== config.viewIndex ) { throw new Error(__filename + ': config.viewIndex must be a number'); }
+	            if ( config.viewIndex < 0 ) { throw new Error(__filename + ': config.viewIndex should be positive'); }
+	        }
+	    }
+	    // reset current view window position
+	    this.viewIndex = null;
+	
+	    if ( this.$focusItem ) {
+	        this.blurItem(this.$focusItem);
+	    }
+	
+	    if ( this.scroll ) {
+	        if ( this.provider ) {
+	            if ( this.scroll.realSize !== this.provider.maxCount ) {
+	                this.scroll.init({
+	                    realSize: this.provider.maxCount,
+	                    viewSize: this.provider.size,
+	                    value: this.provider.head + this.provider.pos
+	                });
+	            }
+	        } else {
+	            this.scroll.init({
+	                realSize: this.data.length,
+	                viewSize: this.size,
+	                value: config.viewIndex || 0
+	            });
+	        }
+	    }
+	
+	    // set focus item
+	    if ( config.focusIndex !== undefined && this.data.length ) {
+	        if ( true ) {
+	            if ( Number(config.focusIndex) !== config.focusIndex ) { throw new Error(__filename + ': config.focusIndex must be a number'); }
+	            if ( config.focusIndex < 0 ) { throw new Error(__filename + ': config.focusIndex should be positive'); }
+	//             if ( config.focusIndex > this.data.length - 1 ) { throw new Error(__filename + ': config.focusIndex should be less than data size'); }
+	        }
+	
+	        // jump to the necessary item
+	        this.focusIndex(config.focusIndex);
+	    } else {
+	        // go to the first page
+	        this.renderView(config.viewIndex || 0);
+	    }
+	};
+	
+	
+	/**
+	 * Shift the visible view window event.
+	 *
+	 * @event module:stb/ui/list~List#move:view
+	 *
+	 * @type {Object}
+	 * @property {number} prevIndex previous view window position
+	 * @property {number} currIndex current view window position
+	 */
+	
+	
+	/**
+	 * Draw the visible window.
+	 *
+	 * @param {number} index start position to render
+	 *
+	 * @return {boolean} operation status
+	 *
+	 * @fires module:stb/ui/list~List#move:view
+	 */
+	List.prototype.renderView = function ( index ) {
+	    var $item, i, itemData, prevIndex, currIndex;
+	
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+	        if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
+	        if ( index < 0 ) { throw new Error(__filename + ': index should be more than zero'); }
+	//         if ( index >= this.data.length ) { throw new Error(__filename + ': index should be less than data size'); }
+	    }
+	
+	    // has the view window position changed
+	    if ( this.viewIndex !== index ) {
+	        // save for emit
+	        prevIndex = this.viewIndex;
+	        // sync global pointer
+	        this.viewIndex = currIndex = index;
+	
+	        // rebuild all visible items
+	        for ( i = 0; i < this.size; i++ ) {
+	            // shortcuts
+	            $item    = this.$body.children[i];
+	            itemData = this.data[index];
+	
+	            // real item or stub
+	            if ( itemData ) {
+	                // correct inner data/index and render
+	                $item.data  = itemData;
+	                $item.index = index;
+	                this.renderItem($item, itemData);
+	
+	                // apply CSS
+	                if ( itemData.mark ) {
+	                    $item.classList.add('mark');
+	                } else {
+	                    $item.classList.remove('mark');
+	                }
+	            } else {
+	                // nothing to render
+	                $item.data = $item.index = undefined;
+	                $item.innerHTML = '&nbsp;';
+	                $item.ready = false;
+	            }
+	            index++;
+	        }
+	
+	        // there are some listeners
+	        if ( this.events['move:view'] ) {
+	            // notify listeners
+	            this.emit('move:view', {prevIndex: prevIndex, currIndex: currIndex});
+	        }
+	
+	        // there are some listeners
+	        if ( this.events['select:item'] ) {
+	            this.emit('select:item', {$item: $item});
+	        }
+	
+	        // update a linked scroll component
+	        if ( this.scroll ) {
+	            this.scroll.scrollTo(this.provider? this.provider.head + this.provider.pos : this.viewIndex);
+	        }
+	
+	        // full rebuild
+	        return true;
+	    }
+	
+	    // nothing was done
+	    return false;
+	};
+	
+	
+	/**
+	 * Jump to the opposite side.
+	 *
+	 * @event module:stb/ui/list~List#cycle
+	 *
+	 * @type {Object}
+	 * @property {number} direction key code initiator of movement
+	 */
+	
+	
+	/**
+	 * Attempt to go beyond the edge of the list.
+	 *
+	 * @event module:stb/ui/list~List#overflow
+	 *
+	 * @type {Object}
+	 * @property {number} direction key code initiator of movement
+	 */
+	
+	
+	/**
+	 * Move focus to the given direction.
+	 *
+	 * @param {number} direction arrow key code
+	 *
+	 * @fires module:stb/ui/list~List#cycle
+	 * @fires module:stb/ui/list~List#overflow
+	 */
+	List.prototype.move = function ( direction ) {
+	    var self = this,
+	        force = false;
+	
+	
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+	        if ( Number(direction) !== direction ) { throw new Error(__filename + ': direction must be a number'); }
+	    }
+	
+	    // empty list
+	    if ( !this.data.length ) {
+	        return;
+	    }
+	    switch ( direction ) {
+	        case codes.left:
+	            if ( this.type === this.TYPE_HORIZONTAL ) {
+	                force = true;
+	            } else {
+	                break;
+	            }
+	        case codes.up:
+	            if ( force || this.type === this.TYPE_VERTICAL ) {
+	                if ( this.$focusItem && this.$focusItem.index > 0 ) {
+	                    if ( this.$focusItem === this.$body.firstChild ) {
+	                        this.renderView(this.viewIndex - 1);
+	                    } else {
+	                        this.focusItem(this.$focusItem.previousSibling);
+	                    }
+	                } else {
+	                    if ( this.provider ) {
+	                        this.provider.get(direction, function ( error, data, pos ) {
+	                            if ( error ) {
+	                                if ( self.events['data:error'] ) {
+	                                    /**
+	                                     * Provider get error while take new data
+	                                     *
+	                                     * @event module:stb/ui/list~List#data:error
+	                                     */
+	                                    self.emit('data:error', error);
+	                                }
+	                            } else {
+	                                if ( data ) {
+	                                    self.setData({data: data, focusIndex: pos || pos === 0 ? pos : self.$focusItem.index});
+	                                }
+	                            }
+	                        });
+	                    } else {
+	                        // already at the beginning
+	                        if ( this.cycle ) {
+	                            // jump to the end of the list
+	                            this.move(codes.end);
+	                        }
+	                        if ( this.events['overflow'] ) {
+	                            // notify listeners
+	                            this.emit('overflow', {direction: direction, cycle: this.cycle});
+	                        }
+	                    }
+	                }
+	            }
+	            break;
+	        case codes.right:
+	            if ( this.type === this.TYPE_HORIZONTAL ) {
+	                force = true;
+	            } else {
+	                break;
+	            }
+	        case codes.down:
+	            if ( force || this.type === this.TYPE_VERTICAL ) {
+	                if ( this.$focusItem && this.$focusItem.index < this.data.length - 1 ) {
+	                    if ( this.$focusItem === this.$body.lastChild ) {
+	                        this.renderView(this.viewIndex + 1);
+	                    } else {
+	                        this.focusItem(this.$focusItem.nextSibling);
+	                    }
+	                } else {
+	                    if ( this.provider ) {
+	                        this.provider.get(direction, function ( error, data, pos ) {
+	                            if ( error ) {
+	                                if ( self.events['data:error'] ) {
+	                                    /**
+	                                     * Provider get error while take new data
+	                                     *
+	                                     * @event module:stb/ui/list~List#data:error
+	                                     */
+	                                    self.emit('data:error', error);
+	                                }
+	                            } else {
+	                                if ( data ) {
+	                                    self.setData({data: data, focusIndex: pos || pos === 0 ? pos : self.$focusItem.index});
+	                                }
+	                            }
+	                        });
+	                    } else {
+	                        // already at the beginning
+	                        if ( this.cycle ) {
+	                            // jump to the beginning of the list
+	                            this.move(codes.home);
+	                        }
+	                        if ( this.events['overflow'] ) {
+	                            // notify listeners
+	                            this.emit('overflow', {direction: direction, cycle: this.cycle});
+	                        }
+	                    }
+	                }
+	            }
+	            break;
+	        case codes.pageUp:
+	            if ( this.provider ) {
+	                this.provider.get(direction, function ( error, data, pos ) {
+	                    if ( error ) {
+	                        if ( self.events['data:error'] ) {
+	                            /**
+	                             * Provider get error while take new data
+	                             *
+	                             * @event module:stb/ui/list~List#data:error
+	                             */
+	                            self.emit('data:error', error);
+	                        }
+	                    } else {
+	                        if ( data ) {
+	                            self.setData({data: data, focusIndex: pos? pos : 0});
+	                        }
+	                    }
+	                });
+	                return;
+	            }
+	            if ( this.viewIndex < this.size ) {
+	                // first page
+	                this.renderView(0);
+	            } else {
+	                // second page and further
+	                this.renderView(this.viewIndex - this.size + 1);
+	            }
+	
+	            this.focusItem(this.$body.firstChild);
+	            break;
+	        case codes.pageDown:
+	            if ( this.provider ) {
+	                this.provider.get(direction, function ( error, data, pos ) {
+	                    if ( error ) {
+	                        if ( self.events['data:error'] ) {
+	                            /**
+	                             * Provider get error while take new data
+	                             *
+	                             * @event module:stb/ui/list~List#data:error
+	                             */
+	                            self.emit('data:error', error);
+	                        }
+	                    } else {
+	                        if ( data ) {
+	                            self.setData({data: data, focusIndex: pos || pos === 0 ? pos : data.length < self.size ?  data.length - 1 : self.size - 1});
+	                        }
+	                    }
+	                });
+	                break;
+	            }
+	            // data is bigger then one page
+	            if ( this.data.length > this.size ) {
+	                // determine jump size
+	                if ( this.viewIndex > this.data.length - this.size * 2 ) {
+	                    // last page
+	                    this.renderView(this.data.length - this.size);
+	                } else {
+	                    // before the last page
+	                    this.renderView(this.viewIndex + this.size - 1);
+	                }
+	                this.focusItem(this.$body.lastChild);
+	            } else {
+	                // not the last item on the page
+	                this.focusItem(this.$body.children[this.data.length - 1]);
+	            }
+	            break;
+	        case codes.home:
+	            if ( this.provider ) {
+	                this.provider.get(direction, function ( error, data, pos ) {
+	                    if ( error ) {
+	                        if ( self.events['data:error'] ) {
+	                            /**
+	                             * Provider get error while take new data
+	                             *
+	                             * @event module:stb/ui/list~List#data:error
+	                             */
+	                            self.emit('data:error', error);
+	                        }
+	                    } else {
+	                        if ( data ) {
+	                            self.setData({data: data, focusIndex: pos ? pos : 0});
+	                        }
+	                    }
+	                });
+	                break;
+	            }
+	            this.renderView(0);
+	            this.focusItem(this.$body.firstChild);
+	            break;
+	        case codes.end:
+	            if ( this.provider ) {
+	                this.provider.get(direction, function ( error, data, pos ) {
+	                    if ( error ) {
+	                        if ( self.events['data:error'] ) {
+	                            /**
+	                             * Provider get error while take new data
+	                             *
+	                             * @event module:stb/ui/list~List#data:error
+	                             */
+	                            self.emit('data:error', error);
+	                        }
+	                    } else {
+	                        if ( data ) {
+	                            self.setData({data: data, focusIndex: pos || pos === 0 ? pos : data.length < self.size ?  data.length - 1 : self.size - 1});
+	                        }
+	                    }
+	                });
+	                break;
+	            }
+	            if ( this.data.length > this.size ) {
+	                this.renderView(this.data.length - this.size);
+	                this.focusItem(this.$body.lastChild);
+	            } else {
+	                // not the last item on the page
+	                this.focusItem(this.$body.children[this.data.length - 1]);
+	            }
+	            break;
+	    }
+	};
+	
+	
+	/**
+	 * Highlight the given DOM element as focused.
+	 * Remove focus from the previously focused item and generate associated event.
+	 *
+	 * @param {Node|Element} $item element to focus
+	 *
+	 * @return {boolean} operation status
+	 *
+	 * @fires module:stb/ui/list~List#focus:item
+	 * @fires module:stb/ui/list~List#blur:item
+	 */
+	List.prototype.focusItem = function ( $item ) {
+	    var $prev = this.$focusItem;
+	
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+	    }
+	
+	    // different element
+	    if ( $item && $prev !== $item ) {
+	        if ( true ) {
+	            if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+	            if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
+	        }
+	
+	        // some item is focused already
+	        if ( $prev !== null ) {
+	            if ( true ) {
+	                if ( !($prev instanceof Element) ) { throw new Error(__filename + ': wrong $prev type'); }
+	            }
+	
+	            // style
+	            $prev.classList.remove('focus');
+	
+	            // there are some listeners
+	            if ( this.events['blur:item'] ) {
+	                /**
+	                 * Remove focus from an element.
+	                 *
+	                 * @event module:stb/ui/list~List#blur:item
+	                 *
+	                 * @type {Object}
+	                 * @property {Element} $item previously focused HTML element
+	                 */
+	                this.emit('blur:item', {$item: $prev});
+	            }
+	        }
+	        // reassign
+	        this.$focusItem = $item;
+	
+	        this.$focusItem.data = this.data[this.$focusItem.index];
+	
+	        // correct CSS
+	        $item.classList.add('focus');
+	
+	        // there are some listeners
+	        if ( this.events['focus:item'] ) {
+	            /**
+	             * Set focus to a DOM element.
+	             *
+	             * @event module:stb/ui/list~List#focus:item
+	             *
+	             * @type {Object}
+	             * @property {Element} $prev old/previous focused HTML element
+	             * @property {Element} $curr new/current focused HTML element
+	             */
+	            this.emit('focus:item', {$prev: $prev, $curr: $item});
+	        }
+	
+	        // there are some listeners
+	        if ( this.events['select:item'] ) {
+	            /**
+	             * Set focus to a list item.
+	             *
+	             * @event module:stb/ui/list~List#select:item
+	             *
+	             * @type {Object}
+	             * @property {Element} $item new/current focused item
+	             */
+	            this.emit('select:item', {$item: $item});
+	        }
+	
+	        return true;
+	    }
+	
+	    // nothing was done
+	    return false;
+	};
+	
+	/**
+	 * Highlight the given DOM element as blur.
+	 * Remove focus from the item and generate associated event.
+	 *
+	 * @param {Node|Element} $item element to focus
+	 *
+	 * @return {boolean} operation status
+	 *
+	 * @fires module:stb/ui/list~List#focus:item
+	 * @fires module:stb/ui/list~List#blur:item
+	 */
+	List.prototype.blurItem = function ( $item ) {
+	    if ( false ) {
+	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+	    }
+	
+	    // different element
+	    if ( $item ) {
+	        if ( $item === this.$focusItem ) {
+	            this.$focusItem = null;
+	        }
+	
+	        $item.classList.remove('focus');
+	
+	        // there are some listeners
+	        if ( this.events['blur:item'] ) {
+	            /**
+	             * Remove focus from an element.
+	             *
+	             * @event module:stb/ui/list~List#blur:item
+	             *
+	             * @type {Object}
+	             * @property {Element} $item previously focused HTML element
+	             */
+	            this.emit('blur:item', {$item: $item});
+	        }
+	        return true;
+	    }
+	
+	    // nothing was done
+	    return false;
+	};
+	
+	/**
+	 * Set the given item focused by item index.
+	 *
+	 * @param {number} index item data index
+	 */
+	List.prototype.focusIndex = function ( index ) {
+	    var viewIndex = this.viewIndex || 0;
+	
+	    if ( true ) {
+	        if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
+	        if ( index < 0 ) { throw new Error(__filename + ': index should be positive'); }
+	//         if ( index > this.data.length - 1 ) { throw new Error(__filename + ': index should be less than data size'); }
+	    }
+	
+	    // determine direction
+	    if ( index >= viewIndex + this.size ) {
+	        // check range
+	        index = index < this.data.length - 1 ? index : this.data.length - 1;
+	        // move down
+	        this.renderView(index - this.size + 1);
+	        this.focusItem(this.$body.lastChild);
+	    } else if ( index < viewIndex ) {
+	        // check range
+	        index = index > 0 ? index : 0;
+	        // move up
+	        this.renderView(index);
+	        this.focusItem(this.$body.firstChild);
+	    } else {
+	        // no move
+	        if ( this.viewIndex === null ) {
+	            // first attempt
+	            this.renderView(0);
+	        }
+	        this.focusItem(this.$body.children[index - viewIndex]);
+	    }
+	};
+	
+	
+	/**
+	 * Set item state and appearance as marked.
+	 *
+	 * @param {Node|Element} $item element to focus
+	 * @param {boolean} state true - marked, false - not marked
+	 */
+	List.prototype.markItem = function ( $item, state ) {
+	    if ( true ) {
+	        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
+	        if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
+	        if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
+	        if ( Boolean(state) !== state ) { throw new Error(__filename + ': state must be boolean'); }
+	    }
+	
+	    // correct CSS
+	    if ( state ) {
+	        $item.classList.add('mark');
+	    } else {
+	        $item.classList.remove('mark');
+	    }
+	
+	    // apply flag
+	    $item.data.mark = state;
+	};
+	
+	
+	// public
+	module.exports = List;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/spasdk/component-list/index.js"))
+
+/***/ },
+/* 18 */
+/*!******************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/rc/index.js ***!
+  \******************************************************/
+/***/ function(module, exports) {
+
+	/**
+	 * Global list of non-printable control key codes.
+	 *
+	 * At the moment `keypress` and `keydown` events are emitted for the same keys (for both printable and non-printable characters).
+	 *
+	 * WARNING!!! All codes in this file (except 'volumeUp' and 'volumeDown')
+	 * are used in window 'keydown' handler to prevent wrong 'keypress' firings.
+	 * If you add new code to this file 'keypress' event with this code will never fire.
+	 *
+	 *  Value | Description
+	 * -------|-------------
+	 *  +1000 | shift key pressed
+	 *  +2000 | alt key pressed
+	 *
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	'use strict';
+	
+	/* eslint quote-props: 0 */
+	
+	// public
+	module.exports = {
+	    getCode: function ( event ) {
+	        var code = event.keyCode;
+	
+	        // apply key modifiers
+	        if ( event.shiftKey ) { code += 1000; }
+	        if ( event.altKey )   { code += 2000; }
+	
+	        return code;
+	    },
+	
+	    codes: {
+	        back:         8,    // Backspace
+	        channelPrev:  1009, // Shift+Tab
+	        channelNext:  9,    // Tab
+	        ok:           13,   // Enter
+	        exit:         27,   // Esc
+	        pageUp:       33,
+	        pageDown:     34,
+	        end:          35,
+	        home:         36,
+	        left:         37,
+	        up:           38,
+	        right:        39,
+	        down:         40,
+	        'delete':     46,
+	        volumeUp:     107,  // NUMPAD +
+	        volumeDown:   109,  // NUMPAD -
+	        f1:           112,  // F1
+	        f2:           113,  // F2
+	        f3:           114,  // F3
+	        f4:           115,  // F4
+	        refresh:      116,  // F5
+	        frame:        117,  // F6
+	        phone:        119,  // F8
+	        set:          120,  // F9
+	        tv:           121,  // F10
+	        menu:         122,  // F11
+	        app:          123,  // F12
+	        rewind:       2066, // Alt+B
+	        forward:      2070, // Alt+F
+	        audio:        2071, // Alt+G
+	        standby:      2074, // Alt+J
+	        keyboard:     2076, // Alt+L
+	        usbMounted:   2080, // Alt+P
+	        usbUnmounted: 2081, // Alt+Q
+	        playPause:    2082, // Alt+R
+	        stop:         2083, // Alt+S
+	        power:        2085, // Alt+U
+	        record:       2087, // Alt+W
+	        info:         2089, // Alt+Y
+	        mute:         2192
+	    }
+	};
+
+
+/***/ },
+/* 19 */
+/*!********************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/magsdk/component-layout/index.js ***!
+  \********************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var Component = __webpack_require__(/*! stb-component */ 13),
+	    rc        = __webpack_require__(/*! stb-rc */ 18);
+	
+	/**
+	 * Layout component implementation
+	 *
+	 * @constructor
+	 * @extends Component
+	 *
+	 * @param {Object}   [config={}]          init parameters (all inherited from the parent)
+	 * @param {Array} [config.data] array of items to add to layout
+	 *
+	 * @example
+	 * var Layout = require ('../stb/ui/layout'),
+	 *     layout = new Layout({
+	 *         data:[
+	 *             'Some text'
+	 *             {
+	 *                 className: 'icon star',
+	 *             },
+	 *             {
+	 *                 value: new Input()
+	 *             },
+	 *             new Button({'value:'Ok'})
+	 *             ]
+	 *         });
+	 */
+	function Layout ( config ) {
+	
+	    // sanitize
+	    config = config || {};
+	
+	    /**
+	     * Index of focused child component
+	     * @type {number}
+	     */
+	    this.focusIndex = 0;
+	
+	    if ( true ) {
+	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        // init parameters checks
+	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+	    }
+	
+	    config.className = 'layout ' + (config.className || '');
+	
+	    /**
+	     * Component data
+	     * @type {Array}
+	     */
+	    this.data = [];
+	
+	    Component.call(this, config);
+	
+	    this.init(config);
+	
+	    // add listener to move focus between children
+	    this.addListener('keydown', function ( event ) {
+	        switch ( event.keyCode ) {
+	            case rc.codes.right:
+	                if ( this.children.length && this.focusIndex < this.children.length - 1 ) {
+	                    this.children[++this.focusIndex].focus();
+	                }
+	                break;
+	            case rc.codes.left:
+	                if ( this.children.length && this.focusIndex > 0 ) {
+	                    this.children[--this.focusIndex].focus();
+	                }
+	                break;
+	            case rc.codes.back:
+	                // focus parent
+	                this.parent.focus();
+	
+	                // focus parent focused item if parent is layout list
+	                if ( this.parent &&  this.$parentItem ) {
+	                    this.parent.focusItem(this.$parentItem);
+	                }
+	                break;
+	        }
+	    });
+	
+	}
+	
+	
+	Layout.prototype = Object.create(Component.prototype);
+	Layout.prototype.constructor = Layout;
+	
+	
+	/**
+	 * Make all the data items identical.
+	 * Wrap to objects if necessary.
+	 *
+	 * @param {Array} data incoming array
+	 * @return {Array} reworked incoming data
+	 */
+	function normalize ( data ) {
+	    var index, item;
+	
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
+	        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+	    }
+	
+	    // rows
+	    for ( index = 0; index < data.length; index++ ) {
+	        // cell value
+	        item = data[index];
+	        // plain text
+	        if ( typeof item !== 'object' ) {
+	            // wrap with defaults
+	            data[index] = {
+	                value: data[index],
+	                wrap : true
+	            };
+	        } else {
+	            // HTML element or component
+	            if ( item instanceof Component || item instanceof HTMLElement ) {
+	                data[index] = {
+	                    value: item,
+	                    wrap : false
+	                };
+	            } else {
+	                data[index].wrap = true;
+	            }
+	        }
+	    }
+	    return data;
+	}
+	
+	
+	/**
+	 * Init or re-init of the component inner structures and HTML.
+	 *
+	 * @param {Object} config init parameters (subset of constructor config params)
+	 */
+	Layout.prototype.init = function ( config ) {
+	    var self = this,
+	        data = normalize(config.data),
+	        item, $wrapper, index;
+	
+	    // clear element if reinit
+	    while (this.$node.firstChild) {
+	        this.$node.removeChild(this.$node.firstChild);
+	    }
+	
+	    this.data = data;
+	
+	    for ( index = 0; index < data.length; index++ ) {
+	        item = data[index];
+	        // plain text
+	        if ( typeof item.value === 'string' ) {
+	            $wrapper = document.createElement('div');
+	            $wrapper.textContent = item.value;
+	            if ( item.className ) { $wrapper.className = item.className; }
+	            this.$node.appendChild($wrapper);
+	        } else if ( item.value instanceof HTMLElement ) {
+	            // HTML Element
+	
+	            // if with wrapper
+	            if ( item.wrap ) {
+	                $wrapper = document.createElement('div');
+	                if ( item.className ) { $wrapper.className = item.className; }
+	                $wrapper.appendChild(item.value);
+	                this.$node.appendChild($wrapper);
+	            } else {
+	                // without wrapper
+	                this.$node.appendChild(item.value);
+	            }
+	        } else if ( item.value instanceof Component ) {
+	            // component
+	            // force propagate events
+	            item.value.propagate = true;
+	
+	            // set index to current component
+	            item.value.index = this.children.length;
+	
+	            // change layout focus index if click component
+	            item.value.addListener('click', function () {
+	                self.focusIndex = this.index;
+	            });
+	
+	            // append component
+	            if ( item.wrap ) {
+	                // with wrapper
+	                $wrapper = document.createElement('div');
+	                if ( item.className ) { $wrapper.className = item.className; }
+	                $wrapper.appendChild(item.value.$node);
+	                this.$node.appendChild($wrapper);
+	                this.children.push(item.value);
+	                item.value.parent = this;
+	            } else {
+	                // without wrapper
+	                this.add(item.value);
+	            }
+	        }
+	    }
+	};
+	
+	
+	module.exports = Layout;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/magsdk/component-layout/index.js"))
+
+/***/ },
+/* 20 */
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/magsdk/app/lib/develop/main.js ***!
+  \******************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	'use strict';
+	
+	var app = __webpack_require__(/*! spa-app/lib/core */ 2);
+	
+	
+	// shims
+	__webpack_require__(/*! stb-shim-bind */ 21);
+	__webpack_require__(/*! stb-shim-classlist */ 7);
+	__webpack_require__(/*! stb-shim-frame */ 22);
+	
+	// public app instance
+	window.app = app;
+	
+	// all development tools placeholder
+	app.develop = {
+	    storage: window.parent.stbStorage
+	};
+	
+	// execution environment
+	// STB device or desktop browser
+	app.host = !!(window.gSTB || (window.parent && window.parent.gSTB));
+	
+	// browser logging
+	window.debug = __webpack_require__(/*! spa-app/lib/develop/debug */ 23);
+	// STB logging
+	//window.debug = app.host ? require('./debug') : require('spa-develop/debug');
+	
+	// universal storage
+	//window.localStorage = window.localStorage || window.stbStorage;
+	
+	//window.localStorage = window.stbStorage || window.parent.stbStorage;
+	
+	// apply screen size, position, margins and styles
+	// app.setScreen(
+	//     app.metrics[localStorage.getItem('screen.height')] ||
+	//     app.metrics[screen.height] ||
+	//     app.metrics[720]
+	// );
+	
+	// inherit SPA tools
+	__webpack_require__(/*! spa-app/lib/develop/wamp */ 24);
+	__webpack_require__(/*! spa-app/lib/develop/events */ 27);
+	__webpack_require__(/*! spa-app/lib/develop/hooks */ 29);
+	__webpack_require__(/*! spa-app/lib/develop/static */ 30);
+	
+	// STB tools
+	if ( app.host ) {
+	    // web inspector
+	    //require('./weinre');
+	}
+	
+	//require('./proxy');
+	__webpack_require__(/*! stb-app/lib/develop/events */ 32);
+	
+	// the application itself
+	// "js" directory is resolved by webpack to
+	// path.join(process.env.PATH_ROOT, process.env.PATH_SRC, 'js')
+	//require('js/main');
+
+
+/***/ },
+/* 21 */
+/*!*************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/shim-bind/index.js ***!
+  \*************************************************************/
+/***/ function(module, exports) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint-disable */
+	
+	'use strict';
+	
+	
+	if ( !Function.prototype.bind ) {
+	    Function.prototype.bind = function ( oThis ) {
+	        if ( typeof this !== 'function' ) {
+	            // closest thing possible to the ECMAScript 5
+	            // internal IsCallable function
+	            throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+	        }
+	
+	        var aArgs = Array.prototype.slice.call(arguments, 1),
+	            fToBind = this,
+	            fNOP = function () {},
+	            fBound = function () {
+	                return fToBind.apply(this instanceof fNOP && oThis
+	                        ? this
+	                        : oThis,
+	                    aArgs.concat(Array.prototype.slice.call(arguments)));
+	            };
+	
+	        fNOP.prototype = this.prototype;
+	        fBound.prototype = new fNOP();
+	
+	        return fBound;
+	    };
+	}
+
+
+/***/ },
+/* 22 */
+/*!**************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/shim-frame/index.js ***!
+  \**************************************************************/
 /***/ function(module, exports) {
 
 	/**
@@ -1710,10 +3777,10 @@
 
 
 /***/ },
-/* 15 */
-/*!*************************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/app/lib/develop/debug.js ***!
-  \*************************************************************/
+/* 23 */
+/*!*******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/app/lib/develop/debug.js ***!
+  \*******************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
@@ -2013,13 +4080,13 @@
 	// public
 	module.exports = debug;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/develop/debug.js"))
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/spasdk/app/lib/develop/debug.js"))
 
 /***/ },
-/* 16 */
-/*!************************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/app/lib/develop/wamp.js ***!
-  \************************************************************/
+/* 24 */
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/app/lib/develop/wamp.js ***!
+  \******************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2030,7 +4097,7 @@
 	'use strict';
 	
 	var app       = __webpack_require__(/*! ../core */ 2),
-	    Wamp      = __webpack_require__(/*! spa-wamp */ 17),
+	    Wamp      = __webpack_require__(/*! spa-wamp */ 25),
 	    stringify = __webpack_require__(/*! cjs-query */ 4).stringify;
 	
 	
@@ -2073,10 +4140,10 @@
 
 
 /***/ },
-/* 17 */
-/*!**************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/wamp/index.js ***!
-  \**************************************************/
+/* 25 */
+/*!********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/wamp/index.js ***!
+  \********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2086,7 +4153,7 @@
 	
 	'use strict';
 	
-	var CjsWamp = __webpack_require__(/*! cjs-wamp */ 18),
+	var CjsWamp = __webpack_require__(/*! cjs-wamp */ 26),
 	    timeout = 5000,
 	    events  = {
 	        open:  'connection:open',
@@ -2160,10 +4227,10 @@
 
 
 /***/ },
-/* 18 */
-/*!**************************************************!*\
-  !*** /home/dp/Projects/sdk/cjssdk/wamp/index.js ***!
-  \**************************************************/
+/* 26 */
+/*!********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/cjssdk/wamp/index.js ***!
+  \********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2324,10 +4391,10 @@
 
 
 /***/ },
-/* 19 */
-/*!**************************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/app/lib/develop/events.js ***!
-  \**************************************************************/
+/* 27 */
+/*!********************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/app/lib/develop/events.js ***!
+  \********************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2345,7 +4412,7 @@
 	    app      = __webpack_require__(/*! ../core */ 2),
 	    //Wamp     = require('spa-wamp'),
 	    //request  = require('spa-request'),
-	    gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 20),
+	    gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 28),
 	    events   = {};
 	    //app;
 	    //dom     = require('spa-dom'),
@@ -2503,20 +4570,20 @@
 
 
 /***/ },
-/* 20 */
-/*!***********************************************************!*\
-  !*** /home/dp/Projects/sdk/~/gremlins.js/gremlins.min.js ***!
-  \***********************************************************/
+/* 28 */
+/*!*****************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/~/gremlins.js/gremlins.min.js ***!
+  \*****************************************************************/
 /***/ function(module, exports) {
 
 	!function(e,n){if("object"==typeof exports&&"object"==typeof module)module.exports=n();else if("function"==typeof define&&define.amd)define(n);else{var t=n();for(var a in t)("object"==typeof exports?exports:e)[a]=t[a]}}(this,function(){return function(e){function n(a){if(t[a])return t[a].exports;var r=t[a]={exports:{},id:a,loaded:!1};return e[a].call(r.exports,r,r.exports,n),r.loaded=!0,r.exports}var t={};return n.m=e,n.c=t,n.p="http://localhost:8080/",n(0)}([function(e,n,t){e.exports=t(6)},function(e,n,t){var a;a=function(e){"use strict";function n(e,n){for(var t in n)!function(t){e[t]=function(a){return arguments.length?(n[t]=a,e):n[t]}}(t)}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;!function(){function r(e,n){if(e||(e={}),!n)return e;for(var t in n)"undefined"==typeof e[t]&&(e[t]=n[t]);return e}function i(e,n){if(e)throw new RangeError(n)}var o=9007199254740992,s=-o,l="0123456789",u="abcdefghijklmnopqrstuvwxyz",c=u.toUpperCase(),m=l+"abcdef",h=function(e){void 0!==e&&("function"==typeof e?this.random=e:this.seed=e),"undefined"==typeof this.random&&(this.mt=this.mersenne_twister(e),this.random=function(){return this.mt.random(this.seed)})};h.prototype.bool=function(e){return e=r(e,{likelihood:50}),i(e.likelihood<0||e.likelihood>100,"Chance: Likelihood accepts values from 0 to 100."),100*this.random()<e.likelihood},h.prototype.character=function(e){e=r(e);var n,t,a="!@#$%^&*()[]";return i(e.alpha&&e.symbols,"Chance: Cannot specify both alpha and symbols."),n="lower"===e.casing?u:"upper"===e.casing?c:u+c,t=e.pool?e.pool:e.alpha?n:e.symbols?a:n+l+a,t.charAt(this.natural({max:t.length-1}))},h.prototype.floating=function(e){var n;e=r(e,{fixed:4});var t=Math.pow(10,e.fixed);i(e.fixed&&e.precision,"Chance: Cannot specify both fixed and precision.");var a=o/t,s=-a;i(e.min&&e.fixed&&e.min<s,"Chance: Min specified is out of range with fixed. Min should be, at least, "+s),i(e.max&&e.fixed&&e.max>a,"Chance: Max specified is out of range with fixed. Max should be, at most, "+a),e=r(e,{min:s,max:a}),n=this.integer({min:e.min*t,max:e.max*t});var l=(n/t).toFixed(e.fixed);return parseFloat(l)},h.prototype.integer=function(e){var n,t;e=r(e,{min:s,max:o}),t=Math.max(Math.abs(e.min),Math.abs(e.max));do n=this.natural({max:t}),n=this.bool()?n:-1*n;while(n<e.min||n>e.max);return n},h.prototype.natural=function(e){return e=r(e,{min:0,max:o}),i(e.min>e.max,"Chance: Min cannot be greater than Max."),Math.floor(this.random()*(e.max-e.min+1)+e.min)},h.prototype.normal=function(e){e=r(e,{mean:0,dev:1});var n,t,a,i,o=e.mean,s=e.dev;do t=2*this.random()-1,a=2*this.random()-1,n=t*t+a*a;while(n>=1);return i=t*Math.sqrt(-2*Math.log(n)/n),s*i+o},h.prototype.string=function(e){e=r(e);for(var n=e.length||this.natural({min:5,max:20}),t="",a=e.pool,i=0;n>i;i++)t+=this.character({pool:a});return t},h.prototype.capitalize=function(e){return e.charAt(0).toUpperCase()+e.substr(1)},h.prototype.mixin=function(e){for(var n in e)h.prototype[n]=e[n];return this},h.prototype.pick=function(e,n){return n&&1!==n?this.shuffle(e).slice(0,n):e[this.natural({max:e.length-1})]},h.prototype.shuffle=function(e){for(var n=e.slice(0),t=[],a=0,r=Number(n.length),i=0;r>i;i++)a=this.natural({max:n.length-1}),t[i]=n[a],n.splice(a,1);return t},h.prototype.paragraph=function(e){e=r(e);for(var n=e.sentences||this.natural({min:3,max:7}),t=[],a=0;n>a;a++)t.push(this.sentence());return t.join(" ")},h.prototype.sentence=function(e){e=r(e);for(var n,t=e.words||this.natural({min:12,max:18}),a=[],i=0;t>i;i++)a.push(this.word());return n=a.join(" "),n=this.capitalize(n)+"."},h.prototype.syllable=function(e){e=r(e);for(var n,t=e.length||this.natural({min:2,max:3}),a="bcdfghjklmnprstvwz",i="aeiou",o=a+i,s="",l=0;t>l;l++)n=this.character(0===l?{pool:o}:-1===a.indexOf(n)?{pool:a}:{pool:i}),s+=n;return s},h.prototype.word=function(e){e=r(e),i(e.syllables&&e.length,"Chance: Cannot specify both syllables AND length.");var n=e.syllables||this.natural({min:1,max:3}),t="";if(e.length){do t+=this.syllable();while(t.length<e.length);t=t.substring(0,e.length)}else for(var a=0;n>a;a++)t+=this.syllable();return t},h.prototype.age=function(e){e=r(e);var n;switch(e.type){case"child":n=this.natural({min:1,max:12});break;case"teen":n=this.natural({min:13,max:19});break;case"adult":n=this.natural({min:18,max:120});break;case"senior":n=this.natural({min:65,max:120});break;default:n=this.natural({min:1,max:120})}return n},h.prototype.birthday=function(e){return e=r(e,{year:(new Date).getFullYear()-this.age(e)}),this.date(e)};var d=["Sophia","Emma","Isabella","Jacob","Mason","Ethan","Noah","Olivia","William","Liam","Jayden","Michael","Ava","Alexander","Aiden","Daniel","Matthew","Elijah","Emily","James","Anthony","Benjamin","Abigail","Joshua","Andrew","David","Joseph","Logan","Jackson","Mia","Christopher","Gabriel","Madison","Samuel","Ryan","Lucas","John","Nathan","Isaac","Dylan","Caleb","Elizabeth","Chloe","Christian","Landon","Jonathan","Carter","Ella","Luke","Owen","Brayden","Avery","Gavin","Wyatt","Addison","Isaiah","Aubrey","Henry","Eli","Hunter","Lily","Jack","Natalie","Evan","Sofia","Jordan","Nicholas","Tyler","Aaron","Charlotte","Zoey","Jeremiah","Julian","Cameron","Grace","Hannah","Amelia","Harper","Levi","Lillian","Brandon","Angel","Austin","Connor","Adrian","Robert","Samantha","Charles","Evelyn","Victoria","Thomas","Brooklyn","Sebastian","Zoe","Colton","Jaxon","Layla","Kevin","Zachary","Ayden","Dominic","Blake","Jose","Hailey","Oliver","Justin","Bentley","Leah","Jason","Chase","Ian","Kaylee","Anna","Aaliyah","Gabriella","Josiah","Allison","Parker","Xavier","Nevaeh","Alexis","Adam","Audrey","Cooper","Savannah","Sarah","Alyssa","Claire","Taylor","Riley","Camila","Nathaniel","Arianna","Ashley","Grayson","Jace","Brianna","Carson","Sophie","Peyton","Nolan","Tristan","Luis","Brody","Bella","Khloe","Genesis","Alexa","Juan","Hudson","Serenity","Kylie","Aubree","Scarlett","Bryson","Carlos","Stella","Maya","Easton","Katherine","Julia","Damian","Alex","Kayden","Ryder","Lucy","Madelyn","Jesus","Cole","Autumn","Makayla","Kayla","Mackenzie","Micah","Vincent","Max","Lauren","Jaxson","Gianna","Eric","Ariana","Asher","Hayden","Faith","Alexandra","Melanie","Sydney","Bailey","Caroline","Naomi","Morgan","Kennedy","Ellie","Jasmine","Eva","Skylar","Diego","Kimberly","Violet","Molly","Miles","Steven","Aria","Ivan","Jocelyn","Trinity","Elias","Aidan","Maxwell","London","Bryce","Lydia","Madeline","Antonio","Giovanni","Reagan","Timothy","Bryan","Piper","Andrea","Santiago","Annabelle","Maria","Colin","Richard","Braxton","Kaleb","Brooke","Kyle","Kaden","Preston","Payton","Miguel","Jonah","Paisley","Paige","Lincoln","Ruby","Nora","Riley","Mariah","Leo","Victor","Brady","Jeremy","Mateo","Brian","Jaden","Ashton","Patrick","Rylee","Declan","Lilly","Brielle","Sean","Joel","Gael","Sawyer","Alejandro","Jade","Marcus","Destiny","Leonardo","Jesse","Caden","Jake","Kaiden","Nicole","Mila","Wesley","Kendall","Liliana","Camden","Kaitlyn","Natalia","Sadie","Edward","Brantley","Jordyn","Roman","Vanessa","Mary","Mya","Penelope","Isabelle","Alice","Axel","Silas","Jude","Grant","Reese","Gabrielle","Hadley","Katelyn","Angelina","Rachel","Isabel","Eleanor","Cayden","Emmanuel","George","Clara","Brooklynn","Jessica","Maddox","Malachi","Bradley","Alan","Weston","Elena","Gage","Aliyah","Vivian","Laila","Sara","Amy","Devin","Eliana","Greyson","Lyla","Juliana","Kenneth","Mark","Oscar","Tanner","Rylan","Valeria","Adriana","Nicolas","Makenzie","Harrison","Elise","Mckenzie","Derek","Quinn","Delilah","Peyton","Ezra","Cora","Kylee","Tucker","Emmett","Avery","Cody","Rebecca","Gracie","Izabella","Calvin","Andres","Jorge","Abel","Paul","Abraham","Kai","Josephine","Alaina","Michelle","Jennifer","Collin","Theodore","Ezekiel","Eden","Omar","Jayce","Valentina","Conner","Bennett","Aurora","Catherine","Stephanie","Trevor","Valerie","Eduardo","Peter","Maximus","Jayla","Jaiden","Willow","Jameson","Seth","Daisy","Alana","Melody","Hazel","Kingston","Summer","Melissa","Javier","Margaret","Travis","Kinsley","Kinley","Garrett","Everett","Ariel","Lila","Graham","Giselle","Ryleigh","Xander","Haley","Julianna","Ivy","Alivia","Cristian","Brynn","Damien","Ryker","Griffin","Keira","Daniela","Aniyah","Angela","Kate","Londyn","Corbin","Myles","Hayden","Harmony","Adalyn","Luca","Zane","Francisco","Ricardo","Alexis","Stephen","Zayden","Megan","Allie","Gabriela","Iker","Drake","Alayna","Lukas","Presley","Charlie","Spencer","Zion","Erick","Jenna","Josue","Alexandria","Ashlyn","Adrianna","Jada","Jeffrey","Trenton","Fiona","Chance","Norah","Paxton","Elliot","Emery","Fernando","Maci","Miranda","Keegan","Landen","Ximena","Amaya","Manuel","Amir","Shane","Cecilia","Raymond","Andre","Ana","Shelby","Katie","Hope","Callie","Jordan","Luna","Leilani","Eliza","Mckenna","Angel","Genevieve","Makenna","Isla","Lola","Danielle","Chelsea","Leila","Tessa","Adelyn","Camille","Mikayla","Adeline","Adalynn","Sienna","Esther","Jacqueline","Emerson","Arabella","Maggie","Athena","Lucia","Lexi","Ayla"];h.prototype.first=function(){return this.pick(d)},h.prototype.gender=function(){return this.pick(["Male","Female"])};var p=["Smith","Johnson","Williams","Jones","Brown","Davis","Miller","Wilson","Moore","Taylor","Anderson","Thomas","Jackson","White","Harris","Martin","Thompson","Garcia","Martinez","Robinson","Clark","Rodriguez","Lewis","Lee","Walker","Hall","Allen","Young","Hernandez","King","Wright","Lopez","Hill","Scott","Green","Adams","Baker","Gonzalez","Nelson","Carter","Mitchell","Perez","Roberts","Turner","Phillips","Campbell","Parker","Evans","Edwards","Collins","Stewart","Sanchez","Morris","Rogers","Reed","Cook","Morgan","Bell","Murphy","Bailey","Rivera","Cooper","Richardson","Cox","Howard","Ward","Torres","Peterson","Gray","Ramirez","James","Watson","Brooks","Kelly","Sanders","Price","Bennett","Wood","Barnes","Ross","Henderson","Coleman","Jenkins","Perry","Powell","Long","Patterson","Hughes","Flores","Washington","Butler","Simmons","Foster","Gonzales","Bryant","Alexander","Russell","Griffin","Diaz","Hayes","Myers","Ford","Hamilton","Graham","Sullivan","Wallace","Woods","Cole","West","Jordan","Owens","Reynolds","Fisher","Ellis","Harrison","Gibson","McDonald","Cruz","Marshall","Ortiz","Gomez","Murray","Freeman","Wells","Webb","Simpson","Stevens","Tucker","Porter","Hunter","Hicks","Crawford","Henry","Boyd","Mason","Morales","Kennedy","Warren","Dixon","Ramos","Reyes","Burns","Gordon","Shaw","Holmes","Rice","Robertson","Hunt","Black","Daniels","Palmer","Mills","Nichols","Grant","Knight","Ferguson","Rose","Stone","Hawkins","Dunn","Perkins","Hudson","Spencer","Gardner","Stephens","Payne","Pierce","Berry","Matthews","Arnold","Wagner","Willis","Ray","Watkins","Olson","Carroll","Duncan","Snyder","Hart","Cunningham","Bradley","Lane","Andrews","Ruiz","Harper","Fox","Riley","Armstrong","Carpenter","Weaver","Greene","Lawrence","Elliott","Chavez","Sims","Austin","Peters","Kelley","Franklin","Lawson","Fields","Gutierrez","Ryan","Schmidt","Carr","Vasquez","Castillo","Wheeler","Chapman","Oliver","Montgomery","Richards","Williamson","Johnston","Banks","Meyer","Bishop","McCoy","Howell","Alvarez","Morrison","Hansen","Fernandez","Garza","Harvey","Little","Burton","Stanley","Nguyen","George","Jacobs","Reid","Kim","Fuller","Lynch","Dean","Gilbert","Garrett","Romero","Welch","Larson","Frazier","Burke","Hanson","Day","Mendoza","Moreno","Bowman","Medina","Fowler","Brewer","Hoffman","Carlson","Silva","Pearson","Holland","Douglas","Fleming","Jensen","Vargas","Byrd","Davidson","Hopkins","May","Terry","Herrera","Wade","Soto","Walters","Curtis","Neal","Caldwell","Lowe","Jennings","Barnett","Graves","Jimenez","Horton","Shelton","Barrett","Obrien","Castro","Sutton","Gregory","McKinney","Lucas","Miles","Craig","Rodriquez","Chambers","Holt","Lambert","Fletcher","Watts","Bates","Hale","Rhodes","Pena","Beck","Newman","Haynes","McDaniel","Mendez","Bush","Vaughn","Parks","Dawson","Santiago","Norris","Hardy","Love","Steele","Curry","Powers","Schultz","Barker","Guzman","Page","Munoz","Ball","Keller","Chandler","Weber","Leonard","Walsh","Lyons","Ramsey","Wolfe","Schneider","Mullins","Benson","Sharp","Bowen","Daniel","Barber","Cummings","Hines","Baldwin","Griffith","Valdez","Hubbard","Salazar","Reeves","Warner","Stevenson","Burgess","Santos","Tate","Cross","Garner","Mann","Mack","Moss","Thornton","Dennis","McGee","Farmer","Delgado","Aguilar","Vega","Glover","Manning","Cohen","Harmon","Rodgers","Robbins","Newton","Todd","Blair","Higgins","Ingram","Reese","Cannon","Strickland","Townsend","Potter","Goodwin","Walton","Rowe","Hampton","Ortega","Patton","Swanson","Joseph","Francis","Goodman","Maldonado","Yates","Becker","Erickson","Hodges","Rios","Conner","Adkins","Webster","Norman","Malone","Hammond","Flowers","Cobb","Moody","Quinn","Blake","Maxwell","Pope","Floyd","Osborne","Paul","McCarthy","Guerrero","Lindsey","Estrada","Sandoval","Gibbs","Tyler","Gross","Fitzgerald","Stokes","Doyle","Sherman","Saunders","Wise","Colon","Gill","Alvarado","Greer","Padilla","Simon","Waters","Nunez","Ballard","Schwartz","McBride","Houston","Christensen","Klein","Pratt","Briggs","Parsons","McLaughlin","Zimmerman","French","Buchanan","Moran","Copeland","Roy","Pittman","Brady","McCormick","Holloway","Brock","Poole","Frank","Logan","Owen","Bass","Marsh","Drake","Wong","Jefferson","Park","Morton","Abbott","Sparks","Patrick","Norton","Huff","Clayton","Massey","Lloyd","Figueroa","Carson","Bowers","Roberson","Barton","Tran","Lamb","Harrington","Casey","Boone","Cortez","Clarke","Mathis","Singleton","Wilkins","Cain","Bryan","Underwood","Hogan","McKenzie","Collier","Luna","Phelps","McGuire","Allison","Bridges","Wilkerson","Nash","Summers","Atkins"];h.prototype.last=function(){return this.pick(p)},h.prototype.name=function(e){e=r(e);var n,t=this.first(),a=this.last();return n=e.middle?t+" "+this.first()+" "+a:e.middle_initial?t+" "+this.character({alpha:!0,casing:"upper"})+". "+a:t+" "+a,e.prefix&&(n=this.prefix()+" "+n),n},h.prototype.name_prefixes=function(){return[{name:"Doctor",abbreviation:"Dr."},{name:"Miss",abbreviation:"Miss"},{name:"Misses",abbreviation:"Mrs."},{name:"Mister",abbreviation:"Mr."}]},h.prototype.prefix=function(e){return this.name_prefix(e)},h.prototype.name_prefix=function(e){return e=r(e),e.full?this.pick(this.name_prefixes()).name:this.pick(this.name_prefixes()).abbreviation},h.prototype.color=function(e){function n(e,n){return[e,e,e].join(n||"")}e=r(e,{format:this.pick(["hex","shorthex","rgb"]),grayscale:!1});var t=e.grayscale;if("hex"===e.format)return"#"+(t?n(this.hash({length:2})):this.hash({length:6}));if("shorthex"===e.format)return"#"+(t?n(this.hash({length:1})):this.hash({length:3}));if("rgb"===e.format)return t?"rgb("+n(this.natural({max:255}),",")+")":"rgb("+this.natural({max:255})+","+this.natural({max:255})+","+this.natural({max:255})+")";throw new Error('Invalid format provided. Please provide one of "hex", "shorthex", or "rgb"')},h.prototype.domain=function(e){return e=r(e),this.word()+"."+(e.tld||this.tld())},h.prototype.email=function(e){return e=r(e),this.word()+"@"+(e.domain||this.domain())},h.prototype.fbid=function(){return parseInt("10000"+this.natural({max:1e11}),10)},h.prototype.hashtag=function(){return"#"+this.word()},h.prototype.ip=function(){return this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})},h.prototype.ipv6=function(){for(var e="",n=0;8>n;n++)e+=this.hash({length:4})+":";return e.substr(0,e.length-1)},h.prototype.klout=function(){return this.natural({min:1,max:99})},h.prototype.tlds=function(){return["com","org","edu","gov","co.uk","net","io"]},h.prototype.tld=function(){return this.pick(this.tlds())},h.prototype.twitter=function(){return"@"+this.word()},h.prototype.address=function(e){return e=r(e),this.natural({min:5,max:2e3})+" "+this.street(e)},h.prototype.areacode=function(e){e=r(e,{parens:!0});var n=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:8}).toString()+this.natural({min:0,max:9}).toString();return e.parens?"("+n+")":n},h.prototype.city=function(){return this.capitalize(this.word({syllables:3}))},h.prototype.coordinates=function(e){return e=r(e),this.latitude(e)+", "+this.longitude(e)},h.prototype.latitude=function(e){return e=r(e,{fixed:5}),this.floating({min:-90,max:90,fixed:e.fixed})},h.prototype.longitude=function(e){return e=r(e,{fixed:5}),this.floating({min:0,max:180,fixed:e.fixed})},h.prototype.phone=function(e){e=r(e,{formatted:!0}),e.formatted||(e.parens=!1);var n=this.areacode(e).toString(),t=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:9}).toString()+this.natural({min:0,max:9}).toString(),a=this.natural({min:1e3,max:9999}).toString();return e.formatted?n+" "+t+"-"+a:n+t+a},h.prototype.postal=function(){var e=this.character({pool:"XVTSRPNKLMHJGECBA"}),n=e+this.natural({max:9})+this.character({alpha:!0,casing:"upper"}),t=this.natural({max:9})+this.character({alpha:!0,casing:"upper"})+this.natural({max:9});return n+" "+t},h.prototype.provinces=function(){return[{name:"Alberta",abbreviation:"AB"},{name:"British Columbia",abbreviation:"BC"},{name:"Manitoba",abbreviation:"MB"},{name:"New Brunswick",abbreviation:"NB"},{name:"Newfoundland and Labrador",abbreviation:"NL"},{name:"Nova Scotia",abbreviation:"NS"},{name:"Ontario",abbreviation:"ON"},{name:"Prince Edward Island",abbreviation:"PE"},{name:"Quebec",abbreviation:"QC"},{name:"Saskatchewan",abbreviation:"SK"},{name:"Northwest Territories",abbreviation:"NT"},{name:"Nunavut",abbreviation:"NU"},{name:"Yukon",abbreviation:"YT"}]},h.prototype.province=function(e){return e&&e.full?this.pick(this.provinces()).name:this.pick(this.provinces()).abbreviation},h.prototype.radio=function(e){e=r(e,{side:"?"});var n="";switch(e.side.toLowerCase()){case"east":case"e":n="W";break;case"west":case"w":n="K";break;default:n=this.character({pool:"KW"})}return n+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})},h.prototype.state=function(e){return e&&e.full?this.pick(this.states()).name:this.pick(this.states()).abbreviation},h.prototype.states=function(){return[{name:"Alabama",abbreviation:"AL"},{name:"Alaska",abbreviation:"AK"},{name:"American Samoa",abbreviation:"AS"},{name:"Arizona",abbreviation:"AZ"},{name:"Arkansas",abbreviation:"AR"},{name:"Armed Forces Europe",abbreviation:"AE"},{name:"Armed Forces Pacific",abbreviation:"AP"},{name:"Armed Forces the Americas",abbreviation:"AA"},{name:"California",abbreviation:"CA"},{name:"Colorado",abbreviation:"CO"},{name:"Connecticut",abbreviation:"CT"},{name:"Delaware",abbreviation:"DE"},{name:"District of Columbia",abbreviation:"DC"},{name:"Federated States of Micronesia",abbreviation:"FM"},{name:"Florida",abbreviation:"FL"},{name:"Georgia",abbreviation:"GA"},{name:"Guam",abbreviation:"GU"},{name:"Hawaii",abbreviation:"HI"},{name:"Idaho",abbreviation:"ID"},{name:"Illinois",abbreviation:"IL"},{name:"Indiana",abbreviation:"IN"},{name:"Iowa",abbreviation:"IA"},{name:"Kansas",abbreviation:"KS"},{name:"Kentucky",abbreviation:"KY"},{name:"Louisiana",abbreviation:"LA"},{name:"Maine",abbreviation:"ME"},{name:"Marshall Islands",abbreviation:"MH"},{name:"Maryland",abbreviation:"MD"},{name:"Massachusetts",abbreviation:"MA"},{name:"Michigan",abbreviation:"MI"},{name:"Minnesota",abbreviation:"MN"},{name:"Mississippi",abbreviation:"MS"},{name:"Missouri",abbreviation:"MO"},{name:"Montana",abbreviation:"MT"},{name:"Nebraska",abbreviation:"NE"},{name:"Nevada",abbreviation:"NV"},{name:"New Hampshire",abbreviation:"NH"},{name:"New Jersey",abbreviation:"NJ"},{name:"New Mexico",abbreviation:"NM"},{name:"New York",abbreviation:"NY"},{name:"North Carolina",abbreviation:"NC"},{name:"North Dakota",abbreviation:"ND"},{name:"Northern Mariana Islands",abbreviation:"MP"},{name:"Ohio",abbreviation:"OH"},{name:"Oklahoma",abbreviation:"OK"},{name:"Oregon",abbreviation:"OR"},{name:"Pennsylvania",abbreviation:"PA"},{name:"Puerto Rico",abbreviation:"PR"},{name:"Rhode Island",abbreviation:"RI"},{name:"South Carolina",abbreviation:"SC"},{name:"South Dakota",abbreviation:"SD"},{name:"Tennessee",abbreviation:"TN"},{name:"Texas",abbreviation:"TX"},{name:"Utah",abbreviation:"UT"},{name:"Vermont",abbreviation:"VT"},{name:"Virgin Islands, U.S.",abbreviation:"VI"},{name:"Virginia",abbreviation:"VA"},{name:"Washington",abbreviation:"WA"},{name:"West Virginia",abbreviation:"WV"},{name:"Wisconsin",abbreviation:"WI"},{name:"Wyoming",abbreviation:"WY"}]},h.prototype.street=function(e){e=r(e);var n=this.word({syllables:2});return n=this.capitalize(n),n+=" ",n+=e.short_suffix?this.street_suffix().abbreviation:this.street_suffix().name},h.prototype.street_suffix=function(){return this.pick(this.street_suffixes())},h.prototype.street_suffixes=function(){return[{name:"Avenue",abbreviation:"Ave"},{name:"Boulevard",abbreviation:"Blvd"},{name:"Center",abbreviation:"Ctr"},{name:"Circle",abbreviation:"Cir"},{name:"Court",abbreviation:"Ct"},{name:"Drive",abbreviation:"Dr"},{name:"Extension",abbreviation:"Ext"},{name:"Glen",abbreviation:"Gln"},{name:"Grove",abbreviation:"Grv"},{name:"Heights",abbreviation:"Hts"},{name:"Highway",abbreviation:"Hwy"},{name:"Junction",abbreviation:"Jct"},{name:"Key",abbreviation:"Key"},{name:"Lane",abbreviation:"Ln"},{name:"Loop",abbreviation:"Loop"},{name:"Manor",abbreviation:"Mnr"},{name:"Mill",abbreviation:"Mill"},{name:"Park",abbreviation:"Park"},{name:"Parkway",abbreviation:"Pkwy"},{name:"Pass",abbreviation:"Pass"},{name:"Path",abbreviation:"Path"},{name:"Pike",abbreviation:"Pike"},{name:"Place",abbreviation:"Pl"},{name:"Plaza",abbreviation:"Plz"},{name:"Point",abbreviation:"Pt"},{name:"Ridge",abbreviation:"Rdg"},{name:"River",abbreviation:"Riv"},{name:"Road",abbreviation:"Rd"},{name:"Square",abbreviation:"Sq"},{name:"Street",abbreviation:"St"},{name:"Terrace",abbreviation:"Ter"},{name:"Trail",abbreviation:"Trl"},{name:"Turnpike",abbreviation:"Tpke"},{name:"View",abbreviation:"Vw"},{name:"Way",abbreviation:"Way"}]},h.prototype.tv=function(e){return this.radio(e)},h.prototype.zip=function(e){for(var n="",t=0;5>t;t++)n+=this.natural({max:9}).toString();if(e&&e.plusfour===!0)for(n+="-",t=0;4>t;t++)n+=this.natural({max:9}).toString();return n},h.prototype.ampm=function(){return this.bool()?"am":"pm"},h.prototype.date=function(e){var n,t=this.month({raw:!0});e=r(e,{year:parseInt(this.year(),10),month:t.numeric-1,day:this.natural({min:1,max:t.days}),hour:this.hour(),minute:this.minute(),second:this.second(),millisecond:this.millisecond(),american:!0,string:!1});var a=new Date(e.year,e.month,e.day,e.hour,e.minute,e.second,e.millisecond);return n=e.american?a.getMonth()+1+"/"+a.getDate()+"/"+a.getFullYear():a.getDate()+"/"+(a.getMonth()+1)+"/"+a.getFullYear(),e.string?n:a},h.prototype.hammertime=function(e){return this.date(e).getTime()},h.prototype.hour=function(e){e=r(e);var n=e.twentyfour?24:12;return this.natural({min:1,max:n})},h.prototype.millisecond=function(){return this.natural({max:999})},h.prototype.minute=h.prototype.second=function(){return this.natural({max:59})},h.prototype.month=function(e){e=r(e);var n=this.pick(this.months());return e.raw?n:n.name},h.prototype.months=function(){return[{name:"January",short_name:"Jan",numeric:"01",days:31},{name:"February",short_name:"Feb",numeric:"02",days:28},{name:"March",short_name:"Mar",numeric:"03",days:31},{name:"April",short_name:"Apr",numeric:"04",days:30},{name:"May",short_name:"May",numeric:"05",days:31},{name:"June",short_name:"Jun",numeric:"06",days:30},{name:"July",short_name:"Jul",numeric:"07",days:31},{name:"August",short_name:"Aug",numeric:"08",days:31},{name:"September",short_name:"Sep",numeric:"09",days:30},{name:"October",short_name:"Oct",numeric:"10",days:31},{name:"November",short_name:"Nov",numeric:"11",days:30},{name:"December",short_name:"Dec",numeric:"12",days:31}]},h.prototype.second=function(){return this.natural({max:59})},h.prototype.timestamp=function(){return this.natural({min:1,max:parseInt((new Date).getTime()/1e3,10)})},h.prototype.year=function(e){return e=r(e,{min:(new Date).getFullYear()}),e.max="undefined"!=typeof e.max?e.max:e.min+100,this.natural(e).toString()},h.prototype.cc=function(e){e=r(e);var n,t,a;n=this.cc_type(e.type?{name:e.type,raw:!0}:{raw:!0}),t=n.prefix.split(""),a=n.length-n.prefix.length-1;for(var i=0;a>i;i++)t.push(this.integer({min:0,max:9}));return t.push(this.luhn_calculate(t.join(""))),t.join("")},h.prototype.cc_types=function(){return[{name:"American Express",short_name:"amex",prefix:"34",length:15},{name:"Bankcard",short_name:"bankcard",prefix:"5610",length:16},{name:"China UnionPay",short_name:"chinaunion",prefix:"62",length:16},{name:"Diners Club Carte Blanche",short_name:"dccarte",prefix:"300",length:14},{name:"Diners Club enRoute",short_name:"dcenroute",prefix:"2014",length:15},{name:"Diners Club International",short_name:"dcintl",prefix:"36",length:14},{name:"Diners Club United States & Canada",short_name:"dcusc",prefix:"54",length:16},{name:"Discover Card",short_name:"discover",prefix:"6011",length:16},{name:"InstaPayment",short_name:"instapay",prefix:"637",length:16},{name:"JCB",short_name:"jcb",prefix:"3528",length:16},{name:"Laser",short_name:"laser",prefix:"6304",length:16},{name:"Maestro",short_name:"maestro",prefix:"5018",length:16},{name:"Mastercard",short_name:"mc",prefix:"51",length:16},{name:"Solo",short_name:"solo",prefix:"6334",length:16},{name:"Switch",short_name:"switch",prefix:"4903",length:16},{name:"Visa",short_name:"visa",prefix:"4",length:16},{name:"Visa Electron",short_name:"electron",prefix:"4026",length:16}]},h.prototype.cc_type=function(e){e=r(e);var n=this.cc_types(),t=null;if(e.name){for(var a=0;a<n.length;a++)if(n[a].name===e.name||n[a].short_name===e.name){t=n[a];break}if(null===t)throw new Error("Credit card type '"+e.name+"'' is not suppoted")}else t=this.pick(n);return e.raw?t:t.name},h.prototype.dollar=function(e){e=r(e,{max:1e4,min:0});var n=this.floating({min:e.min,max:e.max,fixed:2}).toString(),t=n.split(".")[1];return void 0===t?n+=".00":t.length<2&&(n+="0"),0>n?"-$"+n.replace("-",""):"$"+n},h.prototype.exp=function(e){e=r(e);var n={};return n.year=this.exp_year(),n.year===(new Date).getFullYear()?n.month=this.exp_month({future:!0}):n.month=this.exp_month(),e.raw?n:n.month+"/"+n.year},h.prototype.exp_month=function(e){e=r(e);var n,t;if(e.future){do n=this.month({raw:!0}).numeric,t=parseInt(n,10);while(t<(new Date).getMonth())}else n=this.month({raw:!0}).numeric;return n},h.prototype.exp_year=function(){return this.year({max:(new Date).getFullYear()+10})},h.prototype.d4=function(){return this.natural({min:1,max:4})},h.prototype.d6=function(){return this.natural({min:1,max:6})},h.prototype.d8=function(){return this.natural({min:1,max:8})},h.prototype.d10=function(){return this.natural({min:1,max:10})},h.prototype.d12=function(){return this.natural({min:1,max:12})},h.prototype.d20=function(){return this.natural({min:1,max:20})},h.prototype.d30=function(){return this.natural({min:1,max:30})},h.prototype.d100=function(){return this.natural({min:1,max:100})},h.prototype.rpg=function(e,n){if(n=r(n),null===e)throw new Error("A type of die roll must be included");var t=e.toLowerCase().split("d"),a=[];if(2!==t.length||!parseInt(t[0],10)||!parseInt(t[1],10))throw new Error("Invalid format provided. Please provide #d# where the first # is the number of dice to roll, the second # is the max of each die");for(var i=t[0];i>0;i--)a[i-1]=this.natural({min:1,max:t[1]});return"undefined"!=typeof n.sum&&n.sum?a.reduce(function(e,n){return e+n}):a},h.prototype.guid=function(e){e=e||{version:5};var n="ABCDEF1234567890",t="AB89",a=this.string({pool:n,length:8})+"-"+this.string({pool:n,length:4})+"-"+e.version+this.string({pool:n,length:3})+"-"+this.string({pool:t,length:1})+this.string({pool:n,length:3})+"-"+this.string({pool:n,length:12});return a},h.prototype.hash=function(e){e=r(e,{length:40,casing:"lower"});var n="upper"===e.casing?m.toUpperCase():m;return this.string({pool:n,length:e.length})},h.prototype.luhn_check=function(e){var n=e.toString(),t=+n.substring(n.length-1);return t===this.luhn_calculate(+n.substring(0,n.length-1))},h.prototype.luhn_calculate=function(e){for(var n=e.toString().split("").reverse(),t=0,a=0,r=n.length;r>a;++a){var i=+n[a];a%2===0&&(i*=2,i>9&&(i-=9)),t+=i}return 9*t%10},h.prototype.mersenne_twister=function(e){return new f(e)},h.prototype.VERSION="0.5.4";var f=function(e){void 0===e&&(e=(new Date).getTime()),this.N=624,this.M=397,this.MATRIX_A=2567483615,this.UPPER_MASK=2147483648,this.LOWER_MASK=2147483647,this.mt=new Array(this.N),this.mti=this.N+1,this.init_genrand(e)};f.prototype.init_genrand=function(e){for(this.mt[0]=e>>>0,this.mti=1;this.mti<this.N;this.mti++)e=this.mt[this.mti-1]^this.mt[this.mti-1]>>>30,this.mt[this.mti]=(1812433253*((4294901760&e)>>>16)<<16)+1812433253*(65535&e)+this.mti,this.mt[this.mti]>>>=0},f.prototype.init_by_array=function(e,n){var t,a,r=1,i=0;for(this.init_genrand(19650218),t=this.N>n?this.N:n;t;t--)a=this.mt[r-1]^this.mt[r-1]>>>30,this.mt[r]=(this.mt[r]^(1664525*((4294901760&a)>>>16)<<16)+1664525*(65535&a))+e[i]+i,this.mt[r]>>>=0,r++,i++,r>=this.N&&(this.mt[0]=this.mt[this.N-1],r=1),i>=n&&(i=0);for(t=this.N-1;t;t--)a=this.mt[r-1]^this.mt[r-1]>>>30,this.mt[r]=(this.mt[r]^(1566083941*((4294901760&a)>>>16)<<16)+1566083941*(65535&a))-r,this.mt[r]>>>=0,r++,r>=this.N&&(this.mt[0]=this.mt[this.N-1],r=1);this.mt[0]=2147483648},f.prototype.genrand_int32=function(){var e,n=new Array(0,this.MATRIX_A);if(this.mti>=this.N){var t;for(this.mti===this.N+1&&this.init_genrand(5489),t=0;t<this.N-this.M;t++)e=this.mt[t]&this.UPPER_MASK|this.mt[t+1]&this.LOWER_MASK,this.mt[t]=this.mt[t+this.M]^e>>>1^n[1&e];for(;t<this.N-1;t++)e=this.mt[t]&this.UPPER_MASK|this.mt[t+1]&this.LOWER_MASK,this.mt[t]=this.mt[t+(this.M-this.N)]^e>>>1^n[1&e];e=this.mt[this.N-1]&this.UPPER_MASK|this.mt[0]&this.LOWER_MASK,this.mt[this.N-1]=this.mt[this.M-1]^e>>>1^n[1&e],this.mti=0}return e=this.mt[this.mti++],e^=e>>>11,e^=e<<7&2636928640,e^=e<<15&4022730752,e^=e>>>18,e>>>0},f.prototype.genrand_int31=function(){return this.genrand_int32()>>>1},f.prototype.genrand_real1=function(){return this.genrand_int32()*(1/4294967295)},f.prototype.random=function(){return this.genrand_int32()*(1/4294967296)},f.prototype.genrand_real3=function(){return(this.genrand_int32()+.5)*(1/4294967296)},f.prototype.genrand_res53=function(){var e=this.genrand_int32()>>>5,n=this.genrand_int32()>>>6;return(67108864*e+n)*(1/9007199254740992)},"undefined"!=typeof e&&e.exports&&(n=e.exports=h),n.Chance=h,a=function(){return h}.call(n,t,n,e),!(void 0!==a&&(e.exports=a)),"object"==typeof window&&"object"==typeof window.document&&(window.Chance=h,window.chance=new h)}()},function(e,n,t){var a;a=function(e){"use strict";function n(){this.message="This gremlin requires a randomizer to run. Please call randomizer(randomizerObject) before executing the gremlin",this.toString=function(){return this.message}}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";function n(e,n,t,a){var r=n.length;e=e.slice(0);var i=function(e,n){if(!e.length)return"function"==typeof a?a():!0;var o=e.shift();o.apply(t,n),o.length===r&&i(e,n,a)};n.push(function(){i(e,n,a)}),i(e,n,a)}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";function n(){this.message="This mogwai requires a logger to run. Please call logger(loggerObject) before executing the mogwai",this.toString=function(){return this.message}}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";function n(e,n){for(var t=0,a=n.length;a>t;t++)for(var r in e)"function"!=typeof n[t][r]||n[t][r]()||n[t][r](e[r])}var a=t(2),r={species:{clicker:t(10),toucher:t(13),formFiller:t(11),scroller:t(12),typer:t(14)},mogwais:{alert:t(7),fps:t(8),gizmo:t(9)},strategies:{allTogether:t(15),bySpecies:t(16),distribution:t(17)}},i=t(4),o=function(){this._gremlins=[],
 	this._mogwais=[],this._strategies=[],this._beforeCallbacks=[],this._afterCallbacks=[],this._logger=console,this._randomizer=new a};return o.prototype.gremlin=function(e){return this._gremlins.push(e),this},o.prototype.allGremlins=function(){for(var e in r.species)this.gremlin(r.species[e]());return this},o.prototype.mogwai=function(e){return this._mogwais.push(e),this},o.prototype.allMogwais=function(){for(var e in r.mogwais)this.mogwai(r.mogwais[e]());return this},o.prototype.strategy=function(e){return this._strategies.push(e),this},o.prototype.before=function(e){return this._beforeCallbacks.push(e),this},o.prototype.after=function(e){return this._afterCallbacks.push(e),this},o.prototype.logger=function(e){return arguments.length?(this._logger=e,this):this._logger},o.prototype.log=function(e){this._logger.log(e)},o.prototype.randomizer=function(e){return arguments.length?(this._randomizer=e,this):this._randomizer},o.prototype.seed=function(e){return this._randomizer=new a(e),this},o.prototype.unleash=function(e,t){0===this._gremlins.length&&this.allGremlins(),0===this._mogwais.length&&this.allMogwais(),0===this._strategies.length&&this.strategy(r.strategies.distribution());var a=[].concat(this._gremlins,this._mogwais),o=a.concat(this._strategies,this._beforeCallbacks,this._afterCallbacks);n({logger:this._logger,randomizer:this._randomizer},o);var s=this._beforeCallbacks;s=s.concat(this._mogwais);for(var l=this._afterCallbacks,u=0,c=a.length;c>u;u++)"function"==typeof a[u].cleanUp&&l.push(a[u].cleanUp);var m=this;i(s,[],m,function(){i(m._strategies,[m._gremlins,e],m,function(){i(l,[],m,function(){"function"==typeof t&&t()})})})},o.prototype.stop=function(){for(var e=this._strategies,n=0,t=e.length;t>n;n++)e[n].stop()},r.createHorde=function(){return new o},window&&(window.gremlins=r),r}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(5));return function(){function e(){return o.randomizer.bool()}function t(){return o.randomizer.sentence()}function r(){if(!o.logger)throw new a;-1!==o.watchEvents.indexOf("alert")&&(window.alert=function(e){o.logger.warn("mogwai ","alert     ",e,"alert")}),-1!==o.watchEvents.indexOf("confirm")&&(window.confirm=function(e){o.confirmResponse(),o.logger.warn("mogwai ","alert     ",e,"confirm")}),-1!==o.watchEvents.indexOf("prompt")&&(window.prompt=function(e){o.promptResponse(),o.logger.warn("mogwai ","alert     ",e,"prompt")})}var i=["alert","confirm","prompt"],o={watchEvents:i,confirmResponse:e,promptResponse:t,logger:null,randomizer:null},s=window.alert,l=window.confirm,u=window.prompt;return r.cleanUp=function(){return window.alert=s,window.confirm=l,window.prompt=u,r},n(r,o),r}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=t(5);return function(){function e(e){return 10>e?"error":20>e?"warn":"log"}function t(e){e-l>s.delay&&(r(e),l=e),o&&window.requestAnimationFrame(t)}function r(){function e(e){t=e,window.requestAnimationFrame(n)}function n(e){var n=16>e-t?60:1e3/(e-t),a=s.levelSelector(n);s.logger[a]("mogwai ","fps       ",n)}var t;window.requestAnimationFrame(e)}function i(){if(!s.logger)throw new a;o=!0,window.requestAnimationFrame(t)}window.requestAnimationFrame||(window.requestAnimationFrame=window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame||function(e){window.setTimeout(e,1e3/60)});var o,s={delay:500,levelSelector:e,logger:null},l=-(1/0);return i.cleanUp=function(){return o=!1,i},n(i,s),i}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1);return function(){function e(){function e(){if(n++,n==r.maxErrors){if(i.stop(),!r.logger)return;window.setTimeout(function(){r.logger.warn("mogwai ","gizmo     ","stopped test execution after ",r.maxErrors,"errors")},4)}}var n=0,i=this;t=window.onerror,window.onerror=function(n,a,r){return e(),t?t(n,a,r):!1},a=console.error,console.error=function(){e(),a.apply(console,arguments)}}var t,a,r={maxErrors:10,logger:null};return e.cleanUp=function(){return window.onerror=t,console.error=a.bind(console),e},n(e,r),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){return[u.randomizer.natural({max:o.documentElement.clientWidth-1}),u.randomizer.natural({max:o.documentElement.clientHeight-1})]}function t(e,n){var t=o.createElement("div");t.style.zIndex=2e3,t.style.border="3px solid red",t.style["border-radius"]="50%",t.style.borderRadius="50%",t.style.width="40px",t.style.height="40px",t.style["box-sizing"]="border-box",t.style.position="absolute",t.style.webkitTransition="opacity 1s ease-out",t.style.mozTransition="opacity 1s ease-out",t.style.transition="opacity 1s ease-out",t.style.left=e-20+"px",t.style.top=n-20+"px";var a=s.appendChild(t);setTimeout(function(){s.removeChild(a)},1e3),setTimeout(function(){a.style.opacity=0},50)}function r(){return!0}function i(){if(!u.randomizer)throw new a;var e,n,t,r,i=0;do if(e=u.positionSelector(),n=e[0],t=e[1],r=o.elementFromPoint(n,t),i++,i>u.maxNbTries)return!1;while(!r||!u.canClick(r));var s=o.createEvent("MouseEvents"),l=u.randomizer.pick(u.clickTypes);s.initMouseEvent(l,!0,!0,window,0,0,0,n,t,!1,!1,!1,!1,0,null),r.dispatchEvent(s),"function"==typeof u.showAction&&u.showAction(n,t,l),u.logger&&"function"==typeof u.logger.log&&u.logger.log("gremlin","clicker   ",l,"at",n,t)}var o=window.document,s=o.body,l=["click","click","click","click","click","click","dblclick","dblclick","mousedown","mouseup","mouseover","mouseover","mouseover","mousemove","mouseout"],u={clickTypes:l,positionSelector:e,showAction:t,canClick:r,maxNbTries:10,logger:null,randomizer:null};return n(i,u),i}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(e){"undefined"==typeof e.attributes["data-old-border"]&&(e.attributes["data-old-border"]=e.style.border);var n=e.attributes["data-old-border"];e.style.border="1px solid red",setTimeout(function(){e.style.border=n},500)}function t(){return!0}function r(){if(!p.randomizer)throw new a;var e=[];for(var n in p.elementMapTypes)p.elementMapTypes.hasOwnProperty(n)&&e.push(n);var t,r=0;do{var i=h.querySelectorAll(e.join(","));if(0===i.length)return!1;if(t=p.randomizer.pick(i),r++,r>p.maxNbTries)return!1}while(!t||!p.canFillElement(t));var o=null;for(var s in p.elementMapTypes)if(m(t,s)){o=s;break}var l=p.elementMapTypes[o](t);"function"==typeof p.showAction&&p.showAction(t),p.logger&&"function"==typeof p.logger.log&&p.logger.log("gremlin","formFiller","input",l,"in",t)}function i(e){var n=p.randomizer.character();return e.value+=n,n}function o(e){var n=p.randomizer.character({pool:"0123456789"});return e.value+=n,n}function s(e){var n=e.querySelectorAll("option");if(0!==n.length){for(var t=p.randomizer.pick(n),a=0,r=n.length;r>a;a++){var i=n[a];i.selected=i.value==t.value}return t.value}}function l(e){var n=h.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),e.dispatchEvent(n),e.value}function u(e){var n=h.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),e.dispatchEvent(n),e.value}function c(e){var n=p.randomizer.email();return e.value=n,n}function m(e,n){if(e.webkitMatchesSelector)m=function(e,n){return e.webkitMatchesSelector(n)};else if(e.mozMatchesSelector)m=function(e,n){return e.mozMatchesSelector(n)};else if(e.msMatchesSelector)m=function(e,n){return e.msMatchesSelector(n)};else{if(!e.oMatchesSelector)throw new Error("Unsupported browser");m=function(e,n){return e.oMatchesSelector(n)}}return m(e,n)}var h=window.document,d={textarea:i,'input[type="text"]':i,'input[type="password"]':i,'input[type="number"]':o,select:s,'input[type="radio"]':l,'input[type="checkbox"]':u,'input[type="email"]':c,"input:not([type])":i},p={elementMapTypes:d,showAction:e,canFillElement:t,maxNbTries:10,logger:null,randomizer:null};return n(r,p),r}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){var e=Math.max(s.scrollWidth,s.offsetWidth,o.scrollWidth,o.offsetWidth,o.clientWidth),n=Math.max(s.scrollHeight,s.offsetHeight,o.scrollHeight,o.offsetHeight,o.clientHeight);return[l.randomizer.natural({max:e-o.clientWidth}),l.randomizer.natural({max:n-o.clientHeight})]}function t(e,n){var t=i.createElement("div");t.style.zIndex=2e3,t.style.border="3px solid red",t.style.width=o.clientWidth-25+"px",t.style.height=o.clientHeight-25+"px",t.style.position="absolute",t.style.webkitTransition="opacity 1s ease-out",t.style.mozTransition="opacity 1s ease-out",t.style.transition="opacity 1s ease-out",t.style.left=e+10+"px",t.style.top=n+10+"px";var a=s.appendChild(t);setTimeout(function(){s.removeChild(a)},1e3),setTimeout(function(){a.style.opacity=0},50)}function r(){if(!l.randomizer)throw new a;var e=l.positionSelector(),n=e[0],t=e[1];window.scrollTo(n,t),"function"==typeof l.showAction&&l.showAction(n,t),"function"==typeof l.logger.log&&l.logger.log("gremlin","scroller  ","scroll to",n,t)}var i=window.document,o=i.documentElement,s=i.body,l={positionSelector:e,showAction:t,logger:null,randomizer:null};return n(r,l),r}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){return[h.randomizer.natural({max:u.documentElement.clientWidth-1}),h.randomizer.natural({max:u.documentElement.clientHeight-1})]}function t(e){var n=u.createDocumentFragment();e.forEach(function(e){var t=u.createElement("div");t.style.zIndex=2e3,t.style.background="red",t.style["border-radius"]="50%",t.style.borderRadius="50%",t.style.width="20px",t.style.height="20px",t.style.position="absolute",t.style.webkitTransition="opacity .5s ease-out",t.style.mozTransition="opacity .5s ease-out",t.style.transition="opacity .5s ease-out",t.style.left=e.x-10+"px",t.style.top=e.y-10+"px";var a=n.appendChild(t);setTimeout(function(){c.removeChild(a)},500),setTimeout(function(){a.style.opacity=0},50)}),u.body.appendChild(n)}function r(){return!0}function i(e,n,t,a){var r,i,o,s=e[0],l=e[1],u=[];if(1===n)return[{x:s,y:l}];for(t=t||100,a=null!==a?a*Math.PI/180:0,r=2*Math.PI/n,i=0;n>i;i++)o=r*i+a,u.push({x:s+t*Math.cos(o),y:l+t*Math.sin(o)});return u}function o(e,n,t){var a=[],r=u.createEvent("Event");r.initEvent("touch"+t,!0,!0),a.identifiedTouch=a.item=function(e){return this[e]||{}},e.forEach(function(e,t){var r=Math.round(e.x),i=Math.round(e.y);a.push({pageX:r,pageY:i,clientX:r,clientY:i,screenX:r,screenY:i,target:n,identifier:t})}),r.touches="end"==t?[]:a,r.targetTouches="end"==t?[]:a,r.changedTouches=a,n.dispatchEvent(r),h.showAction(e)}function s(e,n,t,a,r){function s(){var m=a.radius;1!==a.scale&&(m=a.radius-a.radius*(1-a.scale)*(1/u)*c);var h=n[0]+a.distanceX/u*c,d=n[1]+a.distanceY/u*c,p="number"==typeof a.rotation?a.rotation/u*c:null,f=i([h,d],t.length,m,p),y=1==c,b=c==u;if(y)o(f,e,"start");else{if(b)return o(f,e,"end"),r(f);o(f,e,"move")}setTimeout(s,l),c++}var l=10,u=Math.ceil(a.duration/l),c=1;s()}function l(e){function n(n,t){"function"==typeof h.showAction&&h.showAction(n),h.logger&&"function"==typeof h.logger.log&&h.logger.log("gremlin","toucher   ",l,"at",r,i,t),e()}if(!h.randomizer)throw new a;var t,r,i,o,s=0;do if(t=h.positionSelector(),r=t[0],i=t[1],o=u.elementFromPoint(r,i),s++,s>h.maxNbTries)return;while(!o||!h.canTouch(o));var l=h.randomizer.pick(h.touchTypes);d[l](t,o,n)}var u=window.document,c=u.body,m=["tap","tap","tap","doubletap","gesture","gesture","gesture","multitouch","multitouch"],h={touchTypes:m,positionSelector:e,showAction:t,canTouch:r,maxNbTries:10,logger:null,randomizer:null,maxTouches:2},d={tap:function(e,n,t){var a=i(e,1),r={duration:h.randomizer.integer({min:20,max:700})};o(a,n,"start"),setTimeout(function(){o(a,n,"end"),t(a,r)},r.duration)},doubletap:function(e,n,t){d.tap(e,n,function(){setTimeout(function(){d.tap(e,n,t)},30)})},gesture:function p(e,n,t){var p={distanceX:h.randomizer.integer({min:-100,max:200}),distanceY:h.randomizer.integer({min:-100,max:200}),duration:h.randomizer.integer({min:20,max:500})},a=i(e,1,p.radius);s(n,e,a,p,function(e){t(e,p)})},multitouch:function(e,n,t){var a=h.randomizer.integer({min:2,max:h.maxTouches}),r={scale:h.randomizer.floating({min:0,max:2}),rotation:h.randomizer.natural({min:-100,max:100}),radius:h.randomizer.integer({min:50,max:200}),distanceX:h.randomizer.integer({min:-20,max:20}),distanceY:h.randomizer.integer({min:-20,max:20}),duration:h.randomizer.integer({min:100,max:1500})},o=i(e,a,r.radius);s(n,e,o,r,function(e){t(e,r)})}};return n(l,h),l}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){return c.randomizer.natural({min:3,max:254})}function t(e,n){return o.elementFromPoint(e,n)}function r(e,n,t,a){var r=o.createElement("div");r.style.zIndex=2e3,r.style.border="3px solid orange",r.style["border-radius"]="50%",r.style.borderRadius="50%",r.style.width="40px",r.style.height="40px",r.style["box-sizing"]="border-box",r.style.position="absolute",r.style.webkitTransition="opacity 1s ease-out",r.style.mozTransition="opacity 1s ease-out",r.style.transition="opacity 1s ease-out",r.style.left=n+"px",r.style.top=t+"px",r.style.textAlign="center",r.style.paddingTop="7px",r.innerHTML=String.fromCharCode(a);var i=l.appendChild(r);setTimeout(function(){l.removeChild(i)},1e3),setTimeout(function(){i.style.opacity=0},50)}function i(){if(!c.randomizer)throw new a;var e=o.createEventObject?o.createEventObject():o.createEvent("Events"),n=c.randomizer.pick(c.eventTypes),t=c.keyGenerator(),r=c.randomizer.natural({max:s.clientWidth-1}),i=c.randomizer.natural({max:s.clientHeight-1}),l=c.targetElement(r,i);e.initEvent&&e.initEvent(n,!0,!0),e.keyCode=t,e.which=t,e.keyCodeVal=t,l.dispatchEvent?l.dispatchEvent(e):l.fireEvent("on"+n,e),"function"==typeof c.showAction&&c.showAction(l,r,i,t),c.logger&&"function"==typeof c.logger.log&&c.logger.log("gremlin","typer       type",String.fromCharCode(t),"at",r,i)}var o=window.document,s=o.documentElement,l=o.body,u=["keypress","keyup","keydown"],c={eventTypes:u,showAction:r,keyGenerator:e,targetElement:t,logger:null,randomizer:null};return n(i,c),i}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(4),a=t(1);return function(){function e(e,a,s){function l(t){n(e,[],m,t)}function u(e){return r?void 0:e>=c?t():void l(function(){setTimeout(function(){u(++e)},o.delay)})}var c=a&&a.nb?a.nb:o.nb,m=this;r=!1,i=s,u(0)}function t(){"function"==typeof i&&i(),i=null}var r,i,o={delay:10,nb:100};return e.stop=function(){r=!0,setTimeout(t,4)},a(e,o),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(4),a=t(1);return function(){function e(e,a,s){function l(e,t,a){return r?void 0:t>=c?a():void n([e],[],m,function(){setTimeout(function(){l(e,++t,a)},o.delay)})}function u(){return r?void 0:0===e.length?t():void l(e.shift(),0,u)}var c=a&&a.nb?a.nb:o.nb,e=e.slice(0),m=this;r=!1,i=s,u()}function t(){"function"==typeof i&&i(),i=null}var r,i,o={delay:10,nb:200};return e.stop=function(){r=!0,setTimeout(t,4)},a(e,o),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(4),a=t(1),r=t(2);return function(){function e(e,a,r){function c(t,a,r){return s?void 0:a>=m?o():void n([t],[],d,function(){setTimeout(function(){c(i(e,h),++a,r)},u.delay)})}var m=a&&a.nb?a.nb:u.nb,e=e.slice(0),h=0===u.distribution.length?t(e):u.distribution,d=this;return 0===m?r():(s=!1,l=r,void c(i(e,h),0,c))}function t(e){var n=e.length;if(0===n)return[];for(var t=[],a=1/n,r=0;n>r;r++)t.push(a);return t}function i(e,n){for(var t=0,a=u.randomizer.floating({min:0,max:1}),r=0,i=e.length;i>r;r++)if(t+=n[r],t>=a)return e[r];return function(){}}function o(){"function"==typeof l&&l(),l=null}var s,l,u={distribution:[],delay:10,nb:1e3,randomizer:new r};return e.stop=function(){s=!0,setTimeout(o,4)},a(e,u),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))}])});
 
 /***/ },
-/* 21 */
-/*!*************************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/app/lib/develop/hooks.js ***!
-  \*************************************************************/
+/* 29 */
+/*!*******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/app/lib/develop/hooks.js ***!
+  \*******************************************************************/
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
@@ -2553,13 +4620,13 @@
 	    return el;
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/develop/hooks.js"))
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/spasdk/app/lib/develop/hooks.js"))
 
 /***/ },
-/* 22 */
-/*!**************************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/app/lib/develop/static.js ***!
-  \**************************************************************/
+/* 30 */
+/*!********************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/app/lib/develop/static.js ***!
+  \********************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2582,7 +4649,7 @@
 	//console.log(require('spa-gulp-livereload/config').default.tinylr);
 	//console.log(LIVERELOAD);
 	
-	__webpack_require__(/*! livereload-js/dist/livereload.js */ 23);
+	__webpack_require__(/*! livereload-js/dist/livereload.js */ 31);
 	
 	// livereload activation
 	//if ( config.livereload ) {
@@ -2595,10 +4662,10 @@
 
 
 /***/ },
-/* 23 */
-/*!****************************************************************!*\
-  !*** /home/dp/Projects/sdk/~/livereload-js/dist/livereload.js ***!
-  \****************************************************************/
+/* 31 */
+/*!**********************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/~/livereload-js/dist/livereload.js ***!
+  \**********************************************************************/
 /***/ function(module, exports) {
 
 	(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -3787,1062 +5854,10 @@
 
 
 /***/ },
-/* 24 */
-/*!************************************!*\
-  !*** ../app/lib/develop/weinre.js ***!
-  \************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Web Inspector Remote.
-	 *
-	 * @module stb/develop/weinre
-	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
-	 * @license GNU GENERAL PUBLIC LICENSE Version 3
-	 */
-	
-	'use strict';
-	
-	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
-	    tag     = __webpack_require__(/*! spa-dom */ 25).tag,
-	    //storage = require('./storage'),
-	    util    = __webpack_require__(/*! util */ 26),
-	    config  = {} /*require('../../config/weinre')*/;
-	
-	
-	// web inspector is allowed only without SpyJS
-	if ( config.active && !app.develop.storage.getItem('spyjs.active') ) {
-	    // load external script
-	    document.head.appendChild(tag('script', {
-	        type: 'text/javascript',
-	        src: util.format('//%s:%s/target/target-script-min.js#%s', location.hostname, config.port, config.name)
-	    }));
-	}
-
-
-/***/ },
-/* 25 */
-/*!*************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/dom/index.js ***!
-  \*************************************************/
-/***/ function(module, exports) {
-
-	/**
-	 * HTML elements low-level handling.
-	 *
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	'use strict';
-	
-	/* eslint no-unused-vars: 0 */
-	
-	/**
-	 * DOM manipulation module
-	 */
-	var dom = {};
-	
-	
-	/**
-	 * Create a new HTML element.
-	 *
-	 * @param {string} tagName mandatory tag name
-	 * @param {Object|null} [attrList] element attributes
-	 * @param {...*} [content] element content (primitive value/values or other nodes)
-	 * @return {Node|null} HTML element or null on failure
-	 *
-	 * @example
-	 * dom.tag('table');
-	 * dom.tag('div', {}, 'some text');
-	 * dom.tag('div', {className:'top'}, dom.tag('span'), dom.tag('br'));
-	 * dom.tag('link', {rel:'stylesheet', type:'text/css', href:'http://some.url/'});
-	 */
-	dom.tag = function ( tagName, attrList, content ) {
-	    var node = null,
-	        index, name;
-	
-	    // minimal param is given
-	    if ( tagName ) {
-	        // empty element
-	        node = document.createElement(tagName);
-	
-	        // optional attribute list is given
-	        if ( attrList && typeof attrList === 'object' ) {
-	            for ( name in attrList ) {
-	                // extend a new node with the given attributes
-	                node[name] = attrList[name];
-	            }
-	        }
-	
-	        // content (arguments except the first two)
-	        for ( index = 2; index < arguments.length; index++ ) {
-	            // some data is given
-	            if ( arguments[index] ) {
-	                // regular HTML tag or plain data
-	                node.appendChild(
-	                    typeof arguments[index] === 'object' ?
-	                    arguments[index] :
-	                    document.createTextNode(arguments[index])
-	                );
-	            }
-	        }
-	
-	    }
-	
-	    return node;
-	};
-	
-	
-	/**
-	 * Create a new DocumentFragment filled with the given non-empty elements if any.
-	 *
-	 * @param {...*} [node] fragment content (primitive value/values or other nodes)
-	 * @return {DocumentFragment} new placeholder
-	 *
-	 * @example
-	 * // gives an empty fragment element
-	 * dom.fragment();
-	 * // gives a fragment element with 3 div element inside
-	 * dom.fragment(dom.tag('div'), div2, div3);
-	 * // mixed case
-	 * dom.fragment('some text', 123, div3);
-	 */
-	dom.fragment = function ( node ) {
-	    // prepare placeholder
-	    var fragment = document.createDocumentFragment(),
-	        index;
-	
-	    // walk through all the given elements
-	    for ( index = 0; index < arguments.length; index++ ) {
-	        node = arguments[index];
-	        // some data is given
-	        if ( node ) {
-	            // regular HTML tag or plain data
-	            fragment.appendChild(typeof node === 'object' ? node : document.createTextNode(node));
-	        }
-	    }
-	
-	    return fragment;
-	};
-	
-	
-	/**
-	 * Add the given non-empty data (HTML element/text or list) to the destination element.
-	 *
-	 * @param {Node} tagDst element to receive children
-	 * @param {...*} [content] element content (primitive value/values or other nodes)
-	 * @return {Node|null} the destination element - owner of all added data
-	 *
-	 * @example
-	 * // simple text value
-	 * add(some_div, 'Hello world');
-	 * // single DOM Element
-	 * add(some_div, some_other_div);
-	 * // DOM Element list
-	 * add(some_div, div1, div2, div3);
-	 * // mixed case
-	 * add(some_div, div1, 'hello', 'world');
-	 */
-	dom.add = function ( tagDst, content ) {
-	    var index;
-	
-	    // valid HTML tag as the destination
-	    if ( tagDst instanceof Node ) {
-	        // append all except the first one
-	        for ( index = 1; index < arguments.length; index++ ) {
-	            // some data is given
-	            if ( arguments[index] ) {
-	                // regular HTML tag or plain data
-	                tagDst.appendChild(
-	                    typeof arguments[index] === 'object' ?
-	                    arguments[index] :
-	                    document.createTextNode(arguments[index])
-	                );
-	            }
-	        }
-	        return tagDst;
-	    }
-	
-	    return null;
-	};
-	
-	
-	/**
-	 * Remove the given elements from the DOM.
-	 *
-	 * @param {...Node} [nodes] element to be removed
-	 * @return {boolean} operation status (true - all given elements removed)
-	 *
-	 * @example
-	 * dom.remove(document.querySelector('div.test'));
-	 * dom.remove(div1, div2, div3);
-	 */
-	dom.remove = function ( nodes ) {
-	    var count = 0,  // amount of successfully removed nodes
-	        index;
-	
-	    // walk through all the given elements
-	    for ( index = 0; index < arguments.length; index++ ) {
-	        // valid non-empty tag
-	        if ( arguments[index] && arguments[index].parentNode ) {
-	            if ( arguments[index].parentNode.removeChild(arguments[index]) === arguments[index] ) {
-	                count++;
-	            }
-	        }
-	    }
-	
-	    return arguments.length > 0 && count === arguments.length;
-	};
-	
-	
-	dom.clear = function ( node ) {
-	    while ( node.lastChild ) {
-	        node.removeChild(node.lastChild);
-	    }
-	};
-	
-	
-	// public
-	module.exports = dom;
-
-
-/***/ },
-/* 26 */
-/*!********************************************!*\
-  !*** /home/dp/Projects/sdk/~/util/util.js ***!
-  \********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-	
-	var formatRegExp = /%[sdj%]/g;
-	exports.format = function(f) {
-	  if (!isString(f)) {
-	    var objects = [];
-	    for (var i = 0; i < arguments.length; i++) {
-	      objects.push(inspect(arguments[i]));
-	    }
-	    return objects.join(' ');
-	  }
-	
-	  var i = 1;
-	  var args = arguments;
-	  var len = args.length;
-	  var str = String(f).replace(formatRegExp, function(x) {
-	    if (x === '%%') return '%';
-	    if (i >= len) return x;
-	    switch (x) {
-	      case '%s': return String(args[i++]);
-	      case '%d': return Number(args[i++]);
-	      case '%j':
-	        try {
-	          return JSON.stringify(args[i++]);
-	        } catch (_) {
-	          return '[Circular]';
-	        }
-	      default:
-	        return x;
-	    }
-	  });
-	  for (var x = args[i]; i < len; x = args[++i]) {
-	    if (isNull(x) || !isObject(x)) {
-	      str += ' ' + x;
-	    } else {
-	      str += ' ' + inspect(x);
-	    }
-	  }
-	  return str;
-	};
-	
-	
-	// Mark that a method should not be used.
-	// Returns a modified function which warns once by default.
-	// If --no-deprecation is set, then it is a no-op.
-	exports.deprecate = function(fn, msg) {
-	  // Allow for deprecating things in the process of starting up.
-	  if (isUndefined(global.process)) {
-	    return function() {
-	      return exports.deprecate(fn, msg).apply(this, arguments);
-	    };
-	  }
-	
-	  if (process.noDeprecation === true) {
-	    return fn;
-	  }
-	
-	  var warned = false;
-	  function deprecated() {
-	    if (!warned) {
-	      if (process.throwDeprecation) {
-	        throw new Error(msg);
-	      } else if (process.traceDeprecation) {
-	        console.trace(msg);
-	      } else {
-	        console.error(msg);
-	      }
-	      warned = true;
-	    }
-	    return fn.apply(this, arguments);
-	  }
-	
-	  return deprecated;
-	};
-	
-	
-	var debugs = {};
-	var debugEnviron;
-	exports.debuglog = function(set) {
-	  if (isUndefined(debugEnviron))
-	    debugEnviron = process.env.NODE_DEBUG || '';
-	  set = set.toUpperCase();
-	  if (!debugs[set]) {
-	    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
-	      var pid = process.pid;
-	      debugs[set] = function() {
-	        var msg = exports.format.apply(exports, arguments);
-	        console.error('%s %d: %s', set, pid, msg);
-	      };
-	    } else {
-	      debugs[set] = function() {};
-	    }
-	  }
-	  return debugs[set];
-	};
-	
-	
-	/**
-	 * Echos the value of a value. Trys to print the value out
-	 * in the best way possible given the different types.
-	 *
-	 * @param {Object} obj The object to print out.
-	 * @param {Object} opts Optional options object that alters the output.
-	 */
-	/* legacy: obj, showHidden, depth, colors*/
-	function inspect(obj, opts) {
-	  // default options
-	  var ctx = {
-	    seen: [],
-	    stylize: stylizeNoColor
-	  };
-	  // legacy...
-	  if (arguments.length >= 3) ctx.depth = arguments[2];
-	  if (arguments.length >= 4) ctx.colors = arguments[3];
-	  if (isBoolean(opts)) {
-	    // legacy...
-	    ctx.showHidden = opts;
-	  } else if (opts) {
-	    // got an "options" object
-	    exports._extend(ctx, opts);
-	  }
-	  // set default options
-	  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
-	  if (isUndefined(ctx.depth)) ctx.depth = 2;
-	  if (isUndefined(ctx.colors)) ctx.colors = false;
-	  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
-	  if (ctx.colors) ctx.stylize = stylizeWithColor;
-	  return formatValue(ctx, obj, ctx.depth);
-	}
-	exports.inspect = inspect;
-	
-	
-	// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-	inspect.colors = {
-	  'bold' : [1, 22],
-	  'italic' : [3, 23],
-	  'underline' : [4, 24],
-	  'inverse' : [7, 27],
-	  'white' : [37, 39],
-	  'grey' : [90, 39],
-	  'black' : [30, 39],
-	  'blue' : [34, 39],
-	  'cyan' : [36, 39],
-	  'green' : [32, 39],
-	  'magenta' : [35, 39],
-	  'red' : [31, 39],
-	  'yellow' : [33, 39]
-	};
-	
-	// Don't use 'blue' not visible on cmd.exe
-	inspect.styles = {
-	  'special': 'cyan',
-	  'number': 'yellow',
-	  'boolean': 'yellow',
-	  'undefined': 'grey',
-	  'null': 'bold',
-	  'string': 'green',
-	  'date': 'magenta',
-	  // "name": intentionally not styling
-	  'regexp': 'red'
-	};
-	
-	
-	function stylizeWithColor(str, styleType) {
-	  var style = inspect.styles[styleType];
-	
-	  if (style) {
-	    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
-	           '\u001b[' + inspect.colors[style][1] + 'm';
-	  } else {
-	    return str;
-	  }
-	}
-	
-	
-	function stylizeNoColor(str, styleType) {
-	  return str;
-	}
-	
-	
-	function arrayToHash(array) {
-	  var hash = {};
-	
-	  array.forEach(function(val, idx) {
-	    hash[val] = true;
-	  });
-	
-	  return hash;
-	}
-	
-	
-	function formatValue(ctx, value, recurseTimes) {
-	  // Provide a hook for user-specified inspect functions.
-	  // Check that value is an object with an inspect function on it
-	  if (ctx.customInspect &&
-	      value &&
-	      isFunction(value.inspect) &&
-	      // Filter out the util module, it's inspect function is special
-	      value.inspect !== exports.inspect &&
-	      // Also filter out any prototype objects using the circular check.
-	      !(value.constructor && value.constructor.prototype === value)) {
-	    var ret = value.inspect(recurseTimes, ctx);
-	    if (!isString(ret)) {
-	      ret = formatValue(ctx, ret, recurseTimes);
-	    }
-	    return ret;
-	  }
-	
-	  // Primitive types cannot have properties
-	  var primitive = formatPrimitive(ctx, value);
-	  if (primitive) {
-	    return primitive;
-	  }
-	
-	  // Look up the keys of the object.
-	  var keys = Object.keys(value);
-	  var visibleKeys = arrayToHash(keys);
-	
-	  if (ctx.showHidden) {
-	    keys = Object.getOwnPropertyNames(value);
-	  }
-	
-	  // IE doesn't make error fields non-enumerable
-	  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-	  if (isError(value)
-	      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
-	    return formatError(value);
-	  }
-	
-	  // Some type of object without properties can be shortcutted.
-	  if (keys.length === 0) {
-	    if (isFunction(value)) {
-	      var name = value.name ? ': ' + value.name : '';
-	      return ctx.stylize('[Function' + name + ']', 'special');
-	    }
-	    if (isRegExp(value)) {
-	      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-	    }
-	    if (isDate(value)) {
-	      return ctx.stylize(Date.prototype.toString.call(value), 'date');
-	    }
-	    if (isError(value)) {
-	      return formatError(value);
-	    }
-	  }
-	
-	  var base = '', array = false, braces = ['{', '}'];
-	
-	  // Make Array say that they are Array
-	  if (isArray(value)) {
-	    array = true;
-	    braces = ['[', ']'];
-	  }
-	
-	  // Make functions say that they are functions
-	  if (isFunction(value)) {
-	    var n = value.name ? ': ' + value.name : '';
-	    base = ' [Function' + n + ']';
-	  }
-	
-	  // Make RegExps say that they are RegExps
-	  if (isRegExp(value)) {
-	    base = ' ' + RegExp.prototype.toString.call(value);
-	  }
-	
-	  // Make dates with properties first say the date
-	  if (isDate(value)) {
-	    base = ' ' + Date.prototype.toUTCString.call(value);
-	  }
-	
-	  // Make error with message first say the error
-	  if (isError(value)) {
-	    base = ' ' + formatError(value);
-	  }
-	
-	  if (keys.length === 0 && (!array || value.length == 0)) {
-	    return braces[0] + base + braces[1];
-	  }
-	
-	  if (recurseTimes < 0) {
-	    if (isRegExp(value)) {
-	      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-	    } else {
-	      return ctx.stylize('[Object]', 'special');
-	    }
-	  }
-	
-	  ctx.seen.push(value);
-	
-	  var output;
-	  if (array) {
-	    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
-	  } else {
-	    output = keys.map(function(key) {
-	      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
-	    });
-	  }
-	
-	  ctx.seen.pop();
-	
-	  return reduceToSingleString(output, base, braces);
-	}
-	
-	
-	function formatPrimitive(ctx, value) {
-	  if (isUndefined(value))
-	    return ctx.stylize('undefined', 'undefined');
-	  if (isString(value)) {
-	    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-	                                             .replace(/'/g, "\\'")
-	                                             .replace(/\\"/g, '"') + '\'';
-	    return ctx.stylize(simple, 'string');
-	  }
-	  if (isNumber(value))
-	    return ctx.stylize('' + value, 'number');
-	  if (isBoolean(value))
-	    return ctx.stylize('' + value, 'boolean');
-	  // For some reason typeof null is "object", so special case here.
-	  if (isNull(value))
-	    return ctx.stylize('null', 'null');
-	}
-	
-	
-	function formatError(value) {
-	  return '[' + Error.prototype.toString.call(value) + ']';
-	}
-	
-	
-	function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
-	  var output = [];
-	  for (var i = 0, l = value.length; i < l; ++i) {
-	    if (hasOwnProperty(value, String(i))) {
-	      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-	          String(i), true));
-	    } else {
-	      output.push('');
-	    }
-	  }
-	  keys.forEach(function(key) {
-	    if (!key.match(/^\d+$/)) {
-	      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-	          key, true));
-	    }
-	  });
-	  return output;
-	}
-	
-	
-	function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
-	  var name, str, desc;
-	  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
-	  if (desc.get) {
-	    if (desc.set) {
-	      str = ctx.stylize('[Getter/Setter]', 'special');
-	    } else {
-	      str = ctx.stylize('[Getter]', 'special');
-	    }
-	  } else {
-	    if (desc.set) {
-	      str = ctx.stylize('[Setter]', 'special');
-	    }
-	  }
-	  if (!hasOwnProperty(visibleKeys, key)) {
-	    name = '[' + key + ']';
-	  }
-	  if (!str) {
-	    if (ctx.seen.indexOf(desc.value) < 0) {
-	      if (isNull(recurseTimes)) {
-	        str = formatValue(ctx, desc.value, null);
-	      } else {
-	        str = formatValue(ctx, desc.value, recurseTimes - 1);
-	      }
-	      if (str.indexOf('\n') > -1) {
-	        if (array) {
-	          str = str.split('\n').map(function(line) {
-	            return '  ' + line;
-	          }).join('\n').substr(2);
-	        } else {
-	          str = '\n' + str.split('\n').map(function(line) {
-	            return '   ' + line;
-	          }).join('\n');
-	        }
-	      }
-	    } else {
-	      str = ctx.stylize('[Circular]', 'special');
-	    }
-	  }
-	  if (isUndefined(name)) {
-	    if (array && key.match(/^\d+$/)) {
-	      return str;
-	    }
-	    name = JSON.stringify('' + key);
-	    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-	      name = name.substr(1, name.length - 2);
-	      name = ctx.stylize(name, 'name');
-	    } else {
-	      name = name.replace(/'/g, "\\'")
-	                 .replace(/\\"/g, '"')
-	                 .replace(/(^"|"$)/g, "'");
-	      name = ctx.stylize(name, 'string');
-	    }
-	  }
-	
-	  return name + ': ' + str;
-	}
-	
-	
-	function reduceToSingleString(output, base, braces) {
-	  var numLinesEst = 0;
-	  var length = output.reduce(function(prev, cur) {
-	    numLinesEst++;
-	    if (cur.indexOf('\n') >= 0) numLinesEst++;
-	    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
-	  }, 0);
-	
-	  if (length > 60) {
-	    return braces[0] +
-	           (base === '' ? '' : base + '\n ') +
-	           ' ' +
-	           output.join(',\n  ') +
-	           ' ' +
-	           braces[1];
-	  }
-	
-	  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-	}
-	
-	
-	// NOTE: These type checking functions intentionally don't use `instanceof`
-	// because it is fragile and can be easily faked with `Object.create()`.
-	function isArray(ar) {
-	  return Array.isArray(ar);
-	}
-	exports.isArray = isArray;
-	
-	function isBoolean(arg) {
-	  return typeof arg === 'boolean';
-	}
-	exports.isBoolean = isBoolean;
-	
-	function isNull(arg) {
-	  return arg === null;
-	}
-	exports.isNull = isNull;
-	
-	function isNullOrUndefined(arg) {
-	  return arg == null;
-	}
-	exports.isNullOrUndefined = isNullOrUndefined;
-	
-	function isNumber(arg) {
-	  return typeof arg === 'number';
-	}
-	exports.isNumber = isNumber;
-	
-	function isString(arg) {
-	  return typeof arg === 'string';
-	}
-	exports.isString = isString;
-	
-	function isSymbol(arg) {
-	  return typeof arg === 'symbol';
-	}
-	exports.isSymbol = isSymbol;
-	
-	function isUndefined(arg) {
-	  return arg === void 0;
-	}
-	exports.isUndefined = isUndefined;
-	
-	function isRegExp(re) {
-	  return isObject(re) && objectToString(re) === '[object RegExp]';
-	}
-	exports.isRegExp = isRegExp;
-	
-	function isObject(arg) {
-	  return typeof arg === 'object' && arg !== null;
-	}
-	exports.isObject = isObject;
-	
-	function isDate(d) {
-	  return isObject(d) && objectToString(d) === '[object Date]';
-	}
-	exports.isDate = isDate;
-	
-	function isError(e) {
-	  return isObject(e) &&
-	      (objectToString(e) === '[object Error]' || e instanceof Error);
-	}
-	exports.isError = isError;
-	
-	function isFunction(arg) {
-	  return typeof arg === 'function';
-	}
-	exports.isFunction = isFunction;
-	
-	function isPrimitive(arg) {
-	  return arg === null ||
-	         typeof arg === 'boolean' ||
-	         typeof arg === 'number' ||
-	         typeof arg === 'string' ||
-	         typeof arg === 'symbol' ||  // ES6 symbol
-	         typeof arg === 'undefined';
-	}
-	exports.isPrimitive = isPrimitive;
-	
-	exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ 28);
-	
-	function objectToString(o) {
-	  return Object.prototype.toString.call(o);
-	}
-	
-	
-	function pad(n) {
-	  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-	}
-	
-	
-	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-	              'Oct', 'Nov', 'Dec'];
-	
-	// 26 Feb 16:19:34
-	function timestamp() {
-	  var d = new Date();
-	  var time = [pad(d.getHours()),
-	              pad(d.getMinutes()),
-	              pad(d.getSeconds())].join(':');
-	  return [d.getDate(), months[d.getMonth()], time].join(' ');
-	}
-	
-	
-	// log is just a thin wrapper to console.log that prepends a timestamp
-	exports.log = function() {
-	  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
-	};
-	
-	
-	/**
-	 * Inherit the prototype methods from one constructor into another.
-	 *
-	 * The Function.prototype.inherits from lang.js rewritten as a standalone
-	 * function (not on Function.prototype). NOTE: If this file is to be loaded
-	 * during bootstrapping this function needs to be rewritten using some native
-	 * functions as prototype setup using normal JavaScript does not work as
-	 * expected during bootstrapping (see mirror.js in r114903).
-	 *
-	 * @param {function} ctor Constructor function which needs to inherit the
-	 *     prototype.
-	 * @param {function} superCtor Constructor function to inherit prototype from.
-	 */
-	exports.inherits = __webpack_require__(/*! inherits */ 29);
-	
-	exports._extend = function(origin, add) {
-	  // Don't do anything if add isn't an object
-	  if (!add || !isObject(add)) return origin;
-	
-	  var keys = Object.keys(add);
-	  var i = keys.length;
-	  while (i--) {
-	    origin[keys[i]] = add[keys[i]];
-	  }
-	  return origin;
-	};
-	
-	function hasOwnProperty(obj, prop) {
-	  return Object.prototype.hasOwnProperty.call(obj, prop);
-	}
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(/*! /home/dp/Projects/sdk/~/process/browser.js */ 27)))
-
-/***/ },
-/* 27 */
-/*!**************************************************!*\
-  !*** /home/dp/Projects/sdk/~/process/browser.js ***!
-  \**************************************************/
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-	var process = module.exports = {};
-	
-	// cached from whatever global is present so that test runners that stub it
-	// don't break things.  But we need to wrap it in a try catch in case it is
-	// wrapped in strict mode code which doesn't define any globals.  It's inside a
-	// function because try/catches deoptimize in certain engines.
-	
-	var cachedSetTimeout;
-	var cachedClearTimeout;
-	
-	function defaultSetTimout() {
-	    throw new Error('setTimeout has not been defined');
-	}
-	function defaultClearTimeout () {
-	    throw new Error('clearTimeout has not been defined');
-	}
-	(function () {
-	    try {
-	        if (typeof setTimeout === 'function') {
-	            cachedSetTimeout = setTimeout;
-	        } else {
-	            cachedSetTimeout = defaultSetTimout;
-	        }
-	    } catch (e) {
-	        cachedSetTimeout = defaultSetTimout;
-	    }
-	    try {
-	        if (typeof clearTimeout === 'function') {
-	            cachedClearTimeout = clearTimeout;
-	        } else {
-	            cachedClearTimeout = defaultClearTimeout;
-	        }
-	    } catch (e) {
-	        cachedClearTimeout = defaultClearTimeout;
-	    }
-	} ())
-	function runTimeout(fun) {
-	    if (cachedSetTimeout === setTimeout) {
-	        //normal enviroments in sane situations
-	        return setTimeout(fun, 0);
-	    }
-	    // if setTimeout wasn't available but was latter defined
-	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-	        cachedSetTimeout = setTimeout;
-	        return setTimeout(fun, 0);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedSetTimeout(fun, 0);
-	    } catch(e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-	            return cachedSetTimeout.call(null, fun, 0);
-	        } catch(e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-	            return cachedSetTimeout.call(this, fun, 0);
-	        }
-	    }
-	
-	
-	}
-	function runClearTimeout(marker) {
-	    if (cachedClearTimeout === clearTimeout) {
-	        //normal enviroments in sane situations
-	        return clearTimeout(marker);
-	    }
-	    // if clearTimeout wasn't available but was latter defined
-	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-	        cachedClearTimeout = clearTimeout;
-	        return clearTimeout(marker);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedClearTimeout(marker);
-	    } catch (e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-	            return cachedClearTimeout.call(null, marker);
-	        } catch (e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-	            return cachedClearTimeout.call(this, marker);
-	        }
-	    }
-	
-	
-	
-	}
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-	
-	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-	
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = runTimeout(cleanUpNextTick);
-	    draining = true;
-	
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    runClearTimeout(timeout);
-	}
-	
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        runTimeout(drainQueue);
-	    }
-	};
-	
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-	
-	function noop() {}
-	
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-	
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ },
-/* 28 */
-/*!***************************************************************!*\
-  !*** /home/dp/Projects/sdk/~/util/support/isBufferBrowser.js ***!
-  \***************************************************************/
-/***/ function(module, exports) {
-
-	module.exports = function isBuffer(arg) {
-	  return arg && typeof arg === 'object'
-	    && typeof arg.copy === 'function'
-	    && typeof arg.fill === 'function'
-	    && typeof arg.readUInt8 === 'function';
-	}
-
-/***/ },
-/* 29 */
-/*!************************************************************!*\
-  !*** /home/dp/Projects/sdk/~/inherits/inherits_browser.js ***!
-  \************************************************************/
-/***/ function(module, exports) {
-
-	if (typeof Object.create === 'function') {
-	  // implementation from standard node.js 'util' module
-	  module.exports = function inherits(ctor, superCtor) {
-	    ctor.super_ = superCtor
-	    ctor.prototype = Object.create(superCtor.prototype, {
-	      constructor: {
-	        value: ctor,
-	        enumerable: false,
-	        writable: true,
-	        configurable: true
-	      }
-	    });
-	  };
-	} else {
-	  // old school shim for old browsers
-	  module.exports = function inherits(ctor, superCtor) {
-	    ctor.super_ = superCtor
-	    var TempCtor = function () {}
-	    TempCtor.prototype = superCtor.prototype
-	    ctor.prototype = new TempCtor()
-	    ctor.prototype.constructor = ctor
-	  }
-	}
-
-
-/***/ },
-/* 30 */
-/*!************************************!*\
-  !*** ../app/lib/develop/events.js ***!
-  \************************************/
+/* 32 */
+/*!********************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/app/lib/develop/events.js ***!
+  \********************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4863,7 +5878,7 @@
 	    //request = require('spa-request'),
 	    //dom     = require('spa-dom'),
 	    //storage = require('./storage'),
-	    grid      = __webpack_require__(/*! ./grid */ 31),
+	    grid      = __webpack_require__(/*! ./grid */ 33),
 	    events    = {};
 	
 	
@@ -5057,10 +6072,10 @@
 
 
 /***/ },
-/* 31 */
-/*!**********************************!*\
-  !*** ../app/lib/develop/grid.js ***!
-  \**********************************/
+/* 33 */
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/app/lib/develop/grid.js ***!
+  \******************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5357,20 +6372,20 @@
 
 
 /***/ },
-/* 32 */
+/* 34 */
 /*!******************************!*\
-  !*** ./src/js/pages/init.js ***!
+  !*** ./src/js/pages/main.js ***!
   \******************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Loading page implementation.
+	 * Main page implementation.
 	 */
 	
 	'use strict';
 	
-	var Page = __webpack_require__(/*! stb-component-page */ 33),
-	    page = new Page({$node: window.pageInit});
+	var Page = __webpack_require__(/*! stb-component-page */ 35),
+	    page = new Page({$node: window.pageMain});
 	
 	
 	// public
@@ -5378,10 +6393,10 @@
 
 
 /***/ },
-/* 33 */
-/*!**********************************!*\
-  !*** ../component-page/index.js ***!
-  \**********************************/
+/* 35 */
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/stbsdk/component-page/index.js ***!
+  \******************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5392,14 +6407,14 @@
 	'use strict';
 	
 	// public
-	module.exports = __webpack_require__(/*! spa-component-page */ 34);
+	module.exports = __webpack_require__(/*! spa-component-page */ 36);
 
 
 /***/ },
-/* 34 */
-/*!************************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/component-page/index.js ***!
-  \************************************************************/
+/* 36 */
+/*!******************************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/component-page/index.js ***!
+  \******************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
@@ -5411,7 +6426,7 @@
 	
 	'use strict';
 	
-	var Component = __webpack_require__(/*! spa-component */ 35);
+	var Component = __webpack_require__(/*! spa-component */ 14);
 	
 	
 	/**
@@ -5490,598 +6505,7 @@
 	// public
 	module.exports = Page;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/component-page/index.js"))
-
-/***/ },
-/* 35 */
-/*!*******************************************************!*\
-  !*** /home/dp/Projects/sdk/spasdk/component/index.js ***!
-  \*******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(__filename) {/**
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	/* eslint no-path-concat: 0 */
-	
-	'use strict';
-	
-	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
-	    Emitter = __webpack_require__(/*! cjs-emitter */ 3),
-	    counter = 0;
-	
-	
-	/**
-	 * Base component implementation.
-	 *
-	 * Visual element that can handle sub-components.
-	 * Each component has a DOM element container $node with a set of classes:
-	 * "component" and some specific component class names depending on the hierarchy, for example "page".
-	 * Each component has a unique ID given either from $node.id or from data.id. If not given will generate automatically.
-	 *
-	 * @constructor
-	 * @extends Emitter
-	 *
-	 * @param {Object} [config={}] init parameters
-	 * @param {Element} [config.id] component unique identifier (generated if not set)
-	 * @param {string} [config.className] space-separated list of classes for "className" property of this.$node
-	 * @param {Element} [config.$node] DOM element/fragment to be a component outer container
-	 * @param {Element} [config.$body] DOM element/fragment to be a component inner container (by default is the same as $node)
-	 * @param {Component} [config.parent] link to the parent component which has this component as a child
-	 * @param {Array.<Component>} [config.children=[]] list of components in this component
-	 * @param {Object.<string, function>} [config.events={}] list of event callbacks
-	 * @param {boolean} [config.visible=true] component initial visibility state flag
-	 * @param {boolean} [config.focusable=true] component can accept focus or not
-	 * @param {boolean} [config.propagate=false] allow to emit events to the parent component
-	 *
-	 * @fires module:stb/component~Component#click
-	 *
-	 * @example
-	 * var component = new Component({
-	 *     $node: document.getElementById(id),
-	 *     className: 'bootstrap responsive',
-	 *     events: {
-	 *         click: function () { ... }
-	 *     }
-	 * });
-	 * component.add( ... );
-	 * component.focus();
-	 */
-	function Component ( config ) {
-	    // current execution context
-	    var self = this,
-	        name;
-	
-	    // sanitize
-	    config = config || {};
-	
-	    console.assert(typeof this === 'object', 'must be constructed via new');
-	
-	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-	        // init parameters checks
-	        if ( config.id        && typeof config.id !== 'string'         ) { throw new Error(__filename + ': wrong or empty config.id'); }
-	        if ( config.className && typeof config.className !== 'string'  ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	        if ( config.$node     && !(config.$node instanceof Element)    ) { throw new Error(__filename + ': wrong config.$node type'); }
-	        if ( config.$body     && !(config.$body instanceof Element)    ) { throw new Error(__filename + ': wrong config.$body type'); }
-	        if ( config.parent    && !(config.parent instanceof Component) ) { throw new Error(__filename + ': wrong config.parent type'); }
-	        if ( config.children  && !Array.isArray(config.children)       ) { throw new Error(__filename + ': wrong config.children type'); }
-	    }
-	
-	    /**
-	     * Component visibility state flag.
-	     *
-	     * @readonly
-	     * @type {boolean}
-	     */
-	    this.visible = true;
-	
-	    /**
-	     * Component can accept focus or not.
-	     *
-	     * @type {boolean}
-	     */
-	    this.focusable = true;
-	
-	    /**
-	     * DOM outer handle.
-	     *
-	     * @type {Element}
-	     */
-	    this.$node = null;
-	
-	    /**
-	     * DOM inner handle.
-	     * In simple cases is the same as $node.
-	     *
-	     * @type {Element}
-	     */
-	    this.$body = null;
-	
-	    /**
-	     * Link to the parent component which has this component as a child.
-	     *
-	     * @type {Component}
-	     */
-	    this.parent = null;
-	
-	    /**
-	     * List of all children components.
-	     *
-	     * @type {Component[]}
-	     */
-	    this.children = [];
-	
-	    /**
-	     * allow to emit events to the parent component
-	     *
-	     * @readonly
-	     * @type {boolean}
-	     */
-	    this.propagate = !!config.propagate;
-	
-	    // parent constructor call
-	    Emitter.call(this, config.data);
-	
-	    // outer handle - empty div in case nothing is given
-	    this.$node = config.$node || document.createElement('div');
-	
-	    // inner handle - the same as outer handler in case nothing is given
-	    this.$body = config.$body || this.$node;
-	
-	    // set CSS class names
-	    this.$node.className += ' component ' + (config.className || '');
-	
-	    // apply component id if given, generate otherwise
-	    this.id = config.id || this.$node.id || 'cid' + counter++;
-	
-	    // apply hierarchy
-	    if ( config.parent ) {
-	        // add to parent component
-	        config.parent.add(this);
-	    }
-	
-	    // apply given visibility
-	    if ( config.visible === false ) {
-	        // default state is visible
-	        this.hide();
-	    }
-	
-	    // apply focus handling method
-	    if ( config.focusable === false ) {
-	        // can't accept focus
-	        this.focusable = false;
-	    }
-	
-	    // a descendant defined own events
-	    if ( this.defaultEvents ) {
-	        // sanitize
-	        config.events = config.events || {};
-	
-	        if ( true ) {
-	            if ( typeof config.events !== 'object' ) { throw new Error(__filename + ': wrong config.events type'); }
-	            if ( typeof this.defaultEvents !== 'object' ) { throw new Error(__filename + ': wrong this.defaultEvents type'); }
-	        }
-	
-	        for ( name in this.defaultEvents ) {
-	            // overwrite default events with user-defined
-	            config.events[name] = config.events[name] || this.defaultEvents[name];
-	        }
-	    }
-	
-	    if ( config.events ) {
-	        // apply all given events
-	        Object.keys(config.events).forEach(function ( name ) {
-	            self.addListener(name, config.events[name]);
-	        });
-	    }
-	
-	    // apply the given children components
-	    if ( config.children ) {
-	        // apply
-	        this.add.apply(this, config.children);
-	    }
-	
-	    // component activation by mouse
-	    this.$node.addEventListener('click', function ( event ) {
-	        // left mouse button
-	        //if ( event.button === 0 ) {
-	        // activate if possible
-	        self.focus();
-	
-	        // there are some listeners
-	        if ( self.events['click'] ) {
-	            /**
-	             * Mouse click event.
-	             *
-	             * @event module:stb/component~Component#click
-	             *
-	             * @type {Object}
-	             * @property {Event} event click event data
-	             */
-	            self.emit('click', event);
-	        }
-	        //}
-	
-	        if ( true ) {
-	            // middle mouse button
-	            if ( event.button === 1 ) {
-	                //debug.inspect(self, 0);
-	                debug.info('"window.link" or "' + self.id + '.component"', 'this component is now available in global scope');
-	                window.link = self;
-	                self.$node.classList.toggle('wired');
-	            }
-	        }
-	
-	        event.stopPropagation();
-	    });
-	
-	    if ( true ) {
-	        // expose inner ID to global scope
-	        window[self.id] = self.$node;
-	
-	        // expose a link
-	        this.$node.component = this.$body.component = this;
-	        this.$node.title = 'component ' + this.constructor.name + '#' + this.id + ' (outer)';
-	        this.$body.title = 'component ' + this.constructor.name + '#' + this.id + ' (inner)';
-	    }
-	
-	    debug.info('create component ' + this.constructor.name + '#' + this.id, null, {
-	        tags: ['create', 'component', this.constructor.name, this.id]
-	    });
-	}
-	
-	
-	// inheritance
-	Component.prototype = Object.create(Emitter.prototype);
-	Component.prototype.constructor = Component;
-	
-	
-	/**
-	 * List of all default event callbacks.
-	 *
-	 * @type {Object.<string, function>}
-	 */
-	Component.prototype.defaultEvents = null;
-	
-	
-	/**
-	 * Add a new component as a child.
-	 *
-	 * @param {...Component} [child] variable number of elements to append
-	 *
-	 * @files Component#add
-	 *
-	 * @example
-	 * panel.add(
-	 *     new Button( ... ),
-	 *     new Button( ... )
-	 * );
-	 */
-	Component.prototype.add = function ( child ) {
-	    var index;
-	
-	    // walk through all the given elements
-	    for ( index = 0; index < arguments.length; index++ ) {
-	        child = arguments[index];
-	
-	        if ( true ) {
-	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
-	        }
-	
-	        // apply
-	        this.children.push(child);
-	        child.parent = this;
-	
-	        // correct DOM parent/child connection if necessary
-	        if ( child.$node && child.$node.parentNode === null ) {
-	            this.$body.appendChild(child.$node);
-	        }
-	
-	        debug.info('add component ' + child.constructor.name + '#' + child.id + ' to ' + this.constructor.name + '#' + this.id, null, {
-	            tags: ['add', 'component', this.constructor.name, this.id, child.constructor.name, child.id]
-	        });
-	
-	        // there are some listeners
-	        if ( this.events['add'] ) {
-	            /**
-	             * A child component is added.
-	             *
-	             * @event module:stb/component~Component#add
-	             *
-	             * @type {Object}
-	             * @property {Component} item new component added
-	             */
-	            this.emit('add', {item: child});
-	        }
-	
-	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' new child: ' + child.constructor.name + '#' + child.id);
-	    }
-	};
-	
-	
-	/* @todo: consider activation in future */
-	///**
-	// * Insert component into the specific position.
-	// *
-	// * @param {Component} child component instance to insert
-	// * @param {number} index insertion position
-	// */
-	//Component.prototype.insert = function ( child, index ) {
-	//    var prevIndex = this.children.indexOf(child);
-	//
-	//    if ( DEVELOP ) {
-	//        if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-	//        if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
-	//    }
-	//
-	//    if ( prevIndex !== -1 ) {
-	//        this.children.splice(prevIndex, 1);
-	//        this.$body.removeChild(child.$node);
-	//    }
-	//
-	//    if ( index === this.children.length ) {
-	//        this.$body.appendChild(child.$node);
-	//    } else {
-	//        this.$body.insertBefore(child.$node, this.$body.children[index]);
-	//    }
-	//    this.children.splice(index, 0, child);
-	//
-	//    if ( !child.parent ) {
-	//        child.parent = this;
-	//    }
-	//};
-	
-	
-	/**
-	 * Delete this component and clear all associated events.
-	 *
-	 * @fires module:stb/component~Component#remove
-	 */
-	Component.prototype.remove = function () {
-	    // really inserted somewhere
-	    if ( this.parent ) {
-	        if ( true ) {
-	            if ( !(this.parent instanceof Component) ) { throw new Error(__filename + ': wrong this.parent type'); }
-	        }
-	
-	        // active at the moment
-	        if ( app.activePage.activeComponent === this ) {
-	            this.blur();
-	            this.parent.focus();
-	        }
-	        this.parent.children.splice(this.parent.children.indexOf(this), 1);
-	    }
-	
-	    // remove all children
-	    this.children.forEach(function ( child ) {
-	        if ( true ) {
-	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
-	        }
-	
-	        child.remove();
-	    });
-	
-	    // remove all listeners
-	    this.events = {};
-	
-	    this.$node.parentNode.removeChild(this.$node);
-	
-	    // there are some listeners
-	    if ( this.events['remove'] ) {
-	        /**
-	         * Delete this component.
-	         *
-	         * @event module:stb/component~Component#remove
-	         */
-	        this.emit('remove');
-	    }
-	
-	    //debug.log('component ' + this.constructor.name + '#' + this.id + ' remove', 'red');
-	    debug.info('remove component ' + this.constructor.name + '#' + this.id, null, {
-	        tags: ['remove', 'component', this.constructor.name, this.id]
-	    });
-	};
-	
-	
-	/**
-	 * Activate the component.
-	 * Notify the owner-page and apply CSS class.
-	 *
-	 * @param {Object} [data] custom data which passed into handlers
-	 *
-	 * @return {boolean} operation status
-	 *
-	 * @fires module:stb/component~Component#focus
-	 */
-	Component.prototype.focus = function ( data ) {
-	    var activePage = app.activePage,
-	        activeItem = activePage.activeComponent;
-	
-	    // this is a visual component on a page
-	    // not already focused and can accept focus
-	    if ( this.focusable && this !== activeItem ) {
-	        // notify the current active component
-	        if ( activeItem ) { activeItem.blur(); }
-	
-	        /* eslint consistent-this: 0 */
-	
-	        // apply
-	        activePage.activeComponent = activeItem = this;
-	        activeItem.$node.classList.add('focus');
-	
-	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' focus');
-	        debug.info('focus component ' + this.constructor.name + '#' + this.id, null, {
-	            tags: ['focus', 'component', this.constructor.name, this.id]
-	        });
-	
-	        // there are some listeners
-	        if ( activeItem.events['focus'] ) {
-	            /**
-	             * Make this component focused.
-	             *
-	             * @event module:stb/component~Component#focus
-	             */
-	            activeItem.emit('focus', data);
-	        }
-	
-	        return true;
-	    }
-	
-	    // nothing was done
-	    return false;
-	};
-	
-	
-	/**
-	 * Remove focus.
-	 * Change page.activeComponent and notify subscribers.
-	 *
-	 * @return {boolean} operation status
-	 *
-	 * @fires module:stb/component~Component#blur
-	 */
-	Component.prototype.blur = function () {
-	    var activePage = app.activePage,
-	        activeItem = activePage.activeComponent;
-	
-	    // apply visuals anyway
-	    this.$node.classList.remove('focus');
-	
-	    // this is the active component
-	    if ( this === activeItem ) {
-	        activePage.activeComponent = null;
-	
-	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' blur', 'grey');
-	        debug.info('blur component ' + this.constructor.name + '#' + this.id, null, {
-	            tags: ['blur', 'component', this.constructor.name, this.id]
-	        });
-	
-	        // there are some listeners
-	        if ( this.events['blur'] ) {
-	            /**
-	             * Remove focus from this component.
-	             *
-	             * @event module:stb/component~Component#blur
-	             */
-	            this.emit('blur');
-	        }
-	
-	        return true;
-	    }
-	
-	    debug.warn('component ' + this.constructor.name + '#' + this.id + ' attempt to blur without link to a page', null, {
-	        tags: ['blur', 'component', this.constructor.name, this.id]
-	    });
-	
-	    // nothing was done
-	    return false;
-	};
-	
-	
-	/**
-	 * Make the component visible and notify subscribers.
-	 *
-	 * @param {Object} [data] custom data which passed into handlers
-	 *
-	 * @return {boolean} operation status
-	 *
-	 * @fires module:stb/component~Component#show
-	 */
-	Component.prototype.show = function ( data ) {
-	    // is it hidden
-	    if ( !this.visible ) {
-	        // correct style
-	        this.$node.classList.remove('hidden');
-	        // flag
-	        this.visible = true;
-	
-	        debug.info('show component ' + this.constructor.name + '#' + this.id, null, {
-	            tags: ['show', 'component', this.constructor.name, this.id]
-	        });
-	
-	        // there are some listeners
-	        if ( this.events['show'] ) {
-	            /**
-	             * Make the component visible.
-	             *
-	             * @event module:stb/component~Component#show
-	             */
-	            this.emit('show', data);
-	        }
-	
-	        return true;
-	    }
-	
-	    // nothing was done
-	    return true;
-	};
-	
-	
-	/**
-	 * Make the component hidden and notify subscribers.
-	 *
-	 * @return {boolean} operation status
-	 *
-	 * @fires module:stb/component~Component#hide
-	 */
-	Component.prototype.hide = function () {
-	    // is it visible
-	    if ( this.visible ) {
-	        // correct style
-	        this.$node.classList.add('hidden');
-	        // flag
-	        this.visible = false;
-	
-	        debug.info('hide component ' + this.constructor.name + '#' + this.id, null, {
-	            tags: ['hide', 'component', this.constructor.name, this.id]
-	        });
-	
-	        // there are some listeners
-	        if ( this.events['hide'] ) {
-	            /**
-	             * Make the component hidden.
-	             *
-	             * @event module:stb/component~Component#hide
-	             */
-	            this.emit('hide');
-	        }
-	
-	        return true;
-	    }
-	
-	    // nothing was done
-	    return true;
-	};
-	
-	
-	// public
-	module.exports = Component;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/component/index.js"))
-
-/***/ },
-/* 36 */
-/*!******************************!*\
-  !*** ./src/js/pages/main.js ***!
-  \******************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Main page implementation.
-	 */
-	
-	'use strict';
-	
-	var Page = __webpack_require__(/*! stb-component-page */ 33),
-	    page = new Page({$node: window.pageMain});
-	
-	
-	// public
-	module.exports = page;
-
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../sdk/spasdk/component-page/index.js"))
 
 /***/ }
 /******/ ]);
