@@ -14,7 +14,9 @@
         "start": "magsdk",
         "build": "magsdk build",
         "watch": "magsdk watch",
-        "serve": "magsdk serve"
+        "serve": "magsdk serve",
+        "lint": "eslint .",
+        "test": "npm run lint"
     },
     "dependencies": {
         "mag-app": "git+ssh://git@192.168.1.222:/web/magsdk/app.git",
@@ -22,6 +24,7 @@
         "stb-component-page": "stbsdk/component-page"
     },
     "devDependencies": {
+        "eslint": "2.*.*",
         "mag-eslint-config": "magsdk/eslint-config"
     },
     "license": "MIT"

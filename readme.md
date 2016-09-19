@@ -1,6 +1,7 @@
 Application template
 ====================
 
+[![Build Status](https://img.shields.io/travis/magsdk/boilerplate.svg?style=flat-square)](https://travis-ci.org/magsdk/boilerplate)
 [![Dependencies Status](https://img.shields.io/david/magsdk/boilerplate.svg?style=flat-square)](https://david-dm.org/magsdk/boilerplate)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-blue.svg?style=flat-square)](https://gitter.im/DarkPark/magsdk)
 
