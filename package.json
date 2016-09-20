@@ -24,7 +24,7 @@
         "stb-component-page": "stbsdk/component-page"
     },
     "devDependencies": {
-        "eslint": "2.*.*",
+        "eslint": "3.*.*",
         "mag-eslint-config": "magsdk/eslint-config"
     },
     "license": "MIT"
