@@ -44,6 +44,9 @@ body > canvas {
     body > canvas.active {
         visibility: visible; }
 
+/* mag-app: release */
+/* mag-app: develop */
+
 /* spa-component: release */
 .component {
     box-sizing: border-box; }
@@ -74,17 +77,4 @@ body.develop .component {
         visibility: inherit; }
 
 /* application: develop */
-#pageInit {
-    display: table; }
-    #pageInit > .cell {
-        display: table-cell;
-        position: relative;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 150%; }
-        #pageInit > .cell > .version {
-            position: absolute;
-            bottom: 50px;
-            right: 50px;
-            font-size: 50%; }
 
