@@ -30,18 +30,10 @@ html, body {
 
 /* mag-app: release */
 
-/* spa-component: release */
-.component {
-    box-sizing: border-box; }
-    .component.hidden {
-        display: none !important; }
 
-/* stb-component: release */
-.component div {
-    -webkit-box-sizing: border-box; }
-
-/* spa-component-page: release */
-.component.page {
+.stb-component-page {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     width: 720px;
     height: 480px;
     position: absolute;
@@ -49,7 +41,9 @@ html, body {
     top: 0;
     visibility: hidden;
     overflow: hidden; }
-    .component.page.active {
+    .stb-component-page.hidden {
+        display: none; }
+    .stb-component-page.active {
         visibility: inherit; }
 
 /* application: release */

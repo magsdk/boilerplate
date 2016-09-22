@@ -47,34 +47,25 @@ body > canvas {
 /* mag-app: release */
 /* mag-app: develop */
 
-/* spa-component: release */
-.component {
-    box-sizing: border-box; }
-    .component.hidden {
-        display: none !important; }
 
-/* spa-component: develop */
-body.develop .component {
-    outline: 1px dashed #005000;
-    outline-offset: -1px; }
-    body.develop .component.focus {
-        outline: 1px dashed red; }
-
-/* stb-component: release */
-.component div {
-    -webkit-box-sizing: border-box; }
-
-/* spa-component-page: release */
-.component.page {
+.stb-component-page {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     width: 1280px;
     height: 720px;
     position: absolute;
     left: 0;
     top: 0;
     visibility: hidden;
-    overflow: hidden; }
-    .component.page.active {
+    overflow: hidden;
+    outline: 1px dashed #005000;
+    outline-offset: -1px; }
+    .stb-component-page.hidden {
+        display: none; }
+    .stb-component-page.active {
         visibility: inherit; }
+    .stb-component-page.focus {
+        outline: 1px dashed red; }
 
 /* application: develop */
 
