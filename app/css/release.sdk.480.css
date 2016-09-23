@@ -1,8 +1,8 @@
 /* spa-app: release */
 html, body {
-    height: 720px;
-    width: 1280px;
-    font-size: 22px;
+    height: 480px;
+    width: 720px;
+    font-size: 18px;
     font-family: Ubuntu, sans-serif;
     overflow: hidden;
     margin: 0;
@@ -34,8 +34,8 @@ html, body {
 .stb-component-page {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    width: 1280px;
-    height: 720px;
+    width: 720px;
+    height: 480px;
     position: absolute;
     left: 0;
     top: 0;
@@ -45,6 +45,4 @@ html, body {
         display: none; }
     .stb-component-page.active {
         visibility: inherit; }
-
-/* application: release */
 

@@ -24,28 +24,11 @@ table {
 a {
     text-decoration: none; }
 
-/* spa-app: develop */
-body.develop {
-    outline: 1px solid yellow;
-    outline-offset: -1px; }
-
 /* stb-app: release */
 html, body {
     -webkit-user-select: none; }
 
-/* stb-app: develop */
-html, body {
-    -webkit-user-select: text; }
-
-body > canvas {
-    cursor: none;
-    visibility: hidden;
-    position: absolute; }
-    body > canvas.active {
-        visibility: visible; }
-
 /* mag-app: release */
-/* mag-app: develop */
 
 
 .stb-component-page {
@@ -57,15 +40,9 @@ body > canvas {
     left: 0;
     top: 0;
     visibility: hidden;
-    overflow: hidden;
-    outline: 1px dashed #005000;
-    outline-offset: -1px; }
+    overflow: hidden; }
     .stb-component-page.hidden {
         display: none; }
     .stb-component-page.active {
         visibility: inherit; }
-    .stb-component-page.focus {
-        outline: 1px dashed red; }
-
-/* application: develop */
 
