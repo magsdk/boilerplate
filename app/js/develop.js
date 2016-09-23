@@ -58,13 +58,15 @@
 	
 	// everything is ready
 	app.once('load', function () {
-	    // load pages
-	    app.pages = {
-	        main: __webpack_require__(/*! ./pages/main */ 34)
-	    };
+	    __webpack_require__(/*! spa-gettext */ 34).load({name: core.environment.language}, function () {
+	        // load pages
+	        app.pages = {
+	            main: __webpack_require__(/*! ./pages/main */ 35)
+	        };
 	
-	    // show main page
-	    app.route(app.pages.main);
+	        // show main page
+	        app.route(app.pages.main);
+	    });
 	});
 
 
@@ -6505,6 +6507,171 @@
 
 /***/ },
 /* 34 */
+/*!***********************************************************!*\
+  !*** /home/yaroslav/Work/web/sdk/spasdk/gettext/index.js ***!
+  \***********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var Emitter = __webpack_require__(/*! cjs-emitter */ 3),
+	    gettext = new Emitter(),
+	    meta    = null,
+	    data    = null;
+	
+	
+	/**
+	 * Simple gettext implementation.
+	 *
+	 * @param {Object} config options
+	 * @param {string} [config.path=lang] relative path to project root
+	 * @param {string} config.name language name
+	 * @param {string} [config.ext=json] language file extension
+	 * @param {function} callback hook on ready
+	 *
+	 * @example
+	 * gettext.load({name: 'ru'}, function ( error, data ) {
+	 *     debug.log(error);
+	 *     debug.inspect(data);
+	 * });
+	 */
+	gettext.load = function ( config, callback ) {
+	    var xhr = new XMLHttpRequest();
+	
+	    if ( true ) {
+	        if ( !config.name || typeof config.name !== 'string' ) { throw new Error(__filename + ': config.name must be a nonempty string'); }
+	        if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
+	    }
+	
+	    // defaults
+	    config.ext  = config.ext  || 'json';
+	    config.path = config.path || 'lang';
+	
+	    /* todo: get rid of JSON.parse in future
+	    xhr.overrideMimeType('application/json');
+	    xhr.responseType = 'json';/**/
+	
+	    xhr.responseType = 'text';
+	
+	    xhr.onload = function () {
+	        var json;
+	
+	        try {
+	            json = JSON.parse(xhr.responseText);
+	            meta = json.meta;
+	            data = json.data;
+	            callback(null, data);
+	        } catch ( error ) {
+	            meta = null;
+	            data = null;
+	            xhr.onerror(error);
+	        }
+	
+	        // there are some listeners
+	        if ( gettext.events['load'] ) {
+	            // notify listeners
+	            gettext.emit('load');
+	        }
+	    };
+	
+	    xhr.onerror = function ( error ) {
+	        callback(error);
+	
+	        // there are some listeners
+	        if ( gettext.events['error'] ) {
+	            // notify listeners
+	            gettext.emit('error', error);
+	        }
+	    };
+	
+	    xhr.open('GET', config.path + '/' + config.name + '.' + config.ext, true);
+	    xhr.send(null);
+	};
+	
+	
+	/**
+	 * Display the native language translation of a textual message.
+	 *
+	 * @param {string} msgId textual message
+	 *
+	 * @return {string} translated text
+	 *
+	 * @global
+	 *
+	 * @example
+	 * console.log(gettext('some line to be localized'));
+	 */
+	window._ = window.gettext = function ( msgId ) {
+	    return data && data[''][msgId] ? data[''][msgId] : msgId;
+	};
+	
+	
+	/**
+	 * The "p" in "pgettext" stands for "particular": fetches a particular translation of the textual message.
+	 *
+	 * @param {string} context message context
+	 * @param {string} msgId textual message
+	 *
+	 * @return {string} translated text
+	 *
+	 * @global
+	 *
+	 * @example
+	 * console.log(pgettext('some context', 'some text'));
+	 */
+	window.pgettext = function ( context, msgId ) {
+	    return data && data[context][msgId] ? data[context][msgId] : msgId;
+	};
+	
+	
+	/**
+	 * Display the native language translation of a textual message whose grammatical form depends on a number.
+	 *
+	 * @param {string} msgId textual message in a singular form
+	 * @param {string} plural textual message in a plural form
+	 * @param {number} value message number
+	 *
+	 * @return {string} translated text
+	 *
+	 * @global
+	 *
+	 * @example
+	 * console.log(ngettext('{0} cat', '{0} cats', 1));
+	 */
+	window.ngettext = function ( msgId, plural, value ) {
+	    /* eslint no-unused-vars: 0 */
+	    /* eslint no-eval: 0 */
+	    /* eslint id-length: 0 */
+	    var n;
+	
+	    if ( true ) {
+	        if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
+	    }
+	
+	    if ( data && meta ) {
+	        // translation
+	        return data[''][msgId][eval('n = ' + value + '; ' + meta.plural)];
+	    }
+	
+	    // english
+	    return value === 1 ? msgId : plural;
+	};
+	
+	
+	// public
+	module.exports = gettext;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/gettext/index.js"))
+
+/***/ },
+/* 35 */
 /*!******************************!*\
   !*** ./src/js/pages/main.js ***!
   \******************************/
@@ -6516,7 +6683,7 @@
 	
 	'use strict';
 	
-	var Page = __webpack_require__(/*! stb-component-page */ 35),
+	var Page = __webpack_require__(/*! stb-component-page */ 36),
 	    page = new Page({$node: window.pageMain});
 	
 	
@@ -6525,7 +6692,7 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /*!******************************************************************!*\
   !*** /home/yaroslav/Work/web/sdk/stbsdk/component-page/index.js ***!
   \******************************************************************/
@@ -6539,14 +6706,14 @@
 	'use strict';
 	
 	// public
-	module.exports = __webpack_require__(/*! spa-component-page */ 36);
+	module.exports = __webpack_require__(/*! spa-component-page */ 37);
 	
 	// correct component name
 	module.exports.prototype.name = 'stb-component-page';
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /*!******************************************************************!*\
   !*** /home/yaroslav/Work/web/sdk/spasdk/component-page/index.js ***!
   \******************************************************************/
