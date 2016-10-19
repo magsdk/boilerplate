@@ -22,7 +22,7 @@
     "devDependencies": {
         "eslint": "3.*.*",
         "mag-app": "magsdk/app",
-        "mag-eslint-config": "magsdk/eslint-config",
+        "mag-eslint-config": "1.*.*",
         "stb-component-page": "stbsdk/component-page",
         "spa-gettext": "spasdk/gettext"
     },
