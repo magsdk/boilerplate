@@ -20,11 +20,11 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "eslint": "3.*.*",
-        "mag-app": "magsdk/app",
-        "mag-eslint-config": "1.*.*",
+        "eslint": "^3.0.0",
+        "mag-app": "^1.0.0",
+        "mag-eslint-config": "^1.0.0",
         "stb-component-page": "stbsdk/component-page",
-        "spa-gettext": "1.*.*"
+        "spa-gettext": "^1.0.0"
     },
     "license": "MIT"
 }
