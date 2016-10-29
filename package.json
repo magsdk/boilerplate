@@ -23,7 +23,7 @@
         "eslint": "3.*.*",
         "mag-app": "magsdk/app",
         "mag-eslint-config": "1.*.*",
-        "stb-component-page": "stbsdk/component-page",
+        "stb-component-page": "1.*.*",
         "spa-gettext": "spasdk/gettext"
     },
     "license": "MIT"
