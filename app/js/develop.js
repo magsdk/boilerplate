@@ -50,12 +50,12 @@
 	/**
 	 * Main application entry point.
 	 */
-	
+
 	'use strict';
-	
+
 	var app = __webpack_require__(/*! mag-app */ 1);
-	
-	
+
+
 	// everything is ready
 	app.once('load', function () {
 	    __webpack_require__(/*! spa-gettext */ 34).load({name: core.environment.language}, function () {
@@ -63,7 +63,7 @@
 	        app.pages = {
 	            main: __webpack_require__(/*! ./pages/main */ 35)
 	        };
-	
+
 	        // show main page
 	        app.route(app.pages.main);
 	    });
@@ -81,35 +81,35 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var app    = __webpack_require__(/*! spa-app/lib/core */ 2),
 	    events = __webpack_require__(/*! spa-app/lib/events */ 6),
 	    keys   = __webpack_require__(/*! stb-keys */ 7);
-	
-	
+
+
 	// get instance
 	window.core = window.parent.getCoreInstance(window, app);
-	
+
 	// shims
 	__webpack_require__(/*! stb-shim-classlist */ 9);
-	
+
 	// apply geometry
 	__webpack_require__(/*! stb-app/lib/metrics */ 10);
-	
+
 	// load sdk css
 	__webpack_require__(/*! stb-app/lib/css */ 12)('sdk');
-	
+
 	// load theme css
 	__webpack_require__(/*! ./lib/css */ 13);
-	
+
 	// load app css
 	__webpack_require__(/*! stb-app/lib/css */ 12)('app');
-	
-	
+
+
 	/**
 	 * Show app.
 	 */
@@ -119,8 +119,8 @@
 	    // }
 	    window.core.call('app:ready');
 	};
-	
-	
+
+
 	/**
 	 * Exit from app.
 	 * Destroy all application instance.
@@ -135,7 +135,7 @@
 	        LayoutList    = __webpack_require__(/*! mag-component-layout-list */ 17),
 	        previousFocus = app.activePage.activeComponent,
 	        exitModal;
-	
+
 	    app.activePage.add(exitModal = new ModalMessage({
 	        title: _('Exit'),
 	        events:{
@@ -168,7 +168,7 @@
 	                            if ( app.events['exit'] ) {
 	                                app.emit('exit');
 	                            }
-	
+
 	                            exitModal.hide();
 	                            exitModal.remove();
 	                            core.call('exit');
@@ -205,15 +205,15 @@
 	            })
 	        ]
 	    }));
-	
+
 	    exitModal.show();
 	    exitModal.focus();
 	};
-	
-	
+
+
 	events.load = function ( event ) {
 	    window.core = window.parent.getCoreInstanse(window, app);
-	
+
 	    if ( core.ready ) {
 	        if ( app.events['load'] ) {
 	            // notify listeners
@@ -229,21 +229,21 @@
 	        });
 	    }
 	};
-	
-	
+
+
 	// activate development mechanisms and tools
 	if ( true ) {
 	    //require('stb-develop');
 	    __webpack_require__(/*! ./lib/develop/main */ 20);
 	}
-	
-	
+
+
 	//apply DOM events
 	Object.keys(events).forEach(function ( name ) {
 	    window.addEventListener(name, events[name]);
 	});
-	
-	
+
+
 	// new way of string handling
 	// all strings are in UTF-16
 	// since stbapp 2.18
@@ -251,7 +251,7 @@
 	//     /* eslint new-cap: 0 */
 	//     gSTB.SetNativeStringMode(true);
 	// }
-	
+
 	// public
 	module.exports = app;
 
@@ -267,16 +267,16 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var Emitter = __webpack_require__(/*! cjs-emitter */ 3),
 	    parse   = __webpack_require__(/*! cjs-query */ 4).parse,
 	    app     = new Emitter();
-	
-	
+
+
 	/**
 	 * Make the given inactive/hidden page active/visible.
 	 * Pass some data to the page and trigger the corresponding event.
@@ -293,26 +293,26 @@
 	        page.$node.classList.add('active');
 	        page.active = true;
 	        app.activePage = page;
-	
+
 	        debug.info('show component ' + page.constructor.name + '#' + page.id, null, {
 	            tags: ['show', 'component', page.constructor.name, page.id]
 	        });
 	        //console.log('component ' + page.constructor.name + '.' + page.id + ' show', 'green');
-	
+
 	        // there are some listeners
 	        if ( page.events['show'] ) {
 	            // notify listeners
 	            page.emit('show', {page: page, data: data});
 	        }
-	
+
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return false;
 	}
-	
-	
+
+
 	/**
 	 * Make the given active/visible page inactive/hidden and trigger the corresponding event.
 	 *
@@ -327,39 +327,39 @@
 	        page.$node.classList.remove('active');
 	        page.active  = false;
 	        app.activePage = null;
-	
+
 	        debug.info('hide component ' + page.constructor.name + '#' + page.id, null, {
 	            tags: ['hide', 'component', page.constructor.name, page.id]
 	        });
 	        //console.log('component ' + page.constructor.name + '.' + page.id + ' hide', 'grey');
-	
+
 	        // there are some listeners
 	        if ( page.events['hide'] ) {
 	            // notify listeners
 	            page.emit('hide', {page: page});
 	        }
-	
+
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return false;
 	}
-	
-	
+
+
 	// url request params
 	app.query = parse(document.location.search.substring(1));
-	
-	
+
+
 	// global application configuration
 	// in config.js file in js root
 	app.config = __webpack_require__(/*! app:config */ 5);
-	
-	
+
+
 	// the only visible page
 	app.activePage = null;
-	
-	
+
+
 	/**
 	 * Browse to a given page.
 	 * Do nothing if the link is invalid. Otherwise hide the current, show new and update the "previous" link.
@@ -371,49 +371,49 @@
 	 */
 	app.route = function ( pageTo, data ) {
 	    var pageFrom = app.activePage;
-	
+
 	    if ( true ) {
 	        //if ( router.pages.length > 0 ) {
 	        if ( !pageTo || typeof pageTo !== 'object' ) { throw new Error(__filename + ': wrong pageTo type'); }
 	        if ( !('active' in pageTo) ) { throw new Error(__filename + ': missing field "active" in pageTo'); }
 	        //}
 	    }
-	
+
 	    // valid not already active page
 	    if ( pageTo && !pageTo.active ) {
 	        //debug.log('router.navigate: ' + pageTo.id, pageTo === pageFrom ? 'grey' : 'green');
 	        debug.info('app route: ' + pageTo.id, null, {tags: ['route', 'page', pageTo.id]});
-	
+
 	        // update url
 	        //location.hash = this.stringify(name, data);
-	
+
 	        // apply visibility
 	        hidePage(app.activePage);
 	        showPage(pageTo, data);
-	
+
 	        // there are some listeners
 	        if ( this.events['route'] ) {
 	            // notify listeners
 	            this.emit('route', {from: pageFrom, to: pageTo});
 	        }
-	
+
 	        // store
 	        //this.history.push(pageTo);
-	
+
 	        return true;
 	    }
-	
+
 	    debug.warn('invalid page to route: ' + pageTo.id, null, {tags: ['route', 'page', pageTo.id]});
 	    //console.log('router.navigate: ' + pageTo.id, 'red');
-	
+
 	    // nothing was done
 	    return false;
 	};
-	
-	
+
+
 	// public
 	module.exports = app;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/core.js"))
 
 /***/ },
@@ -427,12 +427,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
-	
+
+
 	/**
 	 * Base Events Emitter implementation.
 	 *
@@ -444,11 +444,11 @@
 	 */
 	function Emitter () {
 	    console.assert(typeof this === 'object', 'must be constructed via new');
-	
+
 	    // if ( DEVELOP ) {
 	    //     if ( typeof this !== 'object' ) { throw new Error(__filename + ': must be constructed via new'); }
 	    // }
-	
+
 	    /**
 	     * Inner hash table for event names and linked callbacks.
 	     * Manual editing should be avoided.
@@ -468,8 +468,8 @@
 	     **/
 	    this.events = {};
 	}
-	
-	
+
+
 	Emitter.prototype = {
 	    /**
 	     * Bind an event to the given callback function.
@@ -488,20 +488,20 @@
 	        console.assert(typeof name === 'string', 'wrong name type');
 	        console.assert(name.length > 0, 'empty name');
 	        console.assert(typeof callback === 'function', 'callback should be a function');
-	
+
 	        // if ( DEVELOP ) {
 	        //     if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
 	        //     if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
 	        //     if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
 	        // }
-	
+
 	        // initialization may be required
 	        this.events[name] = this.events[name] || [];
 	        // append this new event to the list
 	        this.events[name].push(callback);
 	    },
-	
-	
+
+
 	    /**
 	     * Add a one time listener for the event.
 	     * This listener is invoked only the next time the event is fired, after which it is removed.
@@ -515,13 +515,13 @@
 	    once: function ( name, callback ) {
 	        // current execution context
 	        var self = this;
-	
+
 	        if ( true ) {
 	            if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
 	            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
 	            if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
 	        }
-	
+
 	        // initialization may be required
 	        this.events[name] = this.events[name] || [];
 	        // append this new event to the list
@@ -530,8 +530,8 @@
 	            self.removeListener(name, onceWrapper);
 	        });
 	    },
-	
-	
+
+
 	    /**
 	     * Apply multiple listeners at once.
 	     *
@@ -545,21 +545,21 @@
 	     */
 	    addListeners: function ( callbacks ) {
 	        var name;
-	
+
 	        if ( true ) {
 	            if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	            if ( typeof callbacks !== 'object' ) { throw new Error(__filename + ': wrong callbacks type'); }
 	            if ( Object.keys(callbacks).length === 0 ) { throw new Error(__filename + ': no callbacks given'); }
 	        }
-	
+
 	        for ( name in callbacks ) {
 	            if ( callbacks.hasOwnProperty(name) ) {
 	                this.addListener(name, callbacks[name]);
 	            }
 	        }
 	    },
-	
-	
+
+
 	    /**
 	     * Remove all instances of the given callback.
 	     *
@@ -576,7 +576,7 @@
 	            if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
 	            if ( this.events[name] && !Array.isArray(this.events[name]) ) { throw new Error(__filename + ': corrupted inner data'); }
 	        }
-	
+
 	        // the event exists and should have some callbacks
 	        if ( this.events[name] ) {
 	            // rework the callback list to exclude the given one
@@ -588,8 +588,8 @@
 	            }
 	        }
 	    },
-	
-	
+
+
 	    /**
 	     * Remove all callbacks for the given event name.
 	     * Without event name clears all events.
@@ -608,7 +608,7 @@
 	                throw new Error(__filename + ': wrong or empty name');
 	            }
 	        }
-	
+
 	        // check input
 	        if ( arguments.length === 0 ) {
 	            // no arguments so remove everything
@@ -617,14 +617,14 @@
 	            if ( DEVELOP ) {
 	                if ( this.events[name] ) { throw new Error(__filename + ': event is not removed'); }
 	            }
-	
+
 	            // only name is given so remove all callbacks for the given event
 	            // but object structure modification should be avoided
 	            this.events[name] = undefined;
 	        }
 	    },*/
-	
-	
+
+
 	    /**
 	     * Execute each of the listeners in the given order with the supplied arguments.
 	     *
@@ -643,38 +643,38 @@
 	    emit: function ( name ) {
 	        var event = this.events[name],
 	            index;
-	
+
 	        if ( true ) {
 	            if ( arguments.length < 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
 	        }
-	
+
 	        // the event exists and should have some callbacks
 	        if ( event ) {
 	            if ( true ) {
 	                if ( !Array.isArray(event) ) { throw new Error(__filename + ': wrong event type'); }
 	            }
-	
+
 	            for ( index = 0; index < event.length; index++ ) {
 	                if ( true ) {
 	                    if ( typeof event[index] !== 'function' ) { throw new Error(__filename + ': wrong event callback type'); }
 	                }
-	
+
 	                // invoke the callback with parameters
 	                event[index].apply(this, Array.prototype.slice.call(arguments, 1));
 	            }
 	        }
 	    }
 	};
-	
-	
+
+
 	// correct constructor name
 	Emitter.prototype.constructor = Emitter;
-	
-	
+
+
 	// public
 	module.exports = Emitter;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../cjssdk/emitter/index.js"))
 
 /***/ },
@@ -688,9 +688,9 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	module.exports = {
 	    /**
 	     * Parse the given location search string into object.
@@ -701,7 +701,7 @@
 	     */
 	    parse: function ( query ) {
 	        var data = {};
-	
+
 	        // parse and fill the data
 	        query.split('&').forEach(function ( part ) {
 	            part = part.split('=');
@@ -710,11 +710,11 @@
 	                data[part[0]] = decodeURIComponent(part[1]);
 	            }
 	        });
-	
+
 	        return data;
 	    },
-	
-	
+
+
 		/**
 	     * Make uri query part in a string form.
 	     *
@@ -724,11 +724,11 @@
 	     */
 	    stringify: function ( params ) {
 	        var data = [];
-	
+
 	        Object.keys(params).forEach(function ( name ) {
 	            data.push(name + '=' + encodeURIComponent(params[name]));
 	        });
-	
+
 	        return data.join('&');
 	    }
 	};
@@ -746,9 +746,9 @@
 	 * Can store run-time options, API urls, paths, execution flags and so on.
 	 * Automatically loaded on application initialization and available as app.config.
 	 */
-	
+
 	'use strict';
-	
+
 	// public
 	module.exports = {};
 
@@ -764,22 +764,22 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var app = __webpack_require__(/*! ./core */ 2);
-	
-	
+
+
 	// public
 	module.exports = {
 	    DOMContentLoaded: function ( event ) {
 	        //debug.event(event);
 	        //console.log(event);
-	
+
 	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
+
 	        // there are some listeners
 	        if ( app.events['dom'] ) {
 	            // notify listeners
@@ -787,7 +787,7 @@
 	            //console.log('DOMContentLoaded');
 	        }
 	    },
-	
+
 	    /**
 	     * The load event is fired when a resource and its dependent resources have finished loading.
 	     *
@@ -802,36 +802,36 @@
 	     */
 	    load: function ( event ) {
 	        //var path;
-	
+
 	        //debug.event(event);
 	        //console.log(event);
-	
+
 	        // time mark
 	        //app.data.time.load = event.timeStamp;
-	
+
 	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
+
 	        // global handler
 	        // there are some listeners
 	        if ( app.events[event.type] ) {
 	            // notify listeners
 	            app.emit(event.type, event);
 	        }
-	
+
 	        // local handler on each page
 	        /*router.pages.forEach(function forEachPages ( page ) {
 	         debug.log('component ' + page.constructor.name + '.' + page.id + ' load', 'green');
-	
+
 	         // there are some listeners
 	         if ( page.events[event.type] ) {
 	         // notify listeners
 	         page.emit(event.type, event);
 	         }
 	         });*/
-	
+
 	        // time mark
 	        //app.data.time.done = +new Date();
-	
+
 	        // everything is ready
 	        // and there are some listeners
 	        // if ( app.events['done'] ) {
@@ -839,7 +839,7 @@
 	        //     app.emit('done', event);
 	        // }
 	    },
-	
+
 	    /**
 	     * The unload event is fired when the document or a child resource is being unloaded.
 	     *
@@ -854,20 +854,20 @@
 	    unload: function ( event ) {
 	        //debug.event(event);
 	        console.log(event);
-	
+
 	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
+
 	        // global handler
 	        // there are some listeners
 	        if ( app.events[event.type] ) {
 	            // notify listeners
 	            app.emit(event.type, event);
 	        }
-	
+
 	        // local handler on each page
 	        /*router.pages.forEach(function forEachPages ( page ) {
 	         debug.log('component ' + page.constructor.name + '.' + page.id + ' unload', 'red');
-	
+
 	         // there are some listeners
 	         if ( page.events[event.type] ) {
 	         // notify listeners
@@ -875,7 +875,7 @@
 	         }
 	         });*/
 	    },
-	
+
 	    /**
 	     * The error event is fired when a resource failed to load.
 	     *
@@ -888,7 +888,7 @@
 	        //console.log(event);
 	        debug.fail('app event: ' + event.message, event, {tags: [event.type, 'event']});
 	    },
-	
+
 	    /**
 	     * The keydown event is fired when a key is pressed down.
 	     * Set event.stop to true in order to prevent bubbling.
@@ -909,29 +909,29 @@
 	                stop: false
 	            },
 	            activeComponent;
-	
+
 	        if ( true ) {
 	            if ( !page ) { throw new Error(__filename + ': app should have at least one page'); }
 	        }
-	
+
 	        // filter phantoms
 	        //if ( event.keyCode === 0 ) { return; }
-	
+
 	        // combined key code
 	        //event.code = event.keyCode;
-	
+
 	        // apply key modifiers
 	        if ( event.ctrlKey )  { eventLocal.code += 'c'; }
 	        if ( event.altKey )   { eventLocal.code += 'a'; }
 	        if ( event.shiftKey ) { eventLocal.code += 's'; }
-	
+
 	        //debug.event(event);
 	        //console.log(event);
 	        //debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
+
 	        // page.activeComponent can be set to null in event handles
 	        activeComponent = page.activeComponent;
-	
+
 	        // current component handler
 	        if ( activeComponent && activeComponent !== page ) {
 	            // component is available and not page itself
@@ -939,7 +939,7 @@
 	                // there are some listeners
 	                activeComponent.emit(event.type, eventLocal, event);
 	            }
-	
+
 	            // todo: bubble event recursively
 	            // bubbling
 	            if (
@@ -951,7 +951,7 @@
 	                activeComponent.parent.emit(event.type, eventLocal, event);
 	            }
 	        }
-	
+
 	        // page handler
 	        if ( !eventLocal.stop ) {
 	            // not prevented
@@ -959,7 +959,7 @@
 	                // there are some listeners
 	                page.emit(event.type, eventLocal, event);
 	            }
-	
+
 	            // global app handler
 	            if ( !event.stop ) {
 	                // not prevented
@@ -969,13 +969,13 @@
 	                }
 	            }
 	        }
-	
+
 	        //// suppress non-printable keys in stb device (not in your browser)
 	        //if ( app.data.host && keyCodes[event.code] ) {
 	        //    event.preventDefault();
 	        //}
 	    },
-	
+
 	    /**
 	     * The keypress event is fired when press a printable character.
 	     * Delivers the event only to activeComponent at active page.
@@ -987,14 +987,14 @@
 	     */
 	    keypress: function ( event ) {
 	        var page = app.activePage;
-	
+
 	        if ( true ) {
 	            if ( page === null || page === undefined ) { throw new Error(__filename + ': app should have at least one page'); }
 	        }
-	
+
 	        //debug.event(event);
 	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
+
 	        // current component handler
 	        if ( page.activeComponent && page.activeComponent !== page ) {
 	            // component is available and not page itself
@@ -1004,7 +1004,7 @@
 	            }
 	        }
 	    },
-	
+
 	    /**
 	     * The click event is fired when a pointing device button (usually a mouse button) is pressed and released on a single element.
 	     *
@@ -1017,7 +1017,7 @@
 	     //console.log(event);
 	     debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
 	     },*/
-	
+
 	    /**
 	     * The contextmenu event is fired when the right button of the mouse is clicked (before the context menu is displayed),
 	     * or when the context menu key is pressed (in which case the context menu is displayed at the bottom left of the focused
@@ -1029,28 +1029,28 @@
 	     */
 	    /*contextmenu: function ( event ) {
 	     //var kbEvent = {}; //Object.create(document.createEvent('KeyboardEvent'));
-	
+
 	     //debug.event(event);
 	     //console.log(event);
 	     debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
+
 	     //kbEvent.type    = 'keydown';
 	     //kbEvent.keyCode = 8;
-	
+
 	     //debug.log(kbEvent.type);
-	
+
 	     //globalEventListenerKeydown(kbEvent);
 	     //var event = document.createEvent('KeyboardEvent');
 	     //event.initEvent('keydown', true, true);
-	
+
 	     //document.dispatchEvent(kbEvent);
-	
+
 	     if ( !DEVELOP ) {
 	     // disable right click in release mode
 	     event.preventDefault();
 	     }
 	     },*/
-	
+
 	    /**
 	     * The wheel event is fired when a wheel button of a pointing device (usually a mouse) is rotated.
 	     *
@@ -1060,15 +1060,15 @@
 	     */
 	    mousewheel: function ( event ) {
 	        var page = app.activePage;
-	
+
 	        if ( true ) {
 	            if ( page === null || page === undefined ) { throw new Error(__filename + ': app should have at least one page'); }
 	        }
-	
+
 	        //debug.event(event);
 	        //console.log(event);
 	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
+
 	        // current component handler
 	        if ( page.activeComponent && page.activeComponent !== page ) {
 	            // component is available and not page itself
@@ -1077,7 +1077,7 @@
 	                page.activeComponent.emit(event.type, event);
 	            }
 	        }
-	
+
 	        // page handler
 	        if ( !event.stop ) {
 	            // not prevented
@@ -1088,7 +1088,7 @@
 	        }
 	    }
 	};
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/events.js"))
 
 /***/ },
@@ -1110,12 +1110,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	var keys = __webpack_require__(/*! spa-keys */ 8);
-	
-	
+
+
 	// extend with additional codes
 	keys.back         = keys.backspace;
 	keys.channelNext  = keys.tab;        // Tab
@@ -1148,11 +1148,11 @@
 	keys.record       = 87  + 'a';       // Alt+W
 	keys.info         = 89  + 'a';       // Alt+Y
 	keys.mute         = 192 + 'a';
-	
-	
+
+
 	// public
 	module.exports = keys;
-	
+
 	// public
 	// module.exports = {
 	//     getCode: function ( event ) {
@@ -1223,11 +1223,11 @@
 	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 * @license GNU GENERAL PUBLIC LICENSE Version 3
 	 */
-	
+
 	'use strict';
-	
+
 	/* eslint quote-props: 0 */
-	
+
 	// public
 	module.exports = {
 	    backspace: 8,
@@ -1258,12 +1258,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint-disable */
-	
+
 	'use strict';
-	
-	
+
+
 	if ( !document.documentElement.classList ) {
 	    var prototype = Array.prototype,
 	        indexOf   = prototype.indexOf,
@@ -1271,7 +1271,7 @@
 	        push      = prototype.push,
 	        splice    = prototype.splice,
 	        join      = prototype.join;
-	
+
 	    window.DOMTokenList = function ( el ) {
 	        this._element = el;
 	        if (el.className !== this._classCache) {
@@ -1284,22 +1284,22 @@
 	            }
 	        }
 	    };
-	
+
 	    window.DOMTokenList.prototype = {
 	        add: function ( token ) {
 	            if(this.contains(token)) { return; }
 	            push.call(this, token);
 	            this._element.className = slice.call(this, 0).join(' ');
 	        },
-	
+
 	        contains: function ( token ) {
 	            return indexOf.call(this, token) !== -1;
 	        },
-	
+
 	        item: function ( index ) {
 	            return this[index] || null;
 	        },
-	
+
 	        remove: function ( token ) {
 	            var i = indexOf.call(this, token);
 	            if (i === -1) {
@@ -1308,11 +1308,11 @@
 	            splice.call(this, i, 1);
 	            this._element.className = slice.call(this, 0).join(' ');
 	        },
-	
+
 	        toString: function () {
 	            return join.call(this, ' ');
 	        },
-	
+
 	        toggle: function ( token ) {
 	            if (!this.contains(token)) {
 	                this.add(token);
@@ -1322,7 +1322,7 @@
 	            return this.contains(token);
 	        }
 	    };
-	
+
 	    Object.defineProperty(Element.prototype, 'classList', {
 	        get: function () {
 	            return new window.DOMTokenList(this);
@@ -1342,23 +1342,23 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
 	    metrics = __webpack_require__(/*! app:metrics */ 11);
-	
-	
+
+
 	// global link
 	app.metrics = metrics[app.query.screenHeight] || metrics[screen.height] || metrics[720];
-	
+
 	// calculate and extend
 	app.metrics.availHeight = app.metrics.height - (app.metrics.availTop  + app.metrics.availBottom);
 	app.metrics.availWidth  = app.metrics.width  - (app.metrics.availLeft + app.metrics.availRight);
-	
-	
+
+
 	// public
 	//module.exports = app;
 
@@ -1374,9 +1374,9 @@
 	 * Application geometry options.
 	 * Automatically loaded on application initialization and available as app.metrics.
 	 */
-	
+
 	'use strict';
-	
+
 	// public
 	module.exports = {
 	    480: {
@@ -1391,7 +1391,7 @@
 	        // project-specific vars
 	        // put here ...
 	    },
-	
+
 	    576: {
 	        // screen base dimension
 	        height: 576,
@@ -1404,7 +1404,7 @@
 	        // project-specific vars
 	        // put here ...
 	    },
-	
+
 	    720: {
 	        // screen base dimension
 	        height: 720,
@@ -1417,7 +1417,7 @@
 	        // project-specific vars
 	        // put here ...
 	    },
-	
+
 	    1080: {
 	        // screen base dimension
 	        height: 1080,
@@ -1444,38 +1444,38 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var app = __webpack_require__(/*! spa-app/lib/core */ 2);
 	    //metrics = require('app:metrics'),
 	    //linkCSS;
-	
-	
+
+
 	// global link
 	//app.metrics = metrics[app.query.screenHeight] || metrics[screen.height] || metrics[720];
-	
+
 	// calculate and extend
 	//app.metrics.availHeight = app.metrics.height - (app.metrics.availTop  + app.metrics.availBottom);
 	//app.metrics.availWidth  = app.metrics.width  - (app.metrics.availLeft + app.metrics.availRight);
-	
+
 	// // set max browser window size
 	// window.moveTo(0, 0);
 	// window.resizeTo(metrics.width, metrics.height);
-	
+
 	// load CSS file base on resolution
 	/*linkCSS = document.createElement('link');
 	linkCSS.rel  = 'stylesheet';
 	linkCSS.href = 'css/' + (DEVELOP ? 'develop.' : 'release.') + app.metrics.height + '.css' + (DEVELOP ? '?' + Date.now() : '');
 	document.head.appendChild(linkCSS);*/
-	
-	
+
+
 	// public
 	module.exports = function ( name ) {
 	    var link = document.createElement('link');
-	
+
 	    link.rel  = 'stylesheet';
 	    link.href = 'css/' + ( true ? 'develop.' : 'release.') + name + '.' + app.metrics.height + '.css' + ( true ? '?' + Date.now() : '');
 	    document.head.appendChild(link);
@@ -1493,33 +1493,33 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var app = __webpack_require__(/*! spa-app/lib/core */ 2),
 	    //metrics = require('app:metrics'),
 	    //head = document.head,
 	    linkCSS;
-	
-	
+
+
 	//window.core = window.parent.getCoreInstance(window, app);
-	
+
 	// linkCSS = document.createElement('link');
 	// linkCSS.rel  = 'stylesheet';
 	// linkCSS.href = window.core.theme.path + app.metrics.height + '.css?' + (DEVELOP ? '?' + Date.now() : '');
 	//
 	// // if custom link element is absent behaves as appendChild()
 	// head.insertBefore(linkCSS, head.lastElementChild);
-	
-	
+
+
 	linkCSS = document.createElement('link');
 	linkCSS.rel  = 'stylesheet';
 	linkCSS.href = window.core.theme.path + app.metrics.height + '.css' + ( true ? '?' + Date.now() : '');
 	document.head.appendChild(linkCSS);
-	
-	
+
+
 	// public
 	module.exports = linkCSS;
 
@@ -1535,15 +1535,15 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	// TODO: switch to stb-component-modal
 	var Component = __webpack_require__(/*! stb-component */ 15);
-	
-	
+
+
 	/**
 	 * Modal window implementation.
 	 *
@@ -1559,19 +1559,29 @@
 	 */
 	function Modal ( config ) {
 	    var $overlay;
-	
+
 	    // sanitize
 	    config = config || {};
-	
+
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-	        // init parameters checks
-	        if ( config.icon && typeof config.icon !== 'string' ) { throw new Error(__filename + ': wrong or empty config.icon'); }
-	        if ( config.title && typeof config.title !== 'string' ) { throw new Error(__filename + ': wrong or empty config.title'); }
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	        if ( config.$body ) { throw new Error(__filename + ': config.$body should not be provided in Modal manually'); }
+            if ( typeof config !== 'object' ) {
+                throw new Error(__filename + ': wrong config type');
+            }
+            // init parameters checks
+            if ( config.icon && typeof config.icon !== 'string' ) {
+                throw new Error(__filename + ': wrong or empty config.icon');
+            }
+            if ( config.title && typeof config.title !== 'string' ) {
+                throw new Error(__filename + ': wrong or empty config.title');
+            }
+            if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+                throw new Error(__filename + ': wrong or empty config.className');
+            }
+            if ( config.$body ) {
+                throw new Error(__filename + ': config.$body should not be provided in Modal manually');
+            }
 	    }
-	
+
 	    // usually can't accept focus
 	    config.focusable = config.focusable || false;
 	    // set default className if classList property empty or undefined
@@ -1581,49 +1591,49 @@
 	    // create centered div
 	    config.$body = document.createElement('div');
 	    config.$body.className = 'body';
-	
+
 	    // parent constructor call
 	    Component.call(this, config);
-	
+
 	    // add table-cell wrappers
 	    this.$node.appendChild(document.createElement('div'));
 	    this.$node.firstChild.classList.add('alignBox');
 	    this.$node.firstChild.appendChild(document.createElement('div'));
-	
+
 	    // add header div
 	    this.$header = document.createElement('div');
 	    this.$header.className = 'header';
-	
+
 	    // insert caption placeholder
 	    this.$text = this.$header.appendChild(document.createElement('div'));
 	    this.$text.classList.add('text');
 	    this.$text.innerText = config.title || '';
-	
+
 	    // optional icon
 	    if ( config.icon ) {
 	        // insert icon
 	        this.$icon = this.$header.appendChild(document.createElement('div'));
 	        this.$icon.className = 'icon ' + config.icon;
 	    }
-	
+
 	    $overlay = document.createElement('div');
 	    $overlay.className = 'overlay';
-	
+
 	    // add to dom
 	    this.$node.firstChild.firstChild.appendChild(this.$header);
 	    this.$node.firstChild.firstChild.appendChild(this.$body);
 	    this.$node.firstChild.firstChild.appendChild($overlay);
 	}
-	
-	
+
+
 	// inheritance
 	Modal.prototype = Object.create(Component.prototype);
 	Modal.prototype.constructor = Modal;
-	
+
 	// set component name
 	Modal.prototype.name = 'mag-component-modal';
-	
-	
+
+
 	/**
 	 * Redefine default component focus to set additional css
 	 */
@@ -1634,8 +1644,8 @@
 	        this.children[0].focus();
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Blur message
 	 */
@@ -1643,11 +1653,11 @@
 	    this.$node.classList.remove('active');
 	    Component.prototype.blur.call(this);
 	};
-	
-	
+
+
 	// public
 	module.exports = Modal;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../component-modal/index.js"))
 
 /***/ },
@@ -1661,9 +1671,9 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	// public
 	module.exports = __webpack_require__(/*! spa-component */ 16);
 
@@ -1679,16 +1689,16 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
 	    Emitter = __webpack_require__(/*! cjs-emitter */ 3),
 	    counter = 0;
-	
-	
+
+
 	/**
 	 * Base component implementation.
 	 *
@@ -1729,23 +1739,37 @@
 	    // current execution context
 	    var self = this,
 	        name;
-	
+
 	    // sanitize
 	    config = config || {};
-	
+
 	    console.assert(typeof this === 'object', 'must be constructed via new');
-	
+
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-	        // init parameters checks
-	        if ( config.id        && typeof config.id !== 'string'         ) { throw new Error(__filename + ': wrong or empty config.id'); }
-	        if ( config.className && typeof config.className !== 'string'  ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	        if ( config.$node     && !(config.$node instanceof Element)    ) { throw new Error(__filename + ': wrong config.$node type'); }
-	        if ( config.$body     && !(config.$body instanceof Element)    ) { throw new Error(__filename + ': wrong config.$body type'); }
-	        if ( config.parent    && !(config.parent instanceof Component) ) { throw new Error(__filename + ': wrong config.parent type'); }
-	        if ( config.children  && !Array.isArray(config.children)       ) { throw new Error(__filename + ': wrong config.children type'); }
+            if ( typeof config !== 'object' ) {
+                throw new Error(__filename + ': wrong config type');
+            }
+            // init parameters checks
+            if ( config.id && typeof config.id !== 'string' ) {
+                throw new Error(__filename + ': wrong or empty config.id');
+            }
+            if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+                throw new Error(__filename + ': wrong or empty config.className');
+            }
+            if ( config.$node && !(config.$node instanceof Element) ) {
+                throw new Error(__filename + ': wrong config.$node type');
+            }
+            if ( config.$body && !(config.$body instanceof Element) ) {
+                throw new Error(__filename + ': wrong config.$body type');
+            }
+            if ( config.parent && !(config.parent instanceof Component) ) {
+                throw new Error(__filename + ': wrong config.parent type');
+            }
+            if ( config.children && !Array.isArray(config.children) ) {
+                throw new Error(__filename + ': wrong config.children type');
+            }
 	    }
-	
+
 	    /**
 	     * Component visibility state flag.
 	     *
@@ -1753,21 +1777,21 @@
 	     * @type {boolean}
 	     */
 	    this.visible = true;
-	
+
 	    /**
 	     * Component can accept focus or not.
 	     *
 	     * @type {boolean}
 	     */
 	    this.focusable = true;
-	
+
 	    /**
 	     * DOM outer handle.
 	     *
 	     * @type {Element}
 	     */
 	    this.$node = null;
-	
+
 	    /**
 	     * DOM inner handle.
 	     * In simple cases is the same as $node.
@@ -1775,21 +1799,21 @@
 	     * @type {Element}
 	     */
 	    this.$body = null;
-	
+
 	    /**
 	     * Link to the parent component which has this component as a child.
 	     *
 	     * @type {Component}
 	     */
 	    this.parent = null;
-	
+
 	    /**
 	     * List of all children components.
 	     *
 	     * @type {Component[]}
 	     */
 	    this.children = [];
-	
+
 	    /**
 	     * allow to emit events to the parent component
 	     *
@@ -1797,77 +1821,77 @@
 	     * @type {boolean}
 	     */
 	    this.propagate = !!config.propagate;
-	
+
 	    // parent constructor call
 	    Emitter.call(this, config.data);
-	
+
 	    // outer handle - empty div in case nothing is given
 	    this.$node = config.$node || document.createElement('div');
-	
+
 	    // inner handle - the same as outer handler in case nothing is given
 	    this.$body = config.$body || this.$node;
-	
+
 	    // set CSS class names
 	    //this.$node.className += ' component ' + (config.className || '');
 	    this.$node.className = this.name + ' ' + (config.className || '');
-	
+
 	    // apply component id if given, generate otherwise
 	    this.id = config.id || this.$node.id || 'cid' + counter++;
-	
+
 	    // apply hierarchy
 	    if ( config.parent ) {
 	        // add to parent component
 	        config.parent.add(this);
 	    }
-	
+
 	    // apply given visibility
 	    if ( config.visible === false ) {
 	        // default state is visible
 	        this.hide();
 	    }
-	
+
 	    // apply focus handling method
 	    if ( config.focusable === false ) {
 	        // can't accept focus
 	        this.focusable = false;
 	    }
-	
+
 	    // a descendant defined own events
 	    if ( this.defaultEvents ) {
 	        // sanitize
 	        config.events = config.events || {};
-	
+
 	        if ( true ) {
 	            if ( typeof config.events !== 'object' ) { throw new Error(__filename + ': wrong config.events type'); }
 	            if ( typeof this.defaultEvents !== 'object' ) { throw new Error(__filename + ': wrong this.defaultEvents type'); }
 	        }
-	
+
 	        for ( name in this.defaultEvents ) {
 	            // overwrite default events with user-defined
 	            config.events[name] = config.events[name] || this.defaultEvents[name];
 	        }
 	    }
-	
+
 	    if ( config.events ) {
 	        // apply all given events
 	        Object.keys(config.events).forEach(function ( name ) {
 	            self.addListener(name, config.events[name]);
 	        });
 	    }
-	
+
 	    // apply the given children components
 	    if ( config.children ) {
 	        // apply
 	        this.add.apply(this, config.children);
 	    }
-	
+
 	    // component activation by mouse
 	    this.$node.addEventListener('click', function ( event ) {
 	        // left mouse button
 	        //if ( event.button === 0 ) {
 	        // activate if possible
 	        self.focus();
-	
+
 	        // there are some listeners
 	        if ( self.events['click'] ) {
 	            /**
@@ -1881,7 +1905,7 @@
 	            self.emit('click', event);
 	        }
 	        //}
-	
+
 	        if ( true ) {
 	            // middle mouse button
 	            if ( event.button === 1 ) {
@@ -1891,39 +1915,39 @@
 	                self.$node.classList.toggle('wired');
 	            }
 	        }
-	
+
 	        event.stopPropagation();
 	    });
-	
+
 	    if ( true ) {
 	        // expose inner ID to global scope
 	        window[self.id] = self.$node;
-	
+
 	        // expose a link
 	        this.$node.component = this.$body.component = this;
 	        this.$node.title = 'component ' + this.constructor.name + '#' + this.id + ' (outer)';
 	        this.$body.title = 'component ' + this.constructor.name + '#' + this.id + ' (inner)';
 	    }
-	
+
 	    debug.info('create component ' + this.constructor.name + '#' + this.id, null, {
 	        tags: ['create', 'component', this.constructor.name, this.id]
 	    });
 	}
-	
-	
+
+
 	// inheritance
 	Component.prototype = Object.create(Emitter.prototype);
 	Component.prototype.constructor = Component;
-	
-	
+
+
 	/**
 	 * List of all default event callbacks.
 	 *
 	 * @type {Object.<string, function>}
 	 */
 	Component.prototype.defaultEvents = null;
-	
-	
+
+
 	/**
 	 * Add a new component as a child.
 	 *
@@ -1939,28 +1963,28 @@
 	 */
 	Component.prototype.add = function ( child ) {
 	    var index;
-	
+
 	    // walk through all the given elements
 	    for ( index = 0; index < arguments.length; index++ ) {
 	        child = arguments[index];
-	
+
 	        if ( true ) {
 	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
 	        }
-	
+
 	        // apply
 	        this.children.push(child);
 	        child.parent = this;
-	
+
 	        // correct DOM parent/child connection if necessary
 	        if ( child.$node && child.$node.parentNode === null ) {
 	            this.$body.appendChild(child.$node);
 	        }
-	
+
 	        debug.info('add component ' + child.constructor.name + '#' + child.id + ' to ' + this.constructor.name + '#' + this.id, null, {
 	            tags: ['add', 'component', this.constructor.name, this.id, child.constructor.name, child.id]
 	        });
-	
+
 	        // there are some listeners
 	        if ( this.events['add'] ) {
 	            /**
@@ -1973,12 +1997,12 @@
 	             */
 	            this.emit('add', {item: child});
 	        }
-	
+
 	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' new child: ' + child.constructor.name + '#' + child.id);
 	    }
 	};
-	
-	
+
+
 	/* @todo: consider activation in future */
 	///**
 	// * Insert component into the specific position.
@@ -2010,8 +2034,8 @@
 	//        child.parent = this;
 	//    }
 	//};
-	
-	
+
+
 	/**
 	 * Delete this component and clear all associated events.
 	 *
@@ -2023,7 +2047,7 @@
 	        if ( true ) {
 	            if ( !(this.parent instanceof Component) ) { throw new Error(__filename + ': wrong this.parent type'); }
 	        }
-	
+
 	        // active at the moment
 	        if ( app.activePage.activeComponent === this ) {
 	            this.blur();
@@ -2031,21 +2055,21 @@
 	        }
 	        this.parent.children.splice(this.parent.children.indexOf(this), 1);
 	    }
-	
+
 	    // remove all children
 	    this.children.forEach(function ( child ) {
 	        if ( true ) {
 	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
 	        }
-	
+
 	        child.remove();
 	    });
-	
+
 	    // remove all listeners
 	    this.events = {};
-	
+
 	    this.$node.parentNode.removeChild(this.$node);
-	
+
 	    // there are some listeners
 	    if ( this.events['remove'] ) {
 	        /**
@@ -2055,14 +2079,14 @@
 	         */
 	        this.emit('remove');
 	    }
-	
+
 	    //debug.log('component ' + this.constructor.name + '#' + this.id + ' remove', 'red');
 	    debug.info('remove component ' + this.constructor.name + '#' + this.id, null, {
 	        tags: ['remove', 'component', this.constructor.name, this.id]
 	    });
 	};
-	
-	
+
+
 	/**
 	 * Activate the component.
 	 * Notify the owner-page and apply CSS class.
@@ -2076,24 +2100,24 @@
 	Component.prototype.focus = function ( data ) {
 	    var activePage = app.activePage,
 	        activeItem = activePage.activeComponent;
-	
+
 	    // this is a visual component on a page
 	    // not already focused and can accept focus
 	    if ( this.focusable && this !== activeItem ) {
 	        // notify the current active component
 	        if ( activeItem ) { activeItem.blur(); }
-	
+
 	        /* eslint consistent-this: 0 */
-	
+
 	        // apply
 	        activePage.activeComponent = activeItem = this;
 	        activeItem.$node.classList.add('focus');
-	
+
 	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' focus');
 	        debug.info('focus component ' + this.constructor.name + '#' + this.id, null, {
 	            tags: ['focus', 'component', this.constructor.name, this.id]
 	        });
-	
+
 	        // there are some listeners
 	        if ( activeItem.events['focus'] ) {
 	            /**
@@ -2103,15 +2127,15 @@
 	             */
 	            activeItem.emit('focus', data);
 	        }
-	
+
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return false;
 	};
-	
-	
+
+
 	/**
 	 * Remove focus.
 	 * Change page.activeComponent and notify subscribers.
@@ -2123,19 +2147,19 @@
 	Component.prototype.blur = function () {
 	    var activePage = app.activePage,
 	        activeItem = activePage.activeComponent;
-	
+
 	    // apply visuals anyway
 	    this.$node.classList.remove('focus');
-	
+
 	    // this is the active component
 	    if ( this === activeItem ) {
 	        activePage.activeComponent = null;
-	
+
 	        //debug.log('component ' + this.constructor.name + '#' + this.id + ' blur', 'grey');
 	        debug.info('blur component ' + this.constructor.name + '#' + this.id, null, {
 	            tags: ['blur', 'component', this.constructor.name, this.id]
 	        });
-	
+
 	        // there are some listeners
 	        if ( this.events['blur'] ) {
 	            /**
@@ -2145,19 +2169,19 @@
 	             */
 	            this.emit('blur');
 	        }
-	
+
 	        return true;
 	    }
-	
+
 	    debug.warn('component ' + this.constructor.name + '#' + this.id + ' attempt to blur without link to a page', null, {
 	        tags: ['blur', 'component', this.constructor.name, this.id]
 	    });
-	
+
 	    // nothing was done
 	    return false;
 	};
-	
-	
+
+
 	/**
 	 * Make the component visible and notify subscribers.
 	 *
@@ -2174,11 +2198,11 @@
 	        this.$node.classList.remove('hidden');
 	        // flag
 	        this.visible = true;
-	
+
 	        debug.info('show component ' + this.constructor.name + '#' + this.id, null, {
 	            tags: ['show', 'component', this.constructor.name, this.id]
 	        });
-	
+
 	        // there are some listeners
 	        if ( this.events['show'] ) {
 	            /**
@@ -2188,15 +2212,15 @@
 	             */
 	            this.emit('show', data);
 	        }
-	
+
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return true;
 	};
-	
-	
+
+
 	/**
 	 * Make the component hidden and notify subscribers.
 	 *
@@ -2211,11 +2235,11 @@
 	        this.$node.classList.add('hidden');
 	        // flag
 	        this.visible = false;
-	
+
 	        debug.info('hide component ' + this.constructor.name + '#' + this.id, null, {
 	            tags: ['hide', 'component', this.constructor.name, this.id]
 	        });
-	
+
 	        // there are some listeners
 	        if ( this.events['hide'] ) {
 	            /**
@@ -2225,18 +2249,18 @@
 	             */
 	            this.emit('hide');
 	        }
-	
+
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return true;
 	};
-	
-	
+
+
 	// public
 	module.exports = Component;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/component/index.js"))
 
 /***/ },
@@ -2250,14 +2274,14 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var List = __webpack_require__(/*! mag-component-list */ 18),
 	    Layout = __webpack_require__(/*! mag-component-layout */ 19);
-	
+
 	/**
 	 *  Layout list contains array of layout components
 	 *
@@ -2322,52 +2346,52 @@
 	 */
 	function LayoutList ( config ) {
 	    var self = this;
-	
+
 	    config = config || {};
-	
+
 	    /**
 	     * Elements handlers
 	     */
 	    this.handlers = {};
-	
+
 	    /**
 	     * No data placeholder
 	     *
 	     * @type {Element}
 	     */
 	    this.$noData = null;
-	
+
 	    //config.className = 'layoutList ' + (config.className || '');
-	
+
 	    config.propagate = config.propagate || true;
-	
+
 	    /**
 	     * Set data layout to be fixed to cache HTML elements
 	     *
 	     * @type {boolean|*}
 	     */
 	    this.fixedData = config.fixedData || false;
-	
+
 	    //config.$body = document.createElement('div');
-	
+
 	    config.$body = document.createElement('div');
 	    config.$body.className = 'body';
-	
+
 	    this.$noData = document.createElement('div');
 	    this.$noData.className = 'noData hidden';
-	
+
 	    List.call(this, config);
-	
+
 	    this.$node.appendChild(this.$body);
 	    this.$node.appendChild(this.$noData);
-	
+
 	    // add handler to focus inner layout
 	    this.addListener('click:item', function ( event ) {
 	        // focus inner layout of item
 	        if ( event.$item.layout.children.length && !event.inner ) {
 	            event.$item.layout.children[event.$item.layout.focusIndex].focus();
 	        }
-	
+
 	        // only focus item if we click mouse
 	        if ( event.inner ) {
 	            self.focus();
@@ -2379,15 +2403,15 @@
 	        }
 	    });
 	}
-	
-	
+
+
 	LayoutList.prototype = Object.create(List.prototype);
 	LayoutList.prototype.constructor = LayoutList;
-	
+
 	// set component name
 	LayoutList.prototype.name = 'mag-component-layout-list';
-	
-	
+
+
 	/*eslint id-length:0*/
 	/**
 	 * Default render function
@@ -2397,7 +2421,7 @@
 	 */
 	LayoutList.prototype.renderItemDefault = function ( $item, config ) {
 	    var layout, i;
-	
+
 	    if ( $item.ready && this.fixedData && !$item.innerHTML.length ) {
 	        for ( i = 0; i < config.items.length; i++ ) {
 	            if ( typeof config.items[i].value === 'string' ) {
@@ -2410,23 +2434,23 @@
 	        while ( $item.firstChild ) {
 	            $item.removeChild($item.firstChild);
 	        }
-	
+
 	        layout = new Layout({
 	            focusable: false,
 	            data: config.items
 	        });
-	
+
 	        $item.appendChild(layout.$node);
 	        $item.layout = layout;
 	        layout.parent = this;
 	        layout.$parentItem = $item;
-	
+
 	        // focus layoutList if click on layout
 	        layout.addListener('click', function () {
 	            // add inner property to set that event comes from inner component
 	            this.parent.emit('click:item', {$item: $item, inner: true});
 	        });
-	
+
 	        if ( config.click ) {
 	            this.handlers[$item.index] = config.click;
 	        }
@@ -2434,10 +2458,10 @@
 	        $item.ready = true;
 	    }
 	    $item.value = config.value || {};
-	
+
 	};
-	
-	
+
+
 	// LayoutList.prototype.setData = function ( config ) {
 	//     List.prototype.setData.call(this, config);
 	//
@@ -2447,11 +2471,11 @@
 	//         this.$noData.classList.remove('hidden');
 	//     }
 	// };
-	
-	
+
+
 	LayoutList.prototype.init = function ( config ) {
 	    var $wrap;
-	
+
 	    List.prototype.init.call(this, config);
 	    if ( config.noData ) {
 	        if ( true ) {
@@ -2468,19 +2492,19 @@
 	            this.$noData.appendChild($wrap);
 	        }
 	    }
-	
+
 	    if ( config.data && config.data.length ) {
 	       this.$noData.classList.add('hidden');
 	    } else {
 	       this.$noData.classList.remove('hidden');
 	    }
 	};
-	
+
 	LayoutList.prototype.renderItem = LayoutList.prototype.renderItemDefault;
-	
-	
+
+
 	module.exports = LayoutList;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../component-layout-list/index.js"))
 
 /***/ },
@@ -2494,15 +2518,15 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var Component = __webpack_require__(/*! stb-component */ 15),
 	    keys      = __webpack_require__(/*! stb-keys */ 7);
-	
-	
+
+
 	/**
 	 * Mouse click event.
 	 *
@@ -2512,8 +2536,8 @@
 	 * @property {Element} $item clicked HTML item
 	 * @property {Event} event click event data
 	 */
-	
-	
+
+
 	/**
 	 * Base list implementation.
 	 *
@@ -2543,95 +2567,101 @@
 	function List ( config ) {
 	    // current execution context
 	    //var self = this;
-	
+
 	    // sanitize
 	    config = config || {};
-	
+
 	    console.assert(typeof this === 'object', 'must be constructed via new');
-	
+
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-	        // init parameters checks
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	        if ( config.type      && Number(config.type) !== config.type  ) { throw new Error(__filename + ': config.type must be a number'); }
-	    }
-	
+            if ( typeof config !== 'object' ) {
+                throw new Error(__filename + ': wrong config type');
+            }
+            // init parameters checks
+            if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+                throw new Error(__filename + ': wrong or empty config.className');
+            }
+            if ( config.type && Number(config.type) !== config.type ) {
+                throw new Error(__filename + ': config.type must be a number');
+            }
+        }
+
 	    /**
 	     * Link to the currently focused DOM element.
 	     *
 	     * @type {Element}
 	     */
 	    this.$focusItem = null;
-	
+
 	    /**
 	     * Position of the visible window to render.
 	     *
 	     * @type {number}
 	     */
 	    this.viewIndex = null;
-	
+
 	    /**
 	     * Component data to visualize.
 	     *
 	     * @type {Array}
 	     */
 	    this.data = [];
-	
+
 	    /**
 	     * Component orientation.
 	     *
 	     * @type {number}
 	     */
 	    this.type = this.TYPE_VERTICAL;
-	
+
 	    /**
 	     * Amount of visible items on a page.
 	     *
 	     * @type {number}
 	     */
 	    this.size = 5;
-	
+
 	    /**
 	     * Allow or not to jump to the opposite side of a list when there is nowhere to go next.
 	     *
 	     * @type {boolean}
 	     */
 	    this.cycle = false;
-	
+
 	    /**
 	     * Associated ScrollBar component link.
 	     *
 	     * @type {ScrollBar}
 	     */
 	    this.scroll = null;
-	
+
 	    // horizontal or vertical
 	    if ( config.type ) {
 	        // apply
 	        this.type = config.type;
 	    }
-	
+
 	    /**
 	     * Associated data provider
 	     *
 	     * @type {Provider}
 	     */
 	    this.provider = null;
-	
-	
+
+
 	    // set default className if classList property empty or undefined
 	    //config.className = 'list ' + (config.className || '');
-	
+
 	    if ( this.type === this.TYPE_HORIZONTAL ) {
 	        config.className += ' horizontal';
 	    }
-	
+
 	    // parent constructor call
 	    Component.call(this, config);
-	
+
 	    // component setup
 	    this.init(config);
-	
+
 	    // custom navigation method
 	    //if ( config.navigate ) {
 	    //    if ( DEVELOP ) {
@@ -2640,10 +2670,10 @@
 	    //    // apply
 	    //    this.navigate = config.navigate;
 	    //}
-	
+
 	    // navigation by keyboard
 	    //this.addListener('keydown', this.navigate);
-	
+
 	    // navigation by mouse
 	    //this.$body.addEventListener('mousewheel', function ( event ) {
 	    //    // scrolling by Y axis
@@ -2657,19 +2687,19 @@
 	    //    }
 	    //});
 	}
-	
-	
+
+
 	// inheritance
 	List.prototype = Object.create(Component.prototype);
 	List.prototype.constructor = List;
-	
+
 	// set component name
 	List.prototype.name = 'mag-component-list';
-	
+
 	List.prototype.TYPE_VERTICAL   = 1;
 	List.prototype.TYPE_HORIZONTAL = 2;
-	
-	
+
+
 	/**
 	 * Fill the given item with data.
 	 *
@@ -2679,8 +2709,8 @@
 	List.prototype.renderItemDefault = function ( $item, data ) {
 	    $item.innerText = data.value;
 	};
-	
-	
+
+
 	/**
 	 * Method to build each list item content.
 	 * Can be redefined to provide custom rendering.
@@ -2688,8 +2718,8 @@
 	 * @type {function}
 	 */
 	List.prototype.renderItem = List.prototype.renderItemDefault;
-	
-	
+
+
 	/**
 	 * List of all default event callbacks.
 	 *
@@ -2706,13 +2736,13 @@
 	        if ( this.type === this.TYPE_VERTICAL && event.wheelDeltaY ) {
 	            this.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
 	        }
-	
+
 	        // scrolling by X axis
 	        if ( this.type === this.TYPE_HORIZONTAL && event.wheelDeltaX ) {
 	            this.move(event.wheelDeltaX > 0 ? keys.left : keys.right);
 	        }
 	    },
-	
+
 	    /**
 	     * Default method to handle keyboard keydown events.
 	     *
@@ -2741,8 +2771,8 @@
 	        }
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Default method to move focus according to pressed keys.
 	 *
@@ -2770,8 +2800,8 @@
 	//            break;
 	//    }
 	//};
-	
-	
+
+
 	/**
 	 * Current active method to move focus according to pressed keys.
 	 * Can be redefined to provide custom navigation.
@@ -2779,8 +2809,8 @@
 	 * @type {function}
 	 */
 	//List.prototype.navigate = List.prototype.navigateDefault;
-	
-	
+
+
 	/**
 	 * Make all the data items identical.
 	 * Wrap to objects if necessary.
@@ -2790,12 +2820,12 @@
 	 */
 	function normalize ( data ) {
 	    var i, item;
-	
+
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
 	    }
-	
+
 	    // rows
 	    for ( i = 0; i < data.length; i++ ) {
 	        // cell value
@@ -2807,17 +2837,17 @@
 	                value: data[i]
 	            };
 	        }
-	
+
 	        if ( true ) {
 	            //if ( !('value' in item) ) { throw new Error(__filename + ': field "value" is missing'); }
 	            if ( ('mark' in item) && Boolean(item.mark) !== item.mark ) { throw new Error(__filename + ': item.mark must be boolean'); }
 	        }
 	    }
-	
+
 	    return data;
 	}
-	
-	
+
+
 	/**
 	 * Init or re-init of the component inner structures and HTML.
 	 *
@@ -2838,7 +2868,7 @@
 	        onClick = function ( event ) {
 	            if ( this.data ) {
 	                self.focusItem(this);
-	
+
 	                // there are some listeners
 	                if ( self.events['click:item'] ) {
 	                    // notify listeners
@@ -2847,22 +2877,22 @@
 	            }
 	        },
 	        item, i;
-	
+
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
 	    }
-	
+
 	    // apply cycle behaviour
 	    if ( config.cycle !== undefined ) { this.cycle = config.cycle; }
-	
+
 	    // apply ScrollBar link
 	    if ( config.scroll ) { this.scroll = config.scroll; }
-	
+
 	    // apply data provider
 	    if ( config.provider ) { this.provider = config.provider; }
-	
-	
+
+
 	    // custom render method
 	    if ( config.render ) {
 	        if ( true ) {
@@ -2871,7 +2901,7 @@
 	        // apply
 	        this.renderItem = config.render;
 	    }
-	
+
 	    // list items amount on page
 	    if ( config.size ) {
 	        if ( true ) {
@@ -2881,7 +2911,7 @@
 	        // apply
 	        this.size = config.size;
 	    }
-	
+
 	    // geometry has changed or initial draw
 	    if ( this.size !== currSize ) {
 	        // non-empty list
@@ -2889,18 +2919,18 @@
 	            // clear old items
 	            this.$body.innerText = null;
 	        }
-	
+
 	        // create new items
 	        for ( i = 0; i < this.size; i++ ) {
 	            item = document.createElement('div');
 	            item.index = i;
 	            item.className = 'item';
-	
+
 	            item.addEventListener('click', onClick);
 	            this.$body.appendChild(item);
 	        }
 	    }
-	
+
 	    if ( this.provider ) {
 	        this.provider.get( null, function ( error, data ) {
 	            if ( error ) {
@@ -2939,9 +2969,9 @@
 	    } else if ( config.data ) {
 	        this.setData(config);
 	    }
-	
+
 	};
-	
+
 	/**
 	 * Set data and render inner structures and HTML.
 	 *
@@ -2949,7 +2979,7 @@
 	 */
 	List.prototype.setData = function ( config ) {
 	    // apply list of items
-	
+
 	    if ( config.data ) {
 	        if ( false ) {
 	            if ( !Array.isArray(config.data) ) { throw new Error(__filename + ': wrong config.data type'); }
@@ -2957,7 +2987,7 @@
 	        // prepare user data
 	        this.data = normalize(config.data);
 	    }
-	
+
 	    // view window position
 	    if ( true ) {
 	        if ( config.viewIndex !== undefined ) {
@@ -2967,11 +2997,11 @@
 	    }
 	    // reset current view window position
 	    this.viewIndex = null;
-	
+
 	    if ( this.$focusItem ) {
 	        this.blurItem(this.$focusItem);
 	    }
-	
+
 	    if ( this.scroll ) {
 	        if ( this.provider ) {
 	            if ( this.scroll.realSize !== this.provider.maxCount ) {
@@ -2989,7 +3019,7 @@
 	            });
 	        }
 	    }
-	
+
 	    // set focus item
 	    if ( config.focusIndex !== undefined && this.data.length ) {
 	        if ( true ) {
@@ -2997,7 +3027,7 @@
 	            if ( config.focusIndex < 0 ) { throw new Error(__filename + ': config.focusIndex should be positive'); }
 	//             if ( config.focusIndex > this.data.length - 1 ) { throw new Error(__filename + ': config.focusIndex should be less than data size'); }
 	        }
-	
+
 	        // jump to the necessary item
 	        this.focusIndex(config.focusIndex);
 	    } else {
@@ -3005,8 +3035,8 @@
 	        this.renderView(config.viewIndex || 0);
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Shift the visible view window event.
 	 *
@@ -3016,8 +3046,8 @@
 	 * @property {number} prevIndex previous view window position
 	 * @property {number} currIndex current view window position
 	 */
-	
-	
+
+
 	/**
 	 * Draw the visible window.
 	 *
@@ -3029,34 +3059,34 @@
 	 */
 	List.prototype.renderView = function ( index ) {
 	    var $item, i, itemData, prevIndex, currIndex;
-	
+
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	        if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
 	        if ( index < 0 ) { throw new Error(__filename + ': index should be more than zero'); }
 	//         if ( index >= this.data.length ) { throw new Error(__filename + ': index should be less than data size'); }
 	    }
-	
+
 	    // has the view window position changed
 	    if ( this.viewIndex !== index ) {
 	        // save for emit
 	        prevIndex = this.viewIndex;
 	        // sync global pointer
 	        this.viewIndex = currIndex = index;
-	
+
 	        // rebuild all visible items
 	        for ( i = 0; i < this.size; i++ ) {
 	            // shortcuts
 	            $item    = this.$body.children[i];
 	            itemData = this.data[index];
-	
+
 	            // real item or stub
 	            if ( itemData ) {
 	                // correct inner data/index and render
 	                $item.data  = itemData;
 	                $item.index = index;
 	                this.renderItem($item, itemData);
-	
+
 	                // apply CSS
 	                if ( itemData.mark ) {
 	                    $item.classList.add('mark');
@@ -3071,32 +3101,32 @@
 	            }
 	            index++;
 	        }
-	
+
 	        // there are some listeners
 	        if ( this.events['move:view'] ) {
 	            // notify listeners
 	            this.emit('move:view', {prevIndex: prevIndex, currIndex: currIndex});
 	        }
-	
+
 	        // there are some listeners
 	        if ( this.events['select:item'] ) {
 	            this.emit('select:item', {$item: $item});
 	        }
-	
+
 	        // update a linked scroll component
 	        if ( this.scroll ) {
 	            this.scroll.scrollTo(this.provider? this.provider.head + this.provider.pos : this.viewIndex);
 	        }
-	
+
 	        // full rebuild
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return false;
 	};
-	
-	
+
+
 	/**
 	 * Jump to the opposite side.
 	 *
@@ -3105,8 +3135,8 @@
 	 * @type {Object}
 	 * @property {number} direction key code initiator of movement
 	 */
-	
-	
+
+
 	/**
 	 * Attempt to go beyond the edge of the list.
 	 *
@@ -3115,8 +3145,8 @@
 	 * @type {Object}
 	 * @property {number} direction key code initiator of movement
 	 */
-	
-	
+
+
 	/**
 	 * Move focus to the given direction.
 	 *
@@ -3128,13 +3158,13 @@
 	List.prototype.move = function ( direction ) {
 	    var self = this,
 	        force = false;
-	
-	
+
+
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	        if ( Number(direction) !== direction ) { throw new Error(__filename + ': direction must be a number'); }
 	    }
-	
+
 	    // empty list
 	    if ( !this.data.length ) {
 	        return;
@@ -3259,7 +3289,7 @@
 	                // second page and further
 	                this.renderView(this.viewIndex - this.size + 1);
 	            }
-	
+
 	            this.focusItem(this.$body.firstChild);
 	            break;
 	        case keys.pageDown:
@@ -3351,8 +3381,8 @@
 	            break;
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Highlight the given DOM element as focused.
 	 * Remove focus from the previously focused item and generate associated event.
@@ -3366,27 +3396,27 @@
 	 */
 	List.prototype.focusItem = function ( $item ) {
 	    var $prev = this.$focusItem;
-	
+
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	    }
-	
+
 	    // different element
 	    if ( $item && $prev !== $item ) {
 	        if ( true ) {
 	            if ( !($item instanceof Element) ) { throw new Error(__filename + ': wrong $item type'); }
 	            if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
 	        }
-	
+
 	        // some item is focused already
 	        if ( $prev !== null ) {
 	            if ( true ) {
 	                if ( !($prev instanceof Element) ) { throw new Error(__filename + ': wrong $prev type'); }
 	            }
-	
+
 	            // style
 	            $prev.classList.remove('focus');
-	
+
 	            // there are some listeners
 	            if ( this.events['blur:item'] ) {
 	                /**
@@ -3402,12 +3432,12 @@
 	        }
 	        // reassign
 	        this.$focusItem = $item;
-	
+
 	        this.$focusItem.data = this.data[this.$focusItem.index];
-	
+
 	        // correct CSS
 	        $item.classList.add('focus');
-	
+
 	        // there are some listeners
 	        if ( this.events['focus:item'] ) {
 	            /**
@@ -3421,7 +3451,7 @@
 	             */
 	            this.emit('focus:item', {$prev: $prev, $curr: $item});
 	        }
-	
+
 	        // there are some listeners
 	        if ( this.events['select:item'] ) {
 	            /**
@@ -3434,14 +3464,14 @@
 	             */
 	            this.emit('select:item', {$item: $item});
 	        }
-	
+
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return false;
 	};
-	
+
 	/**
 	 * Highlight the given DOM element as blur.
 	 * Remove focus from the item and generate associated event.
@@ -3457,15 +3487,15 @@
 	    if ( false ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	    }
-	
+
 	    // different element
 	    if ( $item ) {
 	        if ( $item === this.$focusItem ) {
 	            this.$focusItem = null;
 	        }
-	
+
 	        $item.classList.remove('focus');
-	
+
 	        // there are some listeners
 	        if ( this.events['blur:item'] ) {
 	            /**
@@ -3480,11 +3510,11 @@
 	        }
 	        return true;
 	    }
-	
+
 	    // nothing was done
 	    return false;
 	};
-	
+
 	/**
 	 * Set the given item focused by item index.
 	 *
@@ -3492,13 +3522,13 @@
 	 */
 	List.prototype.focusIndex = function ( index ) {
 	    var viewIndex = this.viewIndex || 0;
-	
+
 	    if ( true ) {
 	        if ( Number(index) !== index ) { throw new Error(__filename + ': index must be a number'); }
 	        if ( index < 0 ) { throw new Error(__filename + ': index should be positive'); }
 	//         if ( index > this.data.length - 1 ) { throw new Error(__filename + ': index should be less than data size'); }
 	    }
-	
+
 	    // determine direction
 	    if ( index >= viewIndex + this.size ) {
 	        // check range
@@ -3521,8 +3551,8 @@
 	        this.focusItem(this.$body.children[index - viewIndex]);
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Set item state and appearance as marked.
 	 *
@@ -3536,22 +3566,22 @@
 	        if ( $item.parentNode !== this.$body ) { throw new Error(__filename + ': wrong $item parent element'); }
 	        if ( Boolean(state) !== state ) { throw new Error(__filename + ': state must be boolean'); }
 	    }
-	
+
 	    // correct CSS
 	    if ( state ) {
 	        $item.classList.add('mark');
 	    } else {
 	        $item.classList.remove('mark');
 	    }
-	
+
 	    // apply flag
 	    $item.data.mark = state;
 	};
-	
-	
+
+
 	// public
 	module.exports = List;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../component-list/index.js"))
 
 /***/ },
@@ -3565,14 +3595,14 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var Component = __webpack_require__(/*! stb-component */ 15),
 	    keys      = __webpack_require__(/*! stb-keys */ 7);
-	
+
 	/**
 	 * Layout component implementation
 	 *
@@ -3600,31 +3630,35 @@
 	function Layout ( config ) {
 	    // sanitize
 	    config = config || {};
-	
+
 	    /**
 	     * Index of focused child component
 	     * @type {number}
 	     */
 	    this.focusIndex = 0;
-	
+
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-	        // init parameters checks
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	    }
-	
+            if ( typeof config !== 'object' ) {
+                throw new Error(__filename + ': wrong config type');
+            }
+            // init parameters checks
+            if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+                throw new Error(__filename + ': wrong or empty config.className');
+            }
+        }
+
 	    //config.className = 'layout ' + (config.className || '');
-	
+
 	    /**
 	     * Component data
 	     * @type {Array}
 	     */
 	    this.data = [];
-	
+
 	    Component.call(this, config);
-	
+
 	    this.init(config);
-	
+
 	    // add listener to move focus between children
 	    this.addListener('keydown', function ( event ) {
 	        switch ( event.code ) {
@@ -3641,7 +3675,7 @@
 	            case keys.back:
 	                // focus parent
 	                this.parent.focus();
-	
+
 	                // focus parent focused item if parent is layout list
 	                if ( this.parent &&  this.$parentItem ) {
 	                    this.parent.focusItem(this.$parentItem);
@@ -3650,15 +3684,15 @@
 	        }
 	    });
 	}
-	
-	
+
+
 	Layout.prototype = Object.create(Component.prototype);
 	Layout.prototype.constructor = Layout;
-	
+
 	// set component name
 	Layout.prototype.name = 'mag-component-layout';
-	
-	
+
+
 	/**
 	 * Make all the data items identical.
 	 * Wrap to objects if necessary.
@@ -3668,12 +3702,12 @@
 	 */
 	function normalize ( data ) {
 	    var index, item;
-	
+
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
 	    }
-	
+
 	    // rows
 	    for ( index = 0; index < data.length; index++ ) {
 	        // cell value
@@ -3699,8 +3733,8 @@
 	    }
 	    return data;
 	}
-	
-	
+
+
 	/**
 	 * Init or re-init of the component inner structures and HTML.
 	 *
@@ -3710,14 +3744,14 @@
 	    var self = this,
 	        data = normalize(config.data),
 	        item, $wrapper, index;
-	
+
 	    // clear element if reinit
 	    while (this.$node.firstChild) {
 	        this.$node.removeChild(this.$node.firstChild);
 	    }
-	
+
 	    this.data = data;
-	
+
 	    for ( index = 0; index < data.length; index++ ) {
 	        item = data[index];
 	        // plain text
@@ -3728,7 +3762,7 @@
 	            this.$node.appendChild($wrapper);
 	        } else if ( item.value instanceof HTMLElement ) {
 	            // HTML Element
-	
+
 	            // if with wrapper
 	            if ( item.wrap ) {
 	                $wrapper = document.createElement('div');
@@ -3743,15 +3777,15 @@
 	            // component
 	            // force propagate events
 	            item.value.propagate = true;
-	
+
 	            // set index to current component
 	            item.value.index = this.children.length;
-	
+
 	            // change layout focus index if click component
 	            item.value.addListener('click', function () {
 	                self.focusIndex = this.index;
 	            });
-	
+
 	            // append component
 	            if ( item.wrap ) {
 	                // with wrapper
@@ -3768,10 +3802,10 @@
 	        }
 	    }
 	};
-	
-	
+
+
 	module.exports = Layout;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../component-layout/index.js"))
 
 /***/ },
@@ -3785,61 +3819,61 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	var app = __webpack_require__(/*! spa-app/lib/core */ 2);
-	
-	
+
+
 	// shims
 	__webpack_require__(/*! stb-shim-bind */ 21);
 	__webpack_require__(/*! stb-shim-classlist */ 9);
 	__webpack_require__(/*! stb-shim-frame */ 22);
-	
+
 	// public app instance
 	window.app = app;
-	
+
 	// all development tools placeholder
 	app.develop = {
 	    storage: window.parent.stbStorage
 	};
-	
+
 	// execution environment
 	// STB device or desktop browser
 	app.host = !!(window.gSTB || (window.parent && window.parent.gSTB));
-	
+
 	// browser logging
 	window.debug = __webpack_require__(/*! spa-app/lib/develop/debug */ 23);
 	// STB logging
 	//window.debug = app.host ? require('./debug') : require('spa-develop/debug');
-	
+
 	// universal storage
 	//window.localStorage = window.localStorage || window.stbStorage;
-	
+
 	//window.localStorage = window.stbStorage || window.parent.stbStorage;
-	
+
 	// apply screen size, position, margins and styles
 	// app.setScreen(
 	//     app.metrics[localStorage.getItem('screen.height')] ||
 	//     app.metrics[screen.height] ||
 	//     app.metrics[720]
 	// );
-	
+
 	// inherit SPA tools
 	__webpack_require__(/*! spa-app/lib/develop/wamp */ 24);
 	__webpack_require__(/*! spa-app/lib/develop/events */ 27);
 	__webpack_require__(/*! spa-app/lib/develop/hooks */ 29);
 	__webpack_require__(/*! spa-app/lib/develop/static */ 30);
-	
+
 	// STB tools
 	if ( app.host ) {
 	    // web inspector
 	    //require('./weinre');
 	}
-	
+
 	//require('./proxy');
 	__webpack_require__(/*! stb-app/lib/develop/events */ 32);
-	
+
 	// the application itself
 	// "js" directory is resolved by webpack to
 	// path.join(process.env.PATH_ROOT, process.env.PATH_SRC, 'js')
@@ -3857,12 +3891,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint-disable */
-	
+
 	'use strict';
-	
-	
+
+
 	if ( !Function.prototype.bind ) {
 	    Function.prototype.bind = function ( oThis ) {
 	        if ( typeof this !== 'function' ) {
@@ -3870,7 +3904,7 @@
 	            // internal IsCallable function
 	            throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
 	        }
-	
+
 	        var aArgs = Array.prototype.slice.call(arguments, 1),
 	            fToBind = this,
 	            fNOP = function () {},
@@ -3880,10 +3914,10 @@
 	                        : oThis,
 	                    aArgs.concat(Array.prototype.slice.call(arguments)));
 	            };
-	
+
 	        fNOP.prototype = this.prototype;
 	        fBound.prototype = new fNOP();
-	
+
 	        return fBound;
 	    };
 	}
@@ -3900,12 +3934,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint-disable */
-	
+
 	'use strict';
-	
-	
+
+
 	if ( !window.requestAnimationFrame ) {
 	    // shim layer with setTimeout fallback
 	    window.requestAnimationFrame =
@@ -3916,7 +3950,7 @@
 	            window.setTimeout(callback, 1000 / 60);
 	        };
 	}
-	
+
 
 
 /***/ },
@@ -3932,12 +3966,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
 	/* eslint new-cap: 0 */
-	
+
 	'use strict';
-	
+
 	var //host      = require('../app').data.host,
 	    app       = __webpack_require__(/*! ../core */ 2),
 	    //util      = require('util'),
@@ -3946,13 +3980,13 @@
 	    debug     = {},
 	    links     = {},
 	    linkId    = 0;
-	
-	
+
+
 	// debug.config = {
 	//     depth: 3
 	// };
-	
-	
+
+
 	/**
 	 * Check condition and warn if not match.
 	 *
@@ -3964,65 +3998,65 @@
 	        console.assert(condition, title);
 	    }
 	};
-	
-	
+
+
 	debug.links = links;
-	
-	
+
+
 	function prepareConfig ( config ) {
 	    config = config || {};
-	
+
 	    config.tags = config.tags || [];
 	    config.tags.push('target');
-	
+
 	    return config;
 	}
-	
-	
+
+
 	function wrapData ( data ) {
 	    var result = {
 	        type: typeof data
 	    };
-	
+
 	    if ( data && result.type === 'object' ) {
 	        result.link = linkId++;
 	        links[result.link] = data;
-	
+
 	        if ( data.constructor && data.constructor.name ) {
 	            result.name = data.constructor.name;
 	        }
-	
+
 	        if ( 'length' in data ) {
 	            result.size = data.length;
 	        }
 	    } else {
 	        result.value = data;
 	    }
-	
+
 	    return result;
 	}
-	
-	
+
+
 	// todo: remove setTimeout hack
 	setTimeout(function () {
 	    app.develop.wamp.addListener('getLinkData', function ( params, callback ) {
 	        var link = links[params.id],
 	            data = {};
-	
+
 	        console.log('incoming getLinkData', params);
 	        //console.log(link);
-	
+
 	        if ( link ) {
 	            Object.keys(link).forEach(function ( name ) {
 	                data[name] = wrapData(link[name]);
 	            });
 	        }
-	
+
 	        callback(null, data);
 	    });
 	}, 1000);
-	
-	
+
+
 	/**
 	 * Print a plain colored string.
 	 *
@@ -4033,10 +4067,10 @@
 	    // message = (message + '') || '(empty message)';
 		//
 	    // console.log('%c%s', 'color:' + (color || 'black'), message);
-	
+
 	    // sanitize
 	    config = config || {};
-	
+
 	    config.info = info;
 	    //config.data = data ? util.inspect(data, {depth: debug.config.depth}) : null;
 	    config.data = data !== undefined ? wrapData(data) : undefined;
@@ -4044,7 +4078,7 @@
 	    config.time = Date.now();
 	    config.targetId = app.query.wampTargetId;
 	    //config.tags = config.tags.sort();
-	
+
 	    if ( app.develop.wamp.open ) {
 	        if ( buffer.length ) {
 	            buffer.forEach(function ( bufItem ) {
@@ -4052,14 +4086,14 @@
 	            });
 	            buffer = [];
 	        }
-	
+
 	        app.develop.wamp.call('sendMessage', config);
 	    } else {
 	        buffer.push(config);
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Print the given var with caption.
 	 *
@@ -4069,7 +4103,7 @@
 	debug.info = function ( info, data, config ) {
 	    /*var type = Object.prototype.toString.call(data).match(/\s([a-zA-Z]+)/)[1].toLowerCase(),
 	        args;
-	
+
 	    args = ['color:' + (type === 'error' ? 'red' : 'green'), type];
 	    if ( title ) {
 	        args.unshift('%c%s\t%c%s\t');
@@ -4081,33 +4115,33 @@
 	    args.push(data);
 	    // output
 	    console.log.apply(console, args);*/
-	
+
 	    config = prepareConfig(config);
 	    //config.tags.push('info');
 	    config.type = 'info';
-	
+
 	    debug.log(info, data, config);
 	};
-	
-	
+
+
 	debug.warn = function ( info, data, config ) {
 	    config = prepareConfig(config);
 	    //config.tags.push('warn');
 	    config.type = 'warn';
-	
+
 	    debug.log(info, data, config);
 	};
-	
-	
+
+
 	debug.fail = function ( info, data, config ) {
 	    config = prepareConfig(config);
 	    //config.tags.push('fail');
 	    config.type = 'fail';
-	
+
 	    debug.log(info, data, config);
 	};
-	
-	
+
+
 	/**
 	 * Print the given complex var with level restriction.
 	 *
@@ -4116,8 +4150,8 @@
 	debug.inspect = function ( data ) {
 	    console.log(data);
 	};
-	
-	
+
+
 	/**
 	 * Print the given event object in some special way.
 	 *
@@ -4126,7 +4160,7 @@
 	debug.event = function ( data ) {
 	    var type  = data.type.toUpperCase(),
 	        color = type === 'ERROR' ? 'red' : 'green';
-	
+
 	    switch ( type ) {
 	        case 'KEYDOWN':
 	        case 'KEYPRESS':
@@ -4141,8 +4175,8 @@
 	            console.log('%o\t%c%s', data, 'color:' + color + ';font-weight:bold', type);
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Start specific timer.
 	 * Use to calculate time of some actions.
@@ -4164,11 +4198,11 @@
 	 */
 	debug.time = function ( name, title ) {
 	    var time = Date.now();
-	
+
 	    // sanitize
 	    name  = name  || '';
 	    title = title || '';
-	
+
 	    // is this mark exist
 	    if ( timeMarks[name] ) {
 	        // already set
@@ -4177,12 +4211,12 @@
 	        // create a new mark
 	        timeMarks[name] = {init: time};
 	    }
-	
+
 	    // update with the current value
 	    timeMarks[name].last = time;
 	};
-	
-	
+
+
 	/**
 	 * End specific timer.
 	 * Use to calculate time of some actions.
@@ -4204,25 +4238,25 @@
 	 */
 	debug.timeEnd = function ( name, title ) {
 	    var time = Date.now();
-	
+
 	    // sanitize
 	    name  = name  || '';
 	    title = title || 'total';
-	
+
 	    // is this mark exist
 	    if ( timeMarks[name] ) {
 	        debug.log((name || 'time') + ' (' + title + '): ' + (time - timeMarks[name].init) + 'ms', 'blue');
-	
+
 	        delete timeMarks[name];
 	    } else {
 	        throw new Error(__filename + ': no started timer for "' + name + '"');
 	    }
 	};
-	
-	
+
+
 	// public
 	module.exports = debug;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/develop/debug.js"))
 
 /***/ },
@@ -4236,25 +4270,25 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	var app       = __webpack_require__(/*! ../core */ 2),
 	    Wamp      = __webpack_require__(/*! spa-wamp */ 25),
 	    stringify = __webpack_require__(/*! cjs-query */ 4).stringify;
-	
-	
+
+
 	if ( app.query.wampPort ) {
 	    // correct type
 	    app.query.wampTargetId = parseInt(app.query.wampTargetId, 10);
-	
+
 	    app.develop.wamp = new Wamp(
 	        'ws://' + (app.query.wampHost || location.hostname) + ':' + app.query.wampPort + '/target/' + (app.query.wampTargetId || '')
 	    );
-	
+
 	    app.develop.wamp.addListener('connection:open', function () {
 	        debug.info('wamp open ' + app.develop.wamp.socket.url, null, {tags: ['open', 'wamp']});
-	
+
 	        // get target connection id
 	        app.develop.wamp.call('getConnectionInfo', {}, function ( error, data ) {
 	            // check if already linked
@@ -4268,14 +4302,14 @@
 	            }
 	        });
 	    });
-	
+
 	    app.develop.wamp.addListener('connection:close', function () {
 	        debug.info('wamp close ' + app.develop.wamp.socket.url, null, {tags: ['close', 'wamp']});
 	    });
-	
+
 	    app.develop.wamp.addListener('evalCode', function ( params, callback ) {
 	        console.log('incoming evalCode', params);
-	
+
 	        /* eslint no-eval: 0 */
 	        callback(null, {eval: eval(params.code)});
 	    });
@@ -4293,17 +4327,17 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	var CjsWamp = __webpack_require__(/*! cjs-wamp */ 26),
 	    timeout = 5000,
 	    events  = {
 	        open:  'connection:open',
 	        close: 'connection:close'
 	    };
-	
-	
+
+
 	/**
 	 * WAMP implementation wrapper.
 	 *
@@ -4313,30 +4347,30 @@
 	 */
 	function Wamp ( uri ) {
 	    var self = this;
-	
+
 	    function getSocket () {
 	        var socket = new WebSocket(uri);
-	
+
 	        socket.onopen = function () {
 	            // there are some listeners
 	            if ( self.events[events.open] ) {
 	                self.emit(events.open);
 	            }
-	
+
 	            // set activity flag
 	            self.open = true;
 	        };
-	
+
 	        // reconnect
 	        socket.onclose = function () {
 	            // there are some listeners and it's the first time
 	            if ( self.events[events.close] && self.open ) {
 	                self.emit(events.close);
 	            }
-	
+
 	            // mark as closed
 	            self.open = false;
-	
+
 	            setTimeout(function () {
 	                // recreate connection
 	                self.socket = getSocket();
@@ -4346,25 +4380,25 @@
 	                };
 	            }, timeout);
 	        };
-	
+
 	        return socket;
 	    }
-	
+
 	    console.assert(typeof this === 'object', 'must be constructed via new');
-	
+
 	    // connection state
 	    this.open = false;
-	
+
 	    // parent constructor call
 	    CjsWamp.call(this, getSocket());
 	}
-	
-	
+
+
 	// inheritance
 	Wamp.prototype = Object.create(CjsWamp.prototype);
 	Wamp.prototype.constructor = Wamp;
-	
-	
+
+
 	// public
 	module.exports = Wamp;
 
@@ -4380,15 +4414,15 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	/** @private */
 	var Emitter   = __webpack_require__(/*! cjs-emitter */ 3),
 	    messageId = 0,
 	    callbacks = {};
-	
-	
+
+
 	/**
 	 * Lightweight WAMP implementation based on WebSockets.
 	 *
@@ -4399,14 +4433,14 @@
 	 */
 	function Wamp ( socket ) {
 	    var self = this;
-	
+
 	    console.assert(typeof this === 'object', 'must be constructed via new');
-	    
+
 	    // parent constructor call
 	    Emitter.call(this);
-	
+
 	    this.socket = socket;
-	
+
 	    if ( 'on' in socket ) {
 	        // server-side
 	        socket.on('message', function ( message ) {
@@ -4419,8 +4453,8 @@
 	        };
 	    }
 	}
-	
-	
+
+
 	/**
 	 * Send data through the given socket.
 	 *
@@ -4432,17 +4466,17 @@
 	    if ( socket.readyState === 1 ) {
 	        // protocol version
 	        message.jsonrpc = '2.0';
-	
+
 	        socket.send(JSON.stringify(message));
 	    }
 	}
-	
-	
+
+
 	// inheritance
 	Wamp.prototype = Object.create(Emitter.prototype);
 	Wamp.prototype.constructor = Wamp;
-	
-	
+
+
 	/**
 	 * Internal method to handle messages.
 	 *
@@ -4453,7 +4487,7 @@
 	Wamp.prototype.router = function ( message ) {
 	    var self = this,
 	        data;
-	
+
 	    try {
 	        data = JSON.parse(message);
 	    } catch ( error ) {
@@ -4461,10 +4495,10 @@
 	            error: {code: -32700, message: 'Parse error'},
 	            id: null
 	        });
-	
+
 	        return;
 	    }
-	
+
 	    if ( 'id' in data && !('method' in data) ) {
 	        // incoming answer for previous request
 	        if ( data.id in callbacks ) {
@@ -4503,8 +4537,8 @@
 	        });
 	    }
 	};
-	
-	
+
+
 	/**
 	 * Send message to execute remotely or notify (without `callback` argument).
 	 *
@@ -4517,18 +4551,18 @@
 	        method: method,
 	        params: params
 	    };
-	
+
 	    // execution mode with callback
 	    // notification mode otherwise
 	    if ( typeof callback === 'function' ) {
 	        message.id = ++messageId;
 	        callbacks[messageId] = callback;
 	    }
-	
+
 	    send(this.socket, message);
 	};
-	
-	
+
+
 	// public
 	module.exports = Wamp;
 
@@ -4546,11 +4580,11 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	/* eslint new-cap: 0 */
-	
+
 	var //util    = require('util'),
 	    app      = __webpack_require__(/*! ../core */ 2),
 	    //Wamp     = require('spa-wamp'),
@@ -4560,51 +4594,51 @@
 	    //app;
 	    //dom     = require('spa-dom'),
 	    //grid    = require('./grid');
-	
-	
+
+
 	events.load = function () {
 	    // app instance
 	    //window.app = app = require('spa-app');
-	
+
 	    /*if ( app.query.wampPort ) {
 	        //console.log('connect to WAMP server');
 	        app.develop.wamp = new Wamp(
 	            //new WebSocket('ws://' + (app.query.wampHost || location.hostname) + ':' + app.query.wampPort + '/target')
 	            'ws://' + (app.query.wampHost || location.hostname) + ':' + app.query.wampPort + '/target'
 	        );
-	
+
 	        app.develop.wamp.addListener('connection:open', function () {
 	            console.log('wamp open ' + app.develop.wamp.socket.url);
 	        });
-	
+
 	        app.develop.wamp.addListener('connection:close', function () {
 	            console.log('wamp close ' + app.develop.wamp.socket.url);
 	        });
-	
+
 	        // ready
 	        /!*window.app.wamp.socket.onopen = function () {
 	            console.log('wamp is ready!');
 	        };*!/
 	    }*/
-	
+
 	    // export to globals div for develop HTML elements
 	    /*window.$develop = document.body.appendChild(document.createElement('div'));
 	    window.$develop.className = 'develop';/**/
-	
+
 	    // apply dev css
 	    document.body.classList.add('develop');
-	
+
 	    //grid.init();
-	
+
 	    //if ( localStorage.getItem('grid.active') ) {
 	    //    grid.show();
 	    //}
-	
+
 	    // stress-testing
 	    app.develop.horde = gremlins.createHorde();
 	};
-	
-	
+
+
 	events.keydown = function ( event ) {
 	    switch ( event.keyCode ) {
 	        // numpad 0
@@ -4613,7 +4647,7 @@
 	            location.hash = '';
 	            location.reload();
 	            break;
-	
+
 	        // numpad 5
 	        //case 101:
 	        //    // debug grid
@@ -4625,13 +4659,13 @@
 	        //    debug.log('show grid: ' + grid.active, 'red');
 	        //    localStorage.setItem('grid.active', grid.active);
 	        //    break;
-	
+
 	        // numpad 6
 	        case 102:
 	            // stress-testing
 	            app.develop.horde.unleash({nb: 500});
 	            break;
-	
+
 	        // numpad 7
 	        /*case 103:
 	            //if ( !app.data.host ) {
@@ -4654,7 +4688,7 @@
 	                        localStorage.setItem('spyjs.active', true);
 	                        debug.log('SpyJS: enable', 'red');
 	                        debug.log('SpyJS: set proxy to ' + location.hostname + ':' + 3546);
-	
+
 	                        gSTB.SetWebProxy(location.hostname, 3546, '', '', '');
 	                        location.reload();
 	                    },
@@ -4665,7 +4699,7 @@
 	            }
 	            //}
 	            break;*/
-	
+
 	        //// numpad 8
 	        //case 104:
 	        //    // FireBug Lite
@@ -4681,14 +4715,14 @@
 	        //        }
 	        //    }));
 	        //    break;
-	
+
 	        // numpad 9
 	        case 105:
 	            // outline components and inner structures
 	            debug.info('toggle develop css layout', null, {tags: ['css', 'toggle']});
 	            document.body.classList.toggle('develop');
 	            break;
-	
+
 	        // numpad .
 	        case 110:
 	            // CSS reload
@@ -4701,13 +4735,13 @@
 	            break;
 	    }
 	};
-	
-	
+
+
 	// additional top-level key handlers
 	window.addEventListener('load',    events.load);
 	window.addEventListener('keydown', events.keydown);
-	
-	
+
+
 	// public
 	module.exports = events;
 
@@ -4733,36 +4767,36 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var getElementById = document.getElementById,
 	    querySelector  = document.querySelector;
-	
-	
+
+
 	document.getElementById = function ( id ) {
 	    var el = getElementById.call(document, id);
-	
+
 	    if ( !el ) {
 	        throw new Error(__filename + ': no element with id ' + id);
 	    }
-	
+
 	    return el;
 	};
-	
-	
+
+
 	document.querySelector = function ( selector ) {
 	    var el = querySelector.call(document, selector);
-	
+
 	    if ( !el ) {
 	        throw new Error(__filename + ': no element with selector: ' + selector);
 	    }
-	
+
 	    return el;
 	};
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/app/lib/develop/hooks.js"))
 
 /***/ },
@@ -4778,12 +4812,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	//var tag = require('spa-dom').tag;
-	
-	
+
+
 	//window.LiveReloadOptions = {port: LIVERELOAD.port};
 	window.LiveReloadOptions = {
 	    host: location.hostname,
@@ -4791,9 +4825,9 @@
 	};
 	//console.log(require('spa-gulp-livereload/config').default.tinylr);
 	//console.log(LIVERELOAD);
-	
+
 	__webpack_require__(/*! livereload-js/dist/livereload.js */ 31);
-	
+
 	// livereload activation
 	//if ( config.livereload ) {
 	    // load external script
@@ -4814,11 +4848,11 @@
 	(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 	(function() {
 	  var Connector, PROTOCOL_6, PROTOCOL_7, Parser, Version, _ref;
-	
+
 	  _ref = require('./protocol'), Parser = _ref.Parser, PROTOCOL_6 = _ref.PROTOCOL_6, PROTOCOL_7 = _ref.PROTOCOL_7;
-	
+
 	  Version = '2.2.2';
-	
+
 	  exports.Connector = Connector = (function() {
 	    function Connector(options, WebSocket, Timer, handlers) {
 	      this.options = options;
@@ -4870,11 +4904,11 @@
 	      })(this));
 	      this.connect();
 	    }
-	
+
 	    Connector.prototype._isSocketConnected = function() {
 	      return this.socket && this.socket.readyState === this.WebSocket.OPEN;
 	    };
-	
+
 	    Connector.prototype.connect = function() {
 	      this._connectionDesired = true;
 	      if (this._isSocketConnected()) {
@@ -4906,7 +4940,7 @@
 	        };
 	      })(this);
 	    };
-	
+
 	    Connector.prototype.disconnect = function() {
 	      this._connectionDesired = false;
 	      this._reconnectTimer.stop();
@@ -4916,7 +4950,7 @@
 	      this._disconnectionReason = 'manual';
 	      return this.socket.close();
 	    };
-	
+
 	    Connector.prototype._scheduleReconnection = function() {
 	      if (!this._connectionDesired) {
 	        return;
@@ -4926,24 +4960,24 @@
 	        return this._nextDelay = Math.min(this.options.maxdelay, this._nextDelay * 2);
 	      }
 	    };
-	
+
 	    Connector.prototype.sendCommand = function(command) {
 	      if (this.protocol == null) {
 	        return;
 	      }
 	      return this._sendCommand(command);
 	    };
-	
+
 	    Connector.prototype._sendCommand = function(command) {
 	      return this.socket.send(JSON.stringify(command));
 	    };
-	
+
 	    Connector.prototype._closeOnError = function() {
 	      this._handshakeTimeout.stop();
 	      this._disconnectionReason = 'error';
 	      return this.socket.close();
 	    };
-	
+
 	    Connector.prototype._onopen = function(e) {
 	      var hello;
 	      this.handlers.socketConnected();
@@ -4965,29 +4999,29 @@
 	      this._sendCommand(hello);
 	      return this._handshakeTimeout.start(this.options.handshake_timeout);
 	    };
-	
+
 	    Connector.prototype._onclose = function(e) {
 	      this.protocol = 0;
 	      this.handlers.disconnected(this._disconnectionReason, this._nextDelay);
 	      return this._scheduleReconnection();
 	    };
-	
+
 	    Connector.prototype._onerror = function(e) {};
-	
+
 	    Connector.prototype._onmessage = function(e) {
 	      return this.protocolParser.process(e.data);
 	    };
-	
+
 	    return Connector;
-	
+
 	  })();
-	
+
 	}).call(this);
-	
+
 	},{"./protocol":6}],2:[function(require,module,exports){
 	(function() {
 	  var CustomEvents;
-	
+
 	  CustomEvents = {
 	    bind: function(element, eventName, handler) {
 	      if (element.addEventListener) {
@@ -5018,27 +5052,27 @@
 	      }
 	    }
 	  };
-	
+
 	  exports.bind = CustomEvents.bind;
-	
+
 	  exports.fire = CustomEvents.fire;
-	
+
 	}).call(this);
-	
+
 	},{}],3:[function(require,module,exports){
 	(function() {
 	  var LessPlugin;
-	
+
 	  module.exports = LessPlugin = (function() {
 	    LessPlugin.identifier = 'less';
-	
+
 	    LessPlugin.version = '1.0';
-	
+
 	    function LessPlugin(window, host) {
 	      this.window = window;
 	      this.host = host;
 	    }
-	
+
 	    LessPlugin.prototype.reload = function(path, options) {
 	      if (this.window.less && this.window.less.refresh) {
 	        if (path.match(/\.less$/i)) {
@@ -5050,7 +5084,7 @@
 	      }
 	      return false;
 	    };
-	
+
 	    LessPlugin.prototype.reloadLess = function(path) {
 	      var link, links, _i, _len;
 	      links = (function() {
@@ -5076,32 +5110,32 @@
 	      this.window.less.refresh(true);
 	      return true;
 	    };
-	
+
 	    LessPlugin.prototype.analyze = function() {
 	      return {
 	        disable: !!(this.window.less && this.window.less.refresh)
 	      };
 	    };
-	
+
 	    return LessPlugin;
-	
+
 	  })();
-	
+
 	}).call(this);
-	
+
 	},{}],4:[function(require,module,exports){
 	(function() {
 	  var Connector, LiveReload, Options, Reloader, Timer,
 	    __hasProp = {}.hasOwnProperty;
-	
+
 	  Connector = require('./connector').Connector;
-	
+
 	  Timer = require('./timer').Timer;
-	
+
 	  Options = require('./options').Options;
-	
+
 	  Reloader = require('./reloader').Reloader;
-	
+
 	  exports.LiveReload = LiveReload = (function() {
 	    function LiveReload(window) {
 	      var k, v, _ref;
@@ -5203,15 +5237,15 @@
 	      });
 	      this.initialized = true;
 	    }
-	
+
 	    LiveReload.prototype.on = function(eventName, handler) {
 	      return this.listeners[eventName] = handler;
 	    };
-	
+
 	    LiveReload.prototype.log = function(message) {
 	      return this.console.log("" + message);
 	    };
-	
+
 	    LiveReload.prototype.performReload = function(message) {
 	      var _ref, _ref1;
 	      this.log("LiveReload received reload request: " + (JSON.stringify(message, null, 2)));
@@ -5223,11 +5257,11 @@
 	        serverURL: "http://" + this.options.host + ":" + this.options.port
 	      });
 	    };
-	
+
 	    LiveReload.prototype.performAlert = function(message) {
 	      return alert(message.message);
 	    };
-	
+
 	    LiveReload.prototype.shutDown = function() {
 	      var _base;
 	      if (!this.initialized) {
@@ -5237,11 +5271,11 @@
 	      this.log("LiveReload disconnected.");
 	      return typeof (_base = this.listeners).shutdown === "function" ? _base.shutdown() : void 0;
 	    };
-	
+
 	    LiveReload.prototype.hasPlugin = function(identifier) {
 	      return !!this.pluginIdentifiers[identifier];
 	    };
-	
+
 	    LiveReload.prototype.addPlugin = function(pluginClass) {
 	      var plugin;
 	      if (!this.initialized) {
@@ -5266,7 +5300,7 @@
 	      this.plugins.push(plugin);
 	      this.reloader.addPlugin(plugin);
 	    };
-	
+
 	    LiveReload.prototype.analyze = function() {
 	      var plugin, pluginData, pluginsData, _i, _len, _ref;
 	      if (!this.initialized) {
@@ -5288,17 +5322,17 @@
 	        url: this.window.location.href
 	      });
 	    };
-	
+
 	    return LiveReload;
-	
+
 	  })();
-	
+
 	}).call(this);
-	
+
 	},{"./connector":1,"./options":5,"./reloader":7,"./timer":9}],5:[function(require,module,exports){
 	(function() {
 	  var Options;
-	
+
 	  exports.Options = Options = (function() {
 	    function Options() {
 	      this.https = false;
@@ -5311,7 +5345,7 @@
 	      this.maxdelay = 60000;
 	      this.handshake_timeout = 5000;
 	    }
-	
+
 	    Options.prototype.set = function(name, value) {
 	      if (typeof value === 'undefined') {
 	        return;
@@ -5321,11 +5355,11 @@
 	      }
 	      return this[name] = value;
 	    };
-	
+
 	    return Options;
-	
+
 	  })();
-	
+
 	  Options.extract = function(document) {
 	    var element, keyAndValue, m, mm, options, pair, src, _i, _j, _len, _len1, _ref, _ref1;
 	    _ref = document.getElementsByTagName('script');
@@ -5354,37 +5388,37 @@
 	    }
 	    return null;
 	  };
-	
+
 	}).call(this);
-	
+
 	},{}],6:[function(require,module,exports){
 	(function() {
 	  var PROTOCOL_6, PROTOCOL_7, Parser, ProtocolError,
 	    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-	
+
 	  exports.PROTOCOL_6 = PROTOCOL_6 = 'http://livereload.com/protocols/official-6';
-	
+
 	  exports.PROTOCOL_7 = PROTOCOL_7 = 'http://livereload.com/protocols/official-7';
-	
+
 	  exports.ProtocolError = ProtocolError = (function() {
 	    function ProtocolError(reason, data) {
 	      this.message = "LiveReload protocol error (" + reason + ") after receiving data: \"" + data + "\".";
 	    }
-	
+
 	    return ProtocolError;
-	
+
 	  })();
-	
+
 	  exports.Parser = Parser = (function() {
 	    function Parser(handlers) {
 	      this.handlers = handlers;
 	      this.reset();
 	    }
-	
+
 	    Parser.prototype.reset = function() {
 	      return this.protocol = null;
 	    };
-	
+
 	    Parser.prototype.process = function(data) {
 	      var command, e, message, options, _ref;
 	      try {
@@ -5430,7 +5464,7 @@
 	        }
 	      }
 	    };
-	
+
 	    Parser.prototype._parseMessage = function(data, validCommands) {
 	      var e, message, _ref;
 	      try {
@@ -5447,17 +5481,17 @@
 	      }
 	      return message;
 	    };
-	
+
 	    return Parser;
-	
+
 	  })();
-	
+
 	}).call(this);
-	
+
 	},{}],7:[function(require,module,exports){
 	(function() {
 	  var IMAGE_STYLES, Reloader, numberOfMatchingSegments, pathFromUrl, pathsMatch, pickBestMatch, splitUrl;
-	
+
 	  splitUrl = function(url) {
 	    var hash, index, params;
 	    if ((index = url.indexOf('#')) >= 0) {
@@ -5478,7 +5512,7 @@
 	      hash: hash
 	    };
 	  };
-	
+
 	  pathFromUrl = function(url) {
 	    var path;
 	    url = splitUrl(url).url;
@@ -5489,7 +5523,7 @@
 	    }
 	    return decodeURIComponent(path);
 	  };
-	
+
 	  pickBestMatch = function(path, objects, pathFunc) {
 	    var bestMatch, object, score, _i, _len;
 	    bestMatch = {
@@ -5511,7 +5545,7 @@
 	      return null;
 	    }
 	  };
-	
+
 	  numberOfMatchingSegments = function(path1, path2) {
 	    var comps1, comps2, eqCount, len;
 	    path1 = path1.replace(/^\/+/, '').toLowerCase();
@@ -5528,11 +5562,11 @@
 	    }
 	    return eqCount;
 	  };
-	
+
 	  pathsMatch = function(path1, path2) {
 	    return numberOfMatchingSegments(path1, path2) > 0;
 	  };
-	
+
 	  IMAGE_STYLES = [
 	    {
 	      selector: 'background',
@@ -5542,7 +5576,7 @@
 	      styleNames: ['borderImage', 'webkitBorderImage', 'MozBorderImage']
 	    }
 	  ];
-	
+
 	  exports.Reloader = Reloader = (function() {
 	    function Reloader(window, console, Timer) {
 	      this.window = window;
@@ -5552,15 +5586,15 @@
 	      this.importCacheWaitPeriod = 200;
 	      this.plugins = [];
 	    }
-	
+
 	    Reloader.prototype.addPlugin = function(plugin) {
 	      return this.plugins.push(plugin);
 	    };
-	
+
 	    Reloader.prototype.analyze = function(callback) {
 	      return results;
 	    };
-	
+
 	    Reloader.prototype.reload = function(path, options) {
 	      var plugin, _base, _i, _len, _ref;
 	      this.options = options;
@@ -5589,11 +5623,11 @@
 	      }
 	      return this.reloadPage();
 	    };
-	
+
 	    Reloader.prototype.reloadPage = function() {
 	      return this.window.document.location.reload();
 	    };
-	
+
 	    Reloader.prototype.reloadImages = function(path) {
 	      var expando, img, selector, styleNames, styleSheet, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
 	      expando = this.generateUniqueString();
@@ -5624,7 +5658,7 @@
 	        return _results;
 	      }
 	    };
-	
+
 	    Reloader.prototype.reloadStylesheetImages = function(styleSheet, path, expando) {
 	      var e, rule, rules, styleNames, _i, _j, _len, _len1;
 	      try {
@@ -5652,7 +5686,7 @@
 	        }
 	      }
 	    };
-	
+
 	    Reloader.prototype.reloadStyleImages = function(style, styleNames, path, expando) {
 	      var newValue, styleName, value, _i, _len;
 	      for (_i = 0, _len = styleNames.length; _i < _len; _i++) {
@@ -5674,7 +5708,7 @@
 	        }
 	      }
 	    };
-	
+
 	    Reloader.prototype.reloadStylesheet = function(path) {
 	      var imported, link, links, match, style, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1;
 	      links = (function() {
@@ -5731,7 +5765,7 @@
 	      }
 	      return true;
 	    };
-	
+
 	    Reloader.prototype.collectImportedStylesheets = function(link, styleSheet, result) {
 	      var e, index, rule, rules, _i, _len;
 	      try {
@@ -5760,7 +5794,7 @@
 	        }
 	      }
 	    };
-	
+
 	    Reloader.prototype.waitUntilCssLoads = function(clone, func) {
 	      var callbackExecuted, executeCallback, poll;
 	      callbackExecuted = false;
@@ -5794,11 +5828,11 @@
 	      }
 	      return this.Timer.start(this.options.stylesheetReloadTimeout, executeCallback);
 	    };
-	
+
 	    Reloader.prototype.linkHref = function(link) {
 	      return link.href || link.getAttribute('data-href');
 	    };
-	
+
 	    Reloader.prototype.reattachStylesheetLink = function(link) {
 	      var clone, parent;
 	      if (link.__LiveReload_pendingRemoval) {
@@ -5840,7 +5874,7 @@
 	        };
 	      })(this));
 	    };
-	
+
 	    Reloader.prototype.reattachImportedRule = function(_arg) {
 	      var href, index, link, media, newRule, parent, rule, tempLink;
 	      rule = _arg.rule, index = _arg.index, link = _arg.link;
@@ -5878,11 +5912,11 @@
 	        };
 	      })(this));
 	    };
-	
+
 	    Reloader.prototype.generateUniqueString = function() {
 	      return 'livereload=' + Date.now();
 	    };
-	
+
 	    Reloader.prototype.generateCacheBustUrl = function(url, expando) {
 	      var hash, oldParams, originalUrl, params, _ref;
 	      if (expando == null) {
@@ -5908,51 +5942,51 @@
 	      }
 	      return url + params + hash;
 	    };
-	
+
 	    return Reloader;
-	
+
 	  })();
-	
+
 	}).call(this);
-	
+
 	},{}],8:[function(require,module,exports){
 	(function() {
 	  var CustomEvents, LiveReload, k;
-	
+
 	  CustomEvents = require('./customevents');
-	
+
 	  LiveReload = window.LiveReload = new (require('./livereload').LiveReload)(window);
-	
+
 	  for (k in window) {
 	    if (k.match(/^LiveReloadPlugin/)) {
 	      LiveReload.addPlugin(window[k]);
 	    }
 	  }
-	
+
 	  LiveReload.addPlugin(require('./less'));
-	
+
 	  LiveReload.on('shutdown', function() {
 	    return delete window.LiveReload;
 	  });
-	
+
 	  LiveReload.on('connect', function() {
 	    return CustomEvents.fire(document, 'LiveReloadConnect');
 	  });
-	
+
 	  LiveReload.on('disconnect', function() {
 	    return CustomEvents.fire(document, 'LiveReloadDisconnect');
 	  });
-	
+
 	  CustomEvents.bind(document, 'LiveReloadShutDown', function() {
 	    return LiveReload.shutDown();
 	  });
-	
+
 	}).call(this);
-	
+
 	},{"./customevents":2,"./less":3,"./livereload":4}],9:[function(require,module,exports){
 	(function() {
 	  var Timer;
-	
+
 	  exports.Timer = Timer = (function() {
 	    function Timer(func) {
 	      this.func = func;
@@ -5966,7 +6000,7 @@
 	        };
 	      })(this);
 	    }
-	
+
 	    Timer.prototype.start = function(timeout) {
 	      if (this.running) {
 	        clearTimeout(this.id);
@@ -5974,7 +6008,7 @@
 	      this.id = setTimeout(this._handler, timeout);
 	      return this.running = true;
 	    };
-	
+
 	    Timer.prototype.stop = function() {
 	      if (this.running) {
 	        clearTimeout(this.id);
@@ -5982,17 +6016,17 @@
 	        return this.id = null;
 	      }
 	    };
-	
+
 	    return Timer;
-	
+
 	  })();
-	
+
 	  Timer.start = function(timeout, func) {
 	    return setTimeout(func, timeout);
 	  };
-	
+
 	}).call(this);
-	
+
 	},{}]},{},[8]);
 
 
@@ -6010,11 +6044,11 @@
 	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 * @license GNU GENERAL PUBLIC LICENSE Version 3
 	 */
-	
+
 	'use strict';
-	
+
 	/* eslint new-cap: 0 */
-	
+
 	var //util    = require('util'),
 	    app       = __webpack_require__(/*! spa-app/lib/core */ 2),
 	    stringify = __webpack_require__(/*! cjs-query */ 4).stringify,
@@ -6023,8 +6057,8 @@
 	    //storage = require('./storage'),
 	    grid      = __webpack_require__(/*! ./grid */ 33),
 	    events    = {};
-	
-	
+
+
 	/**
 	 * Apply the given screen geometry and reload the page.
 	 *
@@ -6034,7 +6068,7 @@
 	function changeScreenDimension ( width, height ) {
 	    app.query.screenHeight = height;
 	    location.search = '?' + stringify(app.query);
-	
+
 	    // check if it's necessary
 	    /*if ( Number(localStorage.getItem('screen.height')) === height ) {
 	        // not really
@@ -6042,47 +6076,47 @@
 	    } else {
 	        // yes
 	        debug.log(util.format('switch to %sx%s', width, height), 'red');
-	
+
 	        // save in case of document reload
 	        localStorage.setItem('screen.height', height);
 	        localStorage.setItem('screen.width',  width);
-	
+
 	        // hide content to avoid raw HTML blinking
 	        document.body.style.display = 'none';
-	
+
 	        // apply new metrics
 	        app.setScreen(require('app:metrics')[height]);
-	
+
 	        // restore visibility
 	        document.body.style.display = '';
 	    }*/
 	}
-	
-	
+
+
 	// inherit SPA tools
 	//require('spa-develop/events');
-	
-	
+
+
 	events.load = function () {
 	    // export to globals div for develop HTML elements
 	    //window.$develop = document.body.appendChild(document.createElement('div'));
 	   // window.$develop.className = 'develop';
-	
+
 	    // apply dev css
 	    //document.body.classList.add('develop');
-	
+
 	    grid.init();
-	
+
 	    if ( app.develop.storage.getItem('grid.active') === 'true' ) {
 	        grid.show();
 	    }
-	
+
 	    // stress-testing
 	    //window.gremlins = require('gremlins.js/gremlins.min.js');
 	    //window.horde    = window.gremlins.createHorde();
 	};
-	
-	
+
+
 	events.keydown = function ( event ) {
 	    switch ( event.keyCode ) {
 	        //// numpad 0
@@ -6091,31 +6125,31 @@
 	        //    location.hash = '';
 	        //    location.reload();
 	        //    break;
-	
+
 	        // numpad 1
 	        case 97:
 	            // NTSC
 	            changeScreenDimension(720, 480);
 	            break;
-	
+
 	        // numpad 2
 	        case 98:
 	            // PAL
 	            changeScreenDimension(720, 576);
 	            break;
-	
+
 	        // numpad 3
 	        case 99:
 	            // 720p
 	            changeScreenDimension(1280, 720);
 	            break;
-	
+
 	        // numpad 4
 	        case 100:
 	            // 1080p
 	            changeScreenDimension(1920, 1080);
 	            break;
-	
+
 	        // numpad 5
 	        case 101:
 	            // debug grid
@@ -6127,13 +6161,13 @@
 	            debug.log('show grid: ' + grid.active, 'red');
 	            app.develop.storage.setItem('grid.active', grid.active.toString());
 	            break;
-	
+
 	        // numpad 6
 	        //case 102:
 	        //    // stress-testing for emulation
 	        //    window.horde.unleash({nb: 500});
 	        //    break;
-	
+
 	        // numpad 7
 	        //case 103:
 	        //    if ( !app.data.host ) {
@@ -6167,7 +6201,7 @@
 	        //        }
 	        //    }
 	        //    break;
-	
+
 	        // numpad 8
 	        //case 104:
 	        //    // FireBug Lite
@@ -6183,14 +6217,14 @@
 	        //        }
 	        //    }));
 	        //    break;
-	
+
 	        // numpad 9
 	        //case 105:
 	        //    // outline components and inner structures
 	        //    debug.log('toggle develop css layout', 'red');
 	        //    document.body.classList.toggle('develop');
 	        //    break;
-	
+
 	        // numpad .
 	        //case 110:
 	        //    // CSS reload
@@ -6203,13 +6237,13 @@
 	        //    break;
 	    }
 	};
-	
-	
+
+
 	// additional top-level key handlers
 	window.addEventListener('load',    events.load);
 	window.addEventListener('keydown', events.keydown);
-	
-	
+
+
 	// public
 	module.exports = events;
 
@@ -6228,91 +6262,91 @@
 	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 * @license GNU GENERAL PUBLIC LICENSE Version 3
 	 */
-	
+
 	'use strict';
-	
+
 	var app     = __webpack_require__(/*! spa-app/lib/core */ 2),
 	    metrics = app.metrics;
 	    //storage = require('./storage');
-	
+
 	// public
 	module.exports = window.grid = {
-	
+
 	    /** @type {HTMLElement} */
 	    $canvas: null,
-	
+
 	    /** @type {CanvasRenderingContext2D} */
 	    ctx: null,
-	
+
 	    lineWidth: 1,
-	
+
 	    // content middle point
 	    centerX: 0,
 	    centerY: 0,
-	
+
 	    // last click point
 	    lastX: 0,
 	    lastY: 0,
-	
+
 	    // mouse pointer
 	    cursorX: 0,
 	    cursorY: 0,
-	
+
 	    // list of click points
 	    points: JSON.parse(app.develop.storage.getItem('grid.points') || '[]'),
-	
+
 	    // points to snap
 	    snaps: [],
-	
+
 	    // visible or not
 	    active: false,
-	
-	
+
+
 	    init: function () {
 	        // current execution context
 	        var self = this;
-	
+
 	        this.$canvas = document.body.appendChild(document.createElement('canvas'));
 	        this.ctx = this.$canvas.getContext('2d');
-	
+
 	        // apply size
 	        this.ctx.canvas.width  = metrics.width;
 	        this.ctx.canvas.height = metrics.height;
-	
+
 	        // safe zone center
 	        this.centerX = metrics.availWidth  / 2 + metrics.availLeft;
 	        this.centerY = metrics.availHeight / 2 + metrics.availTop;
-	
+
 	        this.snaps.push({x: metrics.availLeft,  y: metrics.availTop});
 	        this.snaps.push({x: metrics.width - metrics.availRight, y: metrics.height - metrics.availBottom});
 	        this.snaps.push({x: this.centerX, y: this.centerY});
-	
+
 	        this.ctx.lineWidth = this.lineWidth;
 	        this.ctx.font = '14px Ubuntu';
-	
+
 	        this.$canvas.addEventListener('contextmenu', function ( event ) {
 	            event.preventDefault();
 	        });
-	
+
 	        this.$canvas.addEventListener('mousedown', function ( event ) {
 	            self.mousedown(event);
 	        });
-	
+
 	        this.$canvas.addEventListener('mousemove', function ( event ) {
 	            self.mousemove(event);
 	        });
 	    },
-	
-	
+
+
 	    mousemove: function ( event ) {
 	        // current execution context
 	        var self = this;
-	
+
 	        this.cursorX = event.x;
 	        this.cursorY = event.y;
-	
+
 	        this.repaint();
-	
+
 	        if ( event.shiftKey ) {
 	            // snap to the point divisible by 10
 	            this.cursorX = Math.round(event.x / 10) * 10;
@@ -6328,23 +6362,23 @@
 	                }
 	            });
 	        }
-	
+
 	        this.drawPointer();
 	    },
-	
-	
+
+
 	    mousedown: function ( event ) {
 	        var matchPoint = null,
 	            self       = this,  // current execution context
 	            point;
-	
+
 	        // all clicked crosses
 	        this.points.forEach(function ( point ) {
 	            if ( self.cursorX === point.x && self.cursorY === point.y ) {
 	                matchPoint = point;
 	            }
 	        });
-	
+
 	        if ( event.button === 0 ) {
 	            // left mouse button
 	            if ( matchPoint === null ) {
@@ -6384,66 +6418,66 @@
 	        this.drawPointer();
 	        app.develop.storage.setItem('grid.points', JSON.stringify(this.points));
 	    },
-	
-	
+
+
 	    show: function () {
 	        this.active = true;
 	        this.$canvas.classList.add('active');
 	        this.repaint();
 	    },
-	
-	
+
+
 	    hide: function () {
 	        this.active = false;
 	        this.$canvas.classList.remove('active');
 	    },
-	
-	
+
+
 	    repaint: function () {
 	        var ctx  = this.ctx,
 	            self = this;  // current execution context
-	
+
 	        // remove all
 	        ctx.clearRect(0, 0, metrics.width, metrics.height);
-	
+
 	        // safe zone center
 	        this.drawCross({x: this.centerX, y: this.centerY}, {color: 'grey'});
-	
+
 	        // draw safe zone borders
 	        ctx.strokeStyle = 'red';
 	        ctx.strokeRect(metrics.availLeft + 0.5, metrics.availTop + 0.5, metrics.availWidth, metrics.availHeight);
-	
+
 	        // all clicked crosses
 	        this.points.forEach(function ( point ) {
 	            self.drawCross(point, {color: 'green', mark: 3});
 	        });
 	    },
-	
-	
+
+
 	    drawPointer: function () {
 	        var ctx    = this.ctx,
 	            height = 16,
 	            width, dx, dy, angle, title;
-	
+
 	        title = this.cursorX + ' : ' + this.cursorY;
-	
+
 	        // there were some clicks
 	        if ( this.lastX || this.lastY ) {
 	            // distance by X and Y from last point
 	            dx = this.cursorX - this.lastX;
 	            dy = this.cursorY - this.lastY;
 	            title = title + ' [' + (dx > 0 ? '+' : '') + dx + ', ' + (dy > 0 ? '+' : '') + dy + ']';
-	
+
 	            // angle of the line connecting the cursor and the last point
 	            angle = Math.atan2(dy, dx) * 180 / Math.PI;
 	            title = title + ' ' + angle.toFixed(2) + '°';
-	
+
 	            // not perpendicular
 	            if ( dx && dy ) {
 	                // distance between the cursor and the last point
 	                title = title + ' len: ' + Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2)).toFixed(2);
 	            }
-	
+
 	            // angle line
 	            ctx.beginPath();
 	            // show by color if 45°
@@ -6452,13 +6486,13 @@
 	            ctx.lineTo(this.cursorX, this.cursorY);
 	            ctx.stroke();
 	        }
-	
+
 	        // pointer itself
 	        this.drawCross({x: this.cursorX, y: this.cursorY});
-	
+
 	        title = ' ' + title + ' ';
 	        width = ctx.measureText(title).width;
-	
+
 	        // title background
 	        ctx.fillStyle = 'yellow';
 	        ctx.fillRect(
@@ -6466,25 +6500,25 @@
 	            this.cursorY > this.centerY ? this.cursorY - height : this.cursorY,
 	            width, height
 	        );
-	
+
 	        // title itself
 	        ctx.fillStyle    = 'black';
 	        ctx.textBaseline = this.cursorY > this.centerY ? 'bottom' : 'top';
 	        ctx.textAlign    = this.cursorX > this.centerX ? 'right'  : 'left';
 	        ctx.fillText(title, this.cursorX, this.cursorY);
 	    },
-	
-	
+
+
 	    drawCross: function ( point, options ) {
 	        var ctx = this.ctx;
-	
+
 	        // defaults
 	        options = options || {};
-	
+
 	        // apply style options
 	        ctx.lineWidth   = options.width || this.lineWidth;
 	        ctx.strokeStyle = options.color || 'yellow';
-	
+
 	        ctx.beginPath();
 	        // horizontal line
 	        ctx.moveTo(0, point.y + 0.5);
@@ -6494,7 +6528,7 @@
 	        ctx.lineTo(point.x + 0.5, metrics.height);
 	        // draw
 	        ctx.stroke();
-	
+
 	        // center mark
 	        if ( options.mark ) {
 	            ctx.lineWidth = 3;
@@ -6510,7 +6544,7 @@
 	            ctx.lineWidth = this.lineWidth;
 	        }
 	    }
-	
+
 	};
 
 
@@ -6525,17 +6559,17 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var Emitter = __webpack_require__(/*! cjs-emitter */ 3),
 	    gettext = new Emitter(),
 	    meta    = null,
 	    data    = null;
-	
-	
+
+
 	/**
 	 * Simple gettext implementation.
 	 *
@@ -6553,25 +6587,25 @@
 	 */
 	gettext.load = function ( config, callback ) {
 	    var xhr = new XMLHttpRequest();
-	
+
 	    if ( true ) {
 	        if ( !config.name || typeof config.name !== 'string' ) { throw new Error(__filename + ': config.name must be a nonempty string'); }
 	        if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
 	    }
-	
+
 	    // defaults
 	    config.ext  = config.ext  || 'json';
 	    config.path = config.path || 'lang';
-	
+
 	    /* todo: get rid of JSON.parse in future
 	    xhr.overrideMimeType('application/json');
 	    xhr.responseType = 'json';/**/
-	
+
 	    xhr.responseType = 'text';
-	
+
 	    xhr.onload = function () {
 	        var json;
-	
+
 	        try {
 	            json = JSON.parse(xhr.responseText);
 	            meta = json.meta;
@@ -6582,29 +6616,29 @@
 	            data = null;
 	            xhr.onerror(error);
 	        }
-	
+
 	        // there are some listeners
 	        if ( gettext.events['load'] ) {
 	            // notify listeners
 	            gettext.emit('load');
 	        }
 	    };
-	
+
 	    xhr.onerror = function ( error ) {
 	        callback(error);
-	
+
 	        // there are some listeners
 	        if ( gettext.events['error'] ) {
 	            // notify listeners
 	            gettext.emit('error', error);
 	        }
 	    };
-	
+
 	    xhr.open('GET', config.path + '/' + config.name + '.' + config.ext, true);
 	    xhr.send(null);
 	};
-	
-	
+
+
 	/**
 	 * Display the native language translation of a textual message.
 	 *
@@ -6620,8 +6654,8 @@
 	window._ = window.gettext = function ( msgId ) {
 	    return data && data[''][msgId] ? data[''][msgId] : msgId;
 	};
-	
-	
+
+
 	/**
 	 * The "p" in "pgettext" stands for "particular": fetches a particular translation of the textual message.
 	 *
@@ -6638,8 +6672,8 @@
 	window.pgettext = function ( context, msgId ) {
 	    return data && data[context][msgId] ? data[context][msgId] : msgId;
 	};
-	
-	
+
+
 	/**
 	 * Display the native language translation of a textual message whose grammatical form depends on a number.
 	 *
@@ -6659,24 +6693,24 @@
 	    /* eslint no-eval: 0 */
 	    /* eslint id-length: 0 */
 	    var n;
-	
+
 	    if ( true ) {
 	        if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
 	    }
-	
+
 	    if ( data && meta ) {
 	        // translation
 	        return data[''][msgId][eval('n = ' + value + '; ' + meta.plural)];
 	    }
-	
+
 	    // english
 	    return value === 1 ? msgId : plural;
 	};
-	
-	
+
+
 	// public
 	module.exports = gettext;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/gettext/index.js"))
 
 /***/ },
@@ -6689,13 +6723,13 @@
 	/**
 	 * Main page implementation.
 	 */
-	
+
 	'use strict';
-	
+
 	var Page = __webpack_require__(/*! stb-component-page */ 36),
 	    page = new Page({$node: window.pageMain});
-	
-	
+
+
 	// public
 	module.exports = page;
 
@@ -6711,12 +6745,12 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	'use strict';
-	
+
 	// public
 	module.exports = __webpack_require__(/*! spa-component-page */ 37);
-	
+
 	// correct component name
 	module.exports.prototype.name = 'stb-component-page';
 
@@ -6732,14 +6766,14 @@
 	 * @license The MIT License (MIT)
 	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
-	
+
 	/* eslint no-path-concat: 0 */
-	
+
 	'use strict';
-	
+
 	var Component = __webpack_require__(/*! spa-component */ 16);
-	
-	
+
+
 	/**
 	 * Base page implementation.
 	 *
@@ -6764,15 +6798,19 @@
 	function Page ( config ) {
 	    // sanitize
 	    config = config || {};
-	
+
 	    console.assert(typeof this === 'object', 'must be constructed via new');
-	
+
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
-	        // init parameters checks
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	    }
-	
+            if ( typeof config !== 'object' ) {
+                throw new Error(__filename + ': wrong config type');
+            }
+            // init parameters checks
+            if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+                throw new Error(__filename + ': wrong or empty config.className');
+            }
+        }
+
 	    /**
 	     * Page visibility/active state flag.
 	     *
@@ -6780,7 +6818,7 @@
 	     * @type {boolean}
 	     */
 	    this.active = false;
-	
+
 	    /**
 	     * Link to the currently active component with focus.
 	     *
@@ -6788,37 +6826,37 @@
 	     * @type {Component}
 	     */
 	    this.activeComponent = null;
-	
+
 	    // set default className if classList property empty or undefined
 	    //config.className = 'page ' + (config.className || '');
-	
+
 	    // parent constructor call
 	    Component.call(this, config);
-	
+
 	    // state flag
 	    this.active = this.$node.classList.contains('active');
-	
+
 	    // correct DOM parent/child connection if necessary
 	    if ( this.$node.parentNode === null ) {
 	        document.body.appendChild(this.$node);
 	    }
-	
+
 	    // always itself
 	    this.page = this;
 	}
-	
-	
+
+
 	// inheritance
 	Page.prototype = Object.create(Component.prototype);
 	Page.prototype.constructor = Page;
-	
+
 	// set component name
 	Page.prototype.name = 'spa-component-page';
-	
-	
+
+
 	// public
 	module.exports = Page;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, "../../spasdk/component-page/index.js"))
 
 /***/ }
