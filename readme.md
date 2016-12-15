@@ -34,4 +34,4 @@ Pull requests are welcomed with respect to the [JavaScript Code Style](https://g
 
 ## License ##
 
-`stb-boilerplate` is released under the [MIT License](license.md).
+`mag-boilerplate` is released under the [MIT License](license.md).
