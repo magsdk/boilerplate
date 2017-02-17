@@ -1,6 +1,6 @@
 {
     "name": "mag-boilerplate",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "description": "Application template.",
     "author": {
         "name": "Stanislav Kalashnik",
@@ -21,9 +21,16 @@
     "dependencies": {},
     "devDependencies": {
         "eslint": "3.*.*",
-        "mag-app": "1.*.*",
+        "mag-app": "^1.0.1",
+        "mag-component-footer": "2.*.*",
+        "mag-component-layout-list": "^1.0.1",
+        "mag-component-modal": "^1.0.1",
+        "mag-component-panel": "^1.0.1",
+        "mag-component-panel-set": "1.*.*",
         "mag-eslint-config": "1.*.*",
-        "stb-component-page": "1.*.*",
+        "stb-component-page": "^1.4.0",
+        "stb-keys": "^1.4.0",
+        "spa-dom": "1.*.*",
         "spa-gettext": "1.*.*"
     },
     "license": "MIT"

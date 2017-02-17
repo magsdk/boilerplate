@@ -15,6 +15,7 @@ Create a new project base:
 git clone https://github.com/magsdk/boilerplate.git my-project
 ```
 
+There is an example of simple UI inside.
 Remove git metadata, build and start services:
 
 ```bash
@@ -24,7 +25,6 @@ magsdk
 # or
 DEBUG=* magsdk
 ```
-
 
 ## Contribution ##
 
