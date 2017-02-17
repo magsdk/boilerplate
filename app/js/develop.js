@@ -7864,9 +7864,6 @@
 	        exitModal.focus();
 	    }
 	};
-	
-	
-	module.exports = exit;
 
 
 /***/ },

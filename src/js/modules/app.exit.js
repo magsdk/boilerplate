@@ -115,6 +115,3 @@ module.exports = {
         exitModal.focus();
     }
 };
-
-
-module.exports = exit;
