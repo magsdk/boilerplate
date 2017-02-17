@@ -4494,14 +4494,14 @@
 	
 	var app        = __webpack_require__(/*! mag-app */ 1),
 	    Page       = __webpack_require__(/*! stb-component-page */ 32),
-	    page       = new Page({$node: window.pageMain}),
 	    dom        = __webpack_require__(/*! spa-dom */ 35),
 	    keys       = __webpack_require__(/*! stb-keys */ 8),
 	    Footer     = __webpack_require__(/*! mag-component-footer */ 36),
 	    Panel      = __webpack_require__(/*! mag-component-panel */ 38),
 	    PanelSet   = __webpack_require__(/*! mag-component-panel-set */ 40),
 	    LayoutList = __webpack_require__(/*! mag-component-layout-list */ 41),
-	    appExit    = __webpack_require__(/*! ../modules/app.exit */ 43);
+	    appExit    = __webpack_require__(/*! ../modules/app.exit */ 43),
+	    page       = new Page({$node: window.pageMain});
 	
 	
 	page.once('show', function () {
@@ -7768,7 +7768,7 @@
 	    },
 	
 	    /**
-	     * Exit from an app to Launcher by pressing "Exit/Home" button.
+	     * Hide an app and exit to Launcher.
 	     */
 	    goHome: function () {
 	        core.call('hide');

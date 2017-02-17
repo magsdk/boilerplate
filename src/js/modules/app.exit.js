@@ -19,7 +19,7 @@ module.exports = {
     },
 
     /**
-     * Exit from an app to Launcher by pressing "Exit/Home" button.
+     * Hide an app and exit to Launcher.
      */
     goHome: function () {
         core.call('hide');

@@ -6,14 +6,14 @@
 
 var app        = require('mag-app'),
     Page       = require('stb-component-page'),
-    page       = new Page({$node: window.pageMain}),
     dom        = require('spa-dom'),
     keys       = require('stb-keys'),
     Footer     = require('mag-component-footer'),
     Panel      = require('mag-component-panel'),
     PanelSet   = require('mag-component-panel-set'),
     LayoutList = require('mag-component-layout-list'),
-    appExit    = require('../modules/app.exit');
+    appExit    = require('../modules/app.exit'),
+    page       = new Page({$node: window.pageMain});
 
 
 page.once('show', function () {
