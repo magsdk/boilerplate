@@ -20,7 +20,7 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "eslint": "3.*.*",
+        "eslint": "4.*.*",
         "mag-app": "^1.0.1",
         "mag-component-footer": "2.*.*",
         "mag-component-layout-list": "^1.0.1",
