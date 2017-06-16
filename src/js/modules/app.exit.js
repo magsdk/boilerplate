@@ -18,6 +18,7 @@ module.exports = {
         core.call('stop');
     },
 
+
     /**
      * Hide an app and exit to Launcher.
      */
@@ -25,12 +26,13 @@ module.exports = {
         core.call('hide');
     },
 
+
     /**
      * Exit from an app to Launcher, app isn't saved in Task Manager's list.
      * Destroy application instance.
      * If callback function provided, and callback returns boolean 'true', application will stay alive.
      *
-     * @param [callback] provide callback if you want to handle exit result, or cancel it
+     * @param {function} [callback] provide callback if you want to handle exit result, or cancel it
      */
     goExit: function ( callback ) {
         var ModalMessage  = require('mag-component-modal'),
@@ -68,6 +70,7 @@ module.exports = {
                                     if ( callback(true) ) {
                                         exitModal.hide();
                                         exitModal.remove();
+
                                         return;
                                     }
                                 }
