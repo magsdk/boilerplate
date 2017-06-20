@@ -9,6 +9,12 @@ Application template
 
 ## Usage ##
 
+Install global packages:
+
+```bash
+sudo npm install -g eslint magsdk
+```
+
 Create a new project base:
 
 ```bash
