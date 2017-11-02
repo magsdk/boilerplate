@@ -13,7 +13,7 @@ var app        = require('mag-app'),
     PanelSet   = require('mag-component-panel-set'),
     LayoutList = require('mag-component-layout-list'),
     appExit    = require('../modules/app.exit'),
-    page       = new Page({$node: window.pageMain});
+    page       = new Page({$node: document.getElementById('pageMain')});
 
 
 page.once('show', function () {
