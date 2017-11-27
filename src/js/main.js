@@ -1,11 +1,10 @@
 /**
- * Main application entry point.
+ * Release application entry point.
  */
 
 'use strict';
 
 var app = require('mag-app');
-
 
 // everything is ready
 app.once('load', function () {
@@ -17,5 +16,7 @@ app.once('load', function () {
 
         // show main page
         app.route(app.pages.main);
+
+        app.ready();
     });
 });

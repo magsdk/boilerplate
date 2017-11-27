@@ -1,1 +1,5 @@
-.eslintignore
+node_modules
+src
+develop*
+*.map
+.*
