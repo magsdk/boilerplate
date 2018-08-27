@@ -1,3 +1,25 @@
 /* application: develop */
+.mag-component-panel .mag-component-scroll-area {
+    height: 568px; }
+
+.mag-component-panel .stb-component-scrollbar {
+    position: absolute;
+    height: 588px;
+    right: 7.5px;
+    top: 84px; }
+
+.mag-component-panel.main .stb-component-scrollbar {
+    height: 714px;
+    top: 102px; }
+
+.mag-component-modal .body {
+    position: relative; }
+
+.mag-component-modal .stb-component-scrollbar {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    z-index: 3; }
 
 /*# sourceMappingURL=develop.app.1080.map */
