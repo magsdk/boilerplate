@@ -1,0 +1,135 @@
+# Italian translations for mag-boilerplate package.
+# Copyright (C) 2018 THE mag-boilerplate'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the mag-boilerplate package.
+# Automatically generated, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: mag-boilerplate 1.1.1\n"
+"Report-Msgid-Bugs-To: darkpark.main@gmail.com\n"
+"POT-Creation-Date: 2018-08-28 11:15+0300\n"
+"PO-Revision-Date: 2018-08-28 11:15+0300\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Action 1"
+msgstr ""
+
+msgid "Action 2"
+msgstr ""
+
+msgid "Action 3"
+msgstr ""
+
+msgid "Action 4"
+msgstr ""
+
+msgid "Boilerplate"
+msgstr ""
+
+msgid "Boilerplate for magsdk."
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Exit"
+msgstr ""
+
+msgid "Footer"
+msgstr ""
+
+msgid "Hide"
+msgstr ""
+
+msgid "Hide footer"
+msgstr ""
+
+msgid "Modal check list"
+msgstr ""
+
+msgid "Modal radio list"
+msgstr ""
+
+msgid "Modals"
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Play"
+msgstr ""
+
+msgid "Play audio file 1"
+msgstr ""
+
+msgid "Play video file 1"
+msgstr ""
+
+msgid "Play video file 2"
+msgstr ""
+
+msgid "Show"
+msgstr ""
+
+msgid "Show confirm. Closed by button click or \"back\" press."
+msgstr ""
+
+msgid "Show error alert. Closed by button click or \"back\" press."
+msgstr ""
+
+msgid "Show error notification"
+msgstr ""
+
+msgid "Show footer"
+msgstr ""
+
+msgid "Show modal check list"
+msgstr ""
+
+msgid "Show modal check list. Used mag-component-modal-check-list."
+msgstr ""
+
+msgid "Show modal radio list"
+msgstr ""
+
+msgid "Show modal with radio list. Used mag-component-modal and mag-component-radio-list."
+msgstr ""
+
+msgid "Show success notification"
+msgstr ""
+
+msgid "Show warning notification"
+msgstr ""
+
+msgid "Show warning notification. Closed by timeout."
+msgstr ""
+
+msgid "Some long text:"
+msgstr ""
+
+msgid "Title text"
+msgstr ""
+
+msgid "Virtual keyboard"
+msgstr ""
+
+msgid "You need add url to your test file in code."
+msgstr ""
+
+msgid "info"
+msgstr ""
+
+msgid "menu"
+msgstr ""

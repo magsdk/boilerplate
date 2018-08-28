@@ -17,7 +17,8 @@
         "watch": "magsdk watch",
         "serve": "magsdk serve",
         "lint": "eslint .",
-        "test": "npm run lint"
+        "test": "npm run lint",
+        "gettext": "magsdk gettext"
     },
     "dependencies": {
         "magcore-core": "^3.7.35",
@@ -31,17 +32,16 @@
         "mag-component-layout": "^1.0.1",
         "mag-component-radio-list": "^2.3.0",
         "mag-app": "^1.0.1",
-        "mag-component-footer": "2.*.*",
+        "mag-component-footer": "^2.0.0",
         "mag-component-layout-list": "^1.0.1",
         "mag-component-modal": "^1.0.1",
         "mag-component-panel": "^1.0.1",
-        "mag-component-panel-set": "1.*.*",
-        "cjs-eslint": "^1.0.0",
-        "mag-eslint-config": "^1.0.0",
+        "mag-component-panel-set": "^1.0.0",
+        "mag-eslint": "^1.0.0",
         "stb-component-page": "^1.4.0",
         "stb-keys": "^1.4.0",
-        "spa-dom": "1.*.*",
-        "spa-gettext": "1.*.*"
+        "spa-dom": "^1.0.0",
+        "spa-gettext": "^1.0.0"
     },
     "optionalDependencies": {
         "magcore-app-player": "^3.7.0",
@@ -85,8 +85,7 @@
         "colors": {
             "splashFont": "#fff",
             "splashBackground": "#3cbb3c"
-        },
-        "resource": "audio"
+        }
     },
     "license": "MIT"
 }

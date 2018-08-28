@@ -15,14 +15,14 @@ var app            = require('mag-app'),
     ModalMessage   = require('mag-component-modal'),
     RadioList      = require('mag-component-radio-list'),
     ModalCheckList = require('mag-component-modal-check-list'),
-    Scroll         = require('stb-component-scrollbar'),
+    ScrollBar      = require('stb-component-scrollbar'),
     ScrollArea     = require('mag-component-scroll-area'),
 
     appExit    = require('../modules/app.exit'),
     longText   = require('../modules/text'),
     page       = new Page({$node: document.getElementById('pageMain')}),
 
-    scroll = new Scroll({}),
+    scroll = new ScrollBar({}),
     scrollArea = new ScrollArea({
         propagate: true,
         step: 5,
@@ -68,12 +68,12 @@ var app            = require('mag-app'),
                 },
                 _('Play video file 1')
             ],
-            value: _('You need add url to your test file in code.'),
+            value: _('You may change url to your test file in code.'),
             data: {
                 play: true,
                 name: 'Video file 1',
-                // Add url to your test video file
-                url: '',
+                // Change url to your test video file
+                url: 'http://movietrailers.apple.com/movies/independent/indivisible/indivisible-trailer-1_h1080p.mov',
                 type: 'video'
             }
         },
@@ -84,12 +84,12 @@ var app            = require('mag-app'),
                 },
                 _('Play video file 2')
             ],
-            value: _('You need add url to your test file in code.') + '<p>' + _('Some long text:') + '</p>' + longText,
+            value: _('You may change url to your test file in code.') + '<p>' + _('Some long text:') + '</p>' + longText,
             data: {
                 play: true,
                 name: 'Video file 2',
-                /// Add url to your test video file
-                url: '',
+                /// Change url to your test video file
+                url: 'https://trailers.apple.com/movies/sony_pictures/alpha/alpha-featurette-1_h720p.mov',
                 type: 'video'
             }
         },
@@ -100,12 +100,12 @@ var app            = require('mag-app'),
                 },
                 _('Play audio file 1')
             ],
-            value: _('You need add url to your test file in code.') + '<p>' + _('Some long text:') + '</p>' + longText,
+            value: _('You may change url to your test file in code.') + '<p>' + _('Some long text:') + '</p>' + longText,
             data: {
                 play: true,
                 name: 'Audio file 1',
-                // Add url to your test audio file
-                url: '',
+                // Change url to your test audio file
+                url: 'http://s1.stopmusic.net/AC_DC_-_Highway_to_Hell.mp3',
                 type: 'audio'
             }
         }
@@ -217,11 +217,9 @@ var app            = require('mag-app'),
         }
     ];
 
-function play ( data, playerContext ) {
-    var intent;
 
-    //play intent
-    intent = core.intent({
+function play ( data, playerContext ) {
+    var intent = core.intent({
         action: 'play',
         mime: 'content/' + data.type,
         data: {
@@ -248,7 +246,7 @@ function play ( data, playerContext ) {
         context: playerContext
     }, function ( error, context ) {
         if ( error ) {
-            debug.fail('Play error', error);
+            console.error('Play error', error);
         }
         // you can save context and start play next file in this player
         playerContext = context;
@@ -256,11 +254,13 @@ function play ( data, playerContext ) {
     });
 }
 
+
 page.once('show', function () {
     panelSet.panels[1].focus();
 
     app.ready();
 });
+
 
 page.addListener('keydown', function ( event ) {
     if ( event.code === keys.back ) {
@@ -318,7 +318,7 @@ panelSet = new PanelSet({
                                         }
                                     }
                                 }, function ( error ) {
-                                    debug.fail('Keyboard return', error);
+                                    console.error('Keyboard return', error);
                                 });
                             }
                         },
@@ -418,6 +418,7 @@ panelSet = new PanelSet({
 });
 page.add(panelSet);
 
+
 footer = new Footer({
     parent: page,
     visible: true,
@@ -509,7 +510,6 @@ modalCheckList = new ModalCheckList({
 page.add(modalCheckList);
 
 
-modalScroll = new Scroll({});
 modalRadio = new ModalMessage({
     visible: false,
     title: _('Modal radio list'),
@@ -537,7 +537,7 @@ modalRadio = new ModalMessage({
                 {state: false, title: 'Some title 9', value: 9}
             ],
             cycle: true,
-            scroll: modalScroll,
+            scroll: modalScroll = new ScrollBar({}),
             events: {
                 select: function ( data ) {
                     console.log(data);
@@ -558,6 +558,7 @@ modalRadio = new ModalMessage({
     ]
 });
 page.add(modalRadio);
+
 
 if ( DEVELOP ) {
     window.mainPanel = mainPanel;
