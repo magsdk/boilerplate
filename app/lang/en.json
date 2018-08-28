@@ -1,0 +1,19 @@
+{
+	"meta": {
+		"charset": "utf-8",
+		"project": "mag-boilerplate 1.1.1",
+		"language": "en",
+		"plural": "(n != 1)"
+	},
+	"data": {
+		"": {
+			"Action": "Action",
+			"Cancel": "Cancel",
+			"Exit": "Exit",
+			"Item": "Item",
+			"files": "files",
+			"info": "info",
+			"menu": "menu"
+		}
+	}
+}

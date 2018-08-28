@@ -1,0 +1,39 @@
+# Portuguese translations for mag-boilerplate package.
+# Copyright (C) 2017 THE mag-boilerplate'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the mag-boilerplate package.
+# Automatically generated, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: mag-boilerplate 1.1.1\n"
+"Report-Msgid-Bugs-To: darkpark.main@gmail.com\n"
+"POT-Creation-Date: 2017-10-17 11:12+0300\n"
+"PO-Revision-Date: 2017-10-17 11:12+0300\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Action"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Exit"
+msgstr ""
+
+msgid "Item"
+msgstr ""
+
+msgid "files"
+msgstr ""
+
+msgid "info"
+msgstr ""
+
+msgid "menu"
+msgstr ""

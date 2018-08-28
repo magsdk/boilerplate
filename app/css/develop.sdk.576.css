@@ -68,30 +68,32 @@ body > canvas {
     .mag-component-footer > table {
         vertical-align: middle;
         text-align: center; }
-        .mag-component-footer > table > tr > td {
+        .mag-component-footer > table > tbody > tr > td {
             width: 28px; }
-            .mag-component-footer > table > tr > td.central {
+            .mag-component-footer > table > tbody > tr > td.central {
                 width: 544px; }
-                .mag-component-footer > table > tr > td.central > .wrapper {
+                .mag-component-footer > table > tbody > tr > td.central > .wrapper {
                     height: 28px;
                     visibility: inherit; }
-                    .mag-component-footer > table > tr > td.central > .wrapper.hidden {
+                    .mag-component-footer > table > tbody > tr > td.central > .wrapper.hidden {
                         display: none; }
-                    .mag-component-footer > table > tr > td.central > .wrapper > .button {
+                    .mag-component-footer > table > tbody > tr > td.central > .wrapper > .button {
                         display: inline-block;
                         height: 28px;
                         padding: 0 10px 0 7.5px; }
-                        .mag-component-footer > table > tr > td.central > .wrapper > .button.hidden {
+                        .mag-component-footer > table > tbody > tr > td.central > .wrapper > .button.disabled {
+                            opacity: 0.3; }
+                        .mag-component-footer > table > tbody > tr > td.central > .wrapper > .button.hidden {
                             display: none; }
-                        .mag-component-footer > table > tr > td.central > .wrapper > .button .title {
+                        .mag-component-footer > table > tbody > tr > td.central > .wrapper > .button .title {
                             padding-left: 5px; }
-            .mag-component-footer > table > tr > td .iconImg, .mag-component-footer > table > tr > td .iconImg:before {
+            .mag-component-footer > table > tbody > tr > td .iconImg, .mag-component-footer > table > tbody > tr > td .iconImg:before {
                 height: 28px;
                 line-height: 28px;
                 width: 28px;
                 text-align: center;
                 float: left; }
-            .mag-component-footer > table > tr > td .title {
+            .mag-component-footer > table > tbody > tr > td .title {
                 display: block;
                 float: right; }
     .mag-component-footer.focus {
@@ -164,10 +166,14 @@ body > canvas {
     top: 0;
     display: table;
     z-index: 10;
+    visibility: visible;
     outline: 1px dashed #005000;
     outline-offset: -1px; }
     .mag-component-modal.hidden {
         display: none; }
+    .mag-component-modal.hidden {
+        display: table;
+        visibility: hidden; }
     .mag-component-modal.active > div > div > div.overlay {
         display: none; }
     .mag-component-modal > div {
