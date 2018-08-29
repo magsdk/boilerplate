@@ -13,7 +13,7 @@ var webpack  = require('magsdk/node_modules/webpack'),
     webpackDevPlugins = require('magsdk/node_modules/stb-plugin-webpack/config').develop.webpack.plugins;
 
 require('magsdk/node_modules/spa-plugin-gettext/config').default.languages =
-    ['de', 'el', 'es', 'fr', 'it', 'nl', 'pl', 'ru', 'sl', 'uk', 'hy', 'ka', 'bg', 'tr', 'pt', 'lv', 'et'];
+    ['ru', 'uk'];
 
 webpackDevPlugins.push(
     new webpack.BannerPlugin(util.format(
