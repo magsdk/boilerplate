@@ -20,17 +20,17 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "mag-app": "^1.0.1",
-        "mag-component-footer": "2.*.*",
-        "mag-component-layout-list": "^1.0.1",
-        "mag-component-modal": "^1.0.1",
-        "mag-component-panel": "^1.0.1",
-        "mag-component-panel-set": "1.*.*",
-        "mag-eslint": "^1.0.0",
-        "stb-component-page": "^1.4.0",
-        "stb-keys": "^1.4.0",
-        "spa-dom": "1.*.*",
-        "spa-gettext": "1.*.*"
+        "mag-app": "^1.0.8",
+        "mag-component-footer": "^2.0.9",
+        "mag-component-layout-list": "^1.2.1",
+        "mag-component-modal": "^1.0.12",
+        "mag-component-panel": "^1.0.6",
+        "mag-component-panel-set": "^1.0.4",
+        "mag-eslint": "^1.0.1",
+        "stb-component-page": "^1.4.1",
+        "stb-keys": "^1.4.4",
+        "spa-dom": "^1.4.1",
+        "spa-gettext": "^1.4.1"
     },
     "license": "MIT"
 }
