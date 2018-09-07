@@ -1,2 +1,36 @@
 // pages
 @import "pages/main";
+
+.mag-component-panel {
+    .mag-component-scroll-area  {
+        height: $panelHeight - $panelTitleHeight;
+    }
+
+    .stb-component-scrollbar  {
+        position:absolute;
+        height: $panelHeight - $panelTitleHeight;
+        right: $scrollBarWidth;
+        top: $panelTitleHeight;
+    }
+
+    &.main {
+        .stb-component-scrollbar  {
+            height: $panelMainHeight - $panelMainTitleHeight;
+            top: $panelMainTitleHeight;
+        }
+    }
+}
+
+.mag-component-modal {
+    .body {
+        position: relative;
+    }
+
+    .stb-component-scrollbar {
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 5px;
+        z-index: 3;
+    }
+}

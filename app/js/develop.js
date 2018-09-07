@@ -1,3 +1,7 @@
+/*!
+ * */(function(){var gettext = function(){};gettext("Boilerplate");gettext("Boilerplate for magsdk.");})()
+ * /*
+ */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -45,7 +49,7 @@
 /*!************************!*\
   !*** ./src/js/main.js ***!
   \************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Main application entry point.
@@ -58,10 +62,10 @@
 	
 	// everything is ready
 	app.once('load', function () {
-	    __webpack_require__(/*! spa-gettext */ 29).load({name: core.environment.language}, function () {
+	    __webpack_require__(/*! spa-gettext */ 27).load({name: core.environment.language}, function () {
 	        // load pages
 	        app.pages = {
-	            main: __webpack_require__(/*! ./pages/main */ 31)
+	            main: __webpack_require__(/*! ./pages/main */ 29)
 	        };
 	
 	        // show main page
@@ -70,12 +74,12 @@
 	});
 
 
-/***/ },
+/***/ }),
 /* 1 */
 /*!****************************!*\
   !*** ./~/mag-app/index.js ***!
   \****************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -90,12 +94,12 @@
 	module.exports = app;
 
 
-/***/ },
+/***/ }),
 /* 2 */
 /*!*******************************!*\
   !*** ./~/mag-app/lib/main.js ***!
   \*******************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -107,28 +111,33 @@
 	'use strict';
 	
 	var app    = __webpack_require__(/*! spa-app/lib/core */ 3),
-	    events = __webpack_require__(/*! spa-app/lib/events */ 7),
-	    keys   = __webpack_require__(/*! stb-keys */ 8);
+	    events = __webpack_require__(/*! spa-app/lib/events */ 7);
 	
 	
 	// get instance
 	window.core = window.parent.getCoreInstance(window, app);
 	
 	// shims
-	__webpack_require__(/*! stb-shim-classlist */ 10);
+	__webpack_require__(/*! stb-shim-classlist */ 8);
 	
 	// apply geometry
-	__webpack_require__(/*! stb-app/lib/metrics */ 11);
+	__webpack_require__(/*! stb-app/lib/metrics */ 9);
 	
 	// load sdk css
-	__webpack_require__(/*! stb-app/lib/css */ 13)('sdk');
+	__webpack_require__(/*! stb-app/lib/css */ 11)('sdk');
 	
 	// load theme css
-	__webpack_require__(/*! ./css */ 14);
+	__webpack_require__(/*! ./css */ 12);
 	
 	// load app css
-	__webpack_require__(/*! stb-app/lib/css */ 13)('app');
+	__webpack_require__(/*! stb-app/lib/css */ 11)('app');
 	
+	/**
+	 * Specify platform name
+	 *
+	 * @type {string}
+	 */
+	app.platform = 'mag';
 	
 	/**
 	 * Show app.
@@ -159,6 +168,7 @@
 	
 	events.load = function ( event ) {
 	    //window.core = window.parent.getCoreInstanse(window, app);
+	    document.body.setAttribute('platform', app.platform);
 	
 	    if ( core.ready ) {
 	        if ( app.events['load'] ) {
@@ -180,7 +190,7 @@
 	// activate development mechanisms and tools
 	if ( true ) {
 	    //require('stb-develop');
-	    __webpack_require__(/*! ./develop/main */ 15);
+	    __webpack_require__(/*! ./develop/main */ 13);
 	}
 	
 	
@@ -202,16 +212,16 @@
 	module.exports = app;
 
 
-/***/ },
+/***/ }),
 /* 3 */
 /*!*******************************!*\
   !*** ./~/spa-app/lib/core.js ***!
   \*******************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -248,7 +258,7 @@
 	        // there are some listeners
 	        if ( page.events['show'] ) {
 	            // notify listeners
-	            page.emit('show', {page: page, data: data});
+	            page.emit('show', {data: data});
 	        }
 	
 	        return true;
@@ -282,7 +292,7 @@
 	        // there are some listeners
 	        if ( page.events['hide'] ) {
 	            // notify listeners
-	            page.emit('hide', {page: page});
+	            page.emit('hide');
 	        }
 	
 	        return true;
@@ -353,8 +363,8 @@
 	        return true;
 	    }
 	
-	    debug.warn('invalid page to route: ' + pageTo.id, null, {tags: ['route', 'page', pageTo.id]});
-	    //console.log('router.navigate: ' + pageTo.id, 'red');
+	    //debug.warn('invalid page to route: ' + pageTo.id, null, {tags: ['route', 'page', pageTo.id]});
+	    console.warn('invalid page to route: ' + pageTo.id);
 	
 	    // nothing was done
 	    return false;
@@ -366,16 +376,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-app/lib/core.js"))
 
-/***/ },
+/***/ }),
 /* 4 */
 /*!********************************!*\
   !*** ./~/cjs-emitter/index.js ***!
   \********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -467,17 +477,23 @@
 	        var self = this;
 	
 	        if ( true ) {
-	            if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-	            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
-	            if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
+	            if ( arguments.length !== 2 ) {
+	                throw new Error(__filename + ': wrong arguments number');
+	            }
+	            if ( typeof name !== 'string' || name.length === 0 ) {
+	                throw new Error(__filename + ': wrong or empty name');
+	            }
+	            if ( typeof callback !== 'function' ) {
+	                throw new Error(__filename + ': wrong callback type');
+	            }
 	        }
 	
 	        // initialization may be required
 	        this.events[name] = this.events[name] || [];
 	        // append this new event to the list
 	        this.events[name].push(function onceWrapper () {
-	            callback.apply(self, arguments);
 	            self.removeListener(name, onceWrapper);
+	            callback.apply(self, arguments);
 	        });
 	    },
 	
@@ -497,9 +513,15 @@
 	        var name;
 	
 	        if ( true ) {
-	            if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-	            if ( typeof callbacks !== 'object' ) { throw new Error(__filename + ': wrong callbacks type'); }
-	            if ( Object.keys(callbacks).length === 0 ) { throw new Error(__filename + ': no callbacks given'); }
+	            if ( arguments.length !== 1 ) {
+	                throw new Error(__filename + ': wrong arguments number');
+	            }
+	            if ( typeof callbacks !== 'object' ) {
+	                throw new Error(__filename + ': wrong callbacks type');
+	            }
+	            if ( Object.keys(callbacks).length === 0 ) {
+	                throw new Error(__filename + ': no callbacks given');
+	            }
 	        }
 	
 	        for ( name in callbacks ) {
@@ -521,10 +543,18 @@
 	     */
 	    removeListener: function ( name, callback ) {
 	        if ( true ) {
-	            if ( arguments.length !== 2 ) { throw new Error(__filename + ': wrong arguments number'); }
-	            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
-	            if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
-	            if ( this.events[name] && !Array.isArray(this.events[name]) ) { throw new Error(__filename + ': corrupted inner data'); }
+	            if ( arguments.length !== 2 ) {
+	                throw new Error(__filename + ': wrong arguments number');
+	            }
+	            if ( typeof name !== 'string' || name.length === 0 ) {
+	                throw new Error(__filename + ': wrong or empty name');
+	            }
+	            if ( typeof callback !== 'function' ) {
+	                throw new Error(__filename + ': wrong callback type');
+	            }
+	            if ( this.events[name] && !Array.isArray(this.events[name]) ) {
+	                throw new Error(__filename + ': corrupted inner data');
+	            }
 	        }
 	
 	        // the event exists and should have some callbacks
@@ -595,19 +625,27 @@
 	            index;
 	
 	        if ( true ) {
-	            if ( arguments.length < 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-	            if ( typeof name !== 'string' || name.length === 0 ) { throw new Error(__filename + ': wrong or empty name'); }
+	            if ( arguments.length < 1 ) {
+	                throw new Error(__filename + ': wrong arguments number');
+	            }
+	            if ( typeof name !== 'string' || name.length === 0 ) {
+	                throw new Error(__filename + ': wrong or empty name');
+	            }
 	        }
 	
 	        // the event exists and should have some callbacks
 	        if ( event ) {
 	            if ( true ) {
-	                if ( !Array.isArray(event) ) { throw new Error(__filename + ': wrong event type'); }
+	                if ( !Array.isArray(event) ) {
+	                    throw new Error(__filename + ': wrong event type');
+	                }
 	            }
 	
 	            for ( index = 0; index < event.length; index++ ) {
 	                if ( true ) {
-	                    if ( typeof event[index] !== 'function' ) { throw new Error(__filename + ': wrong event callback type'); }
+	                    if ( typeof event[index] !== 'function' ) {
+	                        throw new Error(__filename + ': wrong event callback type');
+	                    }
 	                }
 	
 	                // invoke the callback with parameters
@@ -627,16 +665,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/cjs-emitter/index.js"))
 
-/***/ },
+/***/ }),
 /* 5 */
 /*!******************************!*\
   !*** ./~/cjs-query/index.js ***!
   \******************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	'use strict';
@@ -665,7 +703,7 @@
 	    },
 	
 	
-		/**
+	    /**
 	     * Make uri query part in a string form.
 	     *
 	     * @param {Object} params data to stringify
@@ -684,12 +722,12 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 6 */
 /*!**************************!*\
   !*** ./src/js/config.js ***!
   \**************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Global application configuration.
@@ -703,16 +741,16 @@
 	module.exports = {};
 
 
-/***/ },
+/***/ }),
 /* 7 */
 /*!*********************************!*\
   !*** ./~/spa-app/lib/events.js ***!
   \*********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -728,7 +766,8 @@
 	        //debug.event(event);
 	        //console.log(event);
 	
-	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        //debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        console.log('app event: ' + event.type, event);
 	
 	        // there are some listeners
 	        if ( app.events['dom'] ) {
@@ -759,7 +798,8 @@
 	        // time mark
 	        //app.data.time.load = event.timeStamp;
 	
-	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        //debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        console.log('app event: ' + event.type, event);
 	
 	        // global handler
 	        // there are some listeners
@@ -805,7 +845,8 @@
 	        //debug.event(event);
 	        //console.log(event);
 	
-	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        //debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        console.log('app event: ' + event.type, event);
 	
 	        // global handler
 	        // there are some listeners
@@ -836,7 +877,8 @@
 	    error: function ( event ) {
 	        //debug.event(event);
 	        //console.log(event);
-	        debug.fail('app event: ' + event.message, event, {tags: [event.type, 'event']});
+	        //debug.fail('app event: ' + event.message, event, {tags: [event.type, 'event']});
+	        console.error('app event: ' + event.message, event);
 	    },
 	
 	    /**
@@ -879,7 +921,8 @@
 	
 	        //debug.event(event);
 	        //console.log(event);
-	        debug.info('app event: ' + event.type + ' - ' + eventLocal.code, event, {tags: [event.type, 'event']});
+	        //debug.info('app event: ' + event.type + ' - ' + eventLocal.code, event, {tags: [event.type, 'event']});
+	        console.log('app event: ' + event.type + ' - ' + eventLocal.code, event);
 	
 	        // page.activeComponent can be set to null in event handles
 	        activeComponent = page.activeComponent;
@@ -948,7 +991,8 @@
 	
 	        //debug.event(event);
 	        //console.log(event);
-	        debug.info('app event: ' + event.type + ' - ' + event.key, event, {tags: [event.type, 'event']});
+	        //debug.info('app event: ' + event.type + ' - ' + event.key, event, {tags: [event.type, 'event']});
+	        console.log('app event: ' + event.type + ' - ' + event.key, event);
 	
 	        // current component handler
 	        if ( page.activeComponent && page.activeComponent !== page ) {
@@ -982,14 +1026,14 @@
 	     *
 	     * @param {Event} event generated object with event data
 	     */
-	    contextmenu: function ( event ) {
-	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
-	
-	        if ( false ) {
-	            // disable right click in release mode
-	            event.preventDefault();
-	        }
-	    },
+	    // contextmenu: function ( event ) {
+	    //     debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	    //
+	    //     if ( !DEVELOP ) {
+	    //         // disable right click in release mode
+	    //         event.preventDefault();
+	    //     }
+	    // },
 	
 	    /*contextmenu: function ( event ) {
 	     //var kbEvent = {}; //Object.create(document.createEvent('KeyboardEvent'));
@@ -1033,7 +1077,8 @@
 	
 	        //debug.event(event);
 	        //console.log(event);
-	        debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        //debug.info('app event: ' + event.type, event, {tags: [event.type, 'event']});
+	        console.log('app event: ' + event.type, event);
 	
 	        // current component handler
 	        if ( page.activeComponent && page.activeComponent !== page ) {
@@ -1057,168 +1102,12 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-app/lib/events.js"))
 
-/***/ },
+/***/ }),
 /* 8 */
-/*!*****************************!*\
-  !*** ./~/stb-keys/index.js ***!
-  \*****************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Global list of non-printable control key codes.
-	 *
-	 * At the moment `keypress` and `keydown` events are emitted for the same keys (for both printable and non-printable characters).
-	 *
-	 * WARNING!!! All codes in this file (except 'volumeUp' and 'volumeDown')
-	 * are used in window 'keydown' handler to prevent wrong 'keypress' firings.
-	 * If you add new code to this file 'keypress' event with this code will never fire.
-	 *
-	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
-	 */
-	
-	'use strict';
-	
-	var keys = __webpack_require__(/*! spa-keys */ 9);
-	
-	
-	// extend with additional codes
-	keys.back         = keys.backspace;
-	keys.channelNext  = keys.tab;        // Tab
-	keys.channelPrev  = keys.tab + 's';  // Shift+Tab
-	keys.ok           = keys.enter;      // Enter
-	keys.exit         = keys.escape;     // Esc
-	keys.volumeUp     = 107;             // NUMPAD +
-	keys.volumeDown   = 109;             // NUMPAD -
-	keys.f1           = 112 + 'c';       // Ctrl+F1
-	keys.f2           = 113 + 'c';       // Ctrl+F2
-	keys.f3           = 114 + 'c';       // Ctrl+F3
-	keys.f4           = 115 + 'c';       // Ctrl+F4
-	keys.refresh      = 116 + 'c';       // Ctrl+F5
-	keys.frame        = 117 + 'c';       // Ctrl+F6
-	keys.phone        = 119 + 'c';       // Ctrl+F8
-	keys.set          = 120 + 'c';       // Ctrl+F9
-	keys.tv           = 121 + 'c';       // Ctrl+F10
-	keys.menu         = 122 + 'c';       // Ctrl+F11
-	keys.app          = 123 + 'c';       // Ctrl+F12
-	keys.rewind       = 66  + 'a';       // Alt+B
-	keys.forward      = 70  + 'a';       // Alt+F
-	keys.audio        = 71  + 'a';       // Alt+G
-	keys.standby      = 74  + 'a';       // Alt+J
-	keys.keyboard     = 76  + 'a';       // Alt+L
-	keys.usbMounted   = 80  + 'a';       // Alt+P
-	keys.usbUnmounted = 81  + 'a';       // Alt+Q
-	keys.playPause    = 82  + 'a';       // Alt+R
-	keys.stop         = 83  + 'a';       // Alt+S
-	keys.power        = 85  + 'a';       // Alt+U
-	keys.record       = 87  + 'a';       // Alt+W
-	keys.info         = 89  + 'a';       // Alt+Y
-	keys.mute         = 192 + 'a';
-	
-	
-	// public
-	module.exports = keys;
-	
-	// public
-	// module.exports = {
-	//     getCode: function ( event ) {
-	//         var code = event.keyCode;
-	//
-	//         // apply key modifiers
-	//         if ( event.shiftKey ) { code += 1000; }
-	//         if ( event.altKey )   { code += 2000; }
-	//
-	//         return code;
-	//     },
-	//
-	//     codes: {
-	//         back:         8,    // Backspace
-	//         channelPrev:  1009, // Shift+Tab
-	//         channelNext:  9,    // Tab
-	//         ok:           13,   // Enter
-	//         exit:         27,   // Esc
-	//         pageUp:       33,
-	//         pageDown:     34,
-	//         end:          35,
-	//         home:         36,
-	//         left:         37,
-	//         up:           38,
-	//         right:        39,
-	//         down:         40,
-	//         'delete':     46,
-	//         volumeUp:     107,  // NUMPAD +
-	//         volumeDown:   109,  // NUMPAD -
-	//         f1:           112,  // F1
-	//         f2:           113,  // F2
-	//         f3:           114,  // F3
-	//         f4:           115,  // F4
-	//         refresh:      116,  // F5
-	//         frame:        117,  // F6
-	//         phone:        119,  // F8
-	//         set:          120,  // F9
-	//         tv:           121,  // F10
-	//         menu:         122,  // F11
-	//         app:          123,  // F12
-	//         rewind:       2066, // Alt+B
-	//         forward:      2070, // Alt+F
-	//         audio:        2071, // Alt+G
-	//         standby:      2074, // Alt+J
-	//         keyboard:     2076, // Alt+L
-	//         usbMounted:   2080, // Alt+P
-	//         usbUnmounted: 2081, // Alt+Q
-	//         playPause:    2082, // Alt+R
-	//         stop:         2083, // Alt+S
-	//         power:        2085, // Alt+U
-	//         record:       2087, // Alt+W
-	//         info:         2089, // Alt+Y
-	//         mute:         2192
-	//     }
-	// };
-
-
-/***/ },
-/* 9 */
-/*!*****************************!*\
-  !*** ./~/spa-keys/index.js ***!
-  \*****************************/
-/***/ function(module, exports) {
-
-	/**
-	 * Global list of non-printable control key codes.
-	 *
-	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
-	 * @license GNU GENERAL PUBLIC LICENSE Version 3
-	 */
-	
-	'use strict';
-	
-	/* eslint quote-props: 0 */
-	
-	// public
-	module.exports = {
-	    backspace: 8,
-	    tab:       9,
-	    enter:     13,
-	    escape:    27,
-	    pageUp:    33,
-	    pageDown:  34,
-	    end:       35,
-	    home:      36,
-	    left:      37,
-	    up:        38,
-	    right:     39,
-	    down:      40,
-	    insert:    45,
-	    del:       46   // not "delete" because of old browsers issue
-	};
-
-
-/***/ },
-/* 10 */
 /*!***************************************!*\
   !*** ./~/stb-shim-classlist/index.js ***!
   \***************************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -1297,12 +1186,12 @@
 	}
 
 
-/***/ },
-/* 11 */
+/***/ }),
+/* 9 */
 /*!**********************************!*\
   !*** ./~/stb-app/lib/metrics.js ***!
   \**********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -1314,7 +1203,7 @@
 	'use strict';
 	
 	var app     = __webpack_require__(/*! spa-app/lib/core */ 3),
-	    metrics = __webpack_require__(/*! app:metrics */ 12);
+	    metrics = __webpack_require__(/*! app:metrics */ 10);
 	
 	
 	// global link
@@ -1329,12 +1218,12 @@
 	//module.exports = app;
 
 
-/***/ },
-/* 12 */
+/***/ }),
+/* 10 */
 /*!***************************!*\
   !*** ./src/js/metrics.js ***!
   \***************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * Application geometry options.
@@ -1399,12 +1288,12 @@
 	};
 
 
-/***/ },
-/* 13 */
+/***/ }),
+/* 11 */
 /*!******************************!*\
   !*** ./~/stb-app/lib/css.js ***!
   \******************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -1416,8 +1305,8 @@
 	'use strict';
 	
 	var app = __webpack_require__(/*! spa-app/lib/core */ 3);
-	    //metrics = require('app:metrics'),
-	    //linkCSS;
+	//    metrics = require('app:metrics'),
+	//    linkCSS;
 	
 	
 	// global link
@@ -1448,12 +1337,12 @@
 	};
 
 
-/***/ },
-/* 14 */
+/***/ }),
+/* 12 */
 /*!******************************!*\
   !*** ./~/mag-app/lib/css.js ***!
   \******************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -1482,12 +1371,12 @@
 	module.exports = linkCSS;
 
 
-/***/ },
-/* 15 */
+/***/ }),
+/* 13 */
 /*!***************************************!*\
   !*** ./~/mag-app/lib/develop/main.js ***!
   \***************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -1500,16 +1389,17 @@
 	
 	
 	// shims
-	__webpack_require__(/*! stb-shim-bind */ 16);
-	__webpack_require__(/*! stb-shim-classlist */ 10);
-	__webpack_require__(/*! stb-shim-frame */ 17);
+	__webpack_require__(/*! stb-shim-bind */ 14);
+	__webpack_require__(/*! stb-shim-classlist */ 8);
+	__webpack_require__(/*! stb-shim-frame */ 15);
 	
 	// public app instance
 	window.app = app;
 	
 	// all development tools placeholder
 	app.develop = {
-	    storage: window.parent.stbStorage
+	    // use local storage from iframe or use stbStorage from top window
+	    storage: window.localStorage || window.top.stbStorage
 	};
 	
 	// execution environment
@@ -1517,7 +1407,7 @@
 	app.host = !!(window.gSTB || (window.parent && window.parent.gSTB));
 	
 	// browser logging
-	window.debug = __webpack_require__(/*! spa-app/lib/develop/debug */ 18);
+	window.debug = __webpack_require__(/*! spa-app/lib/develop/debug */ 16);
 	// STB logging
 	//window.debug = app.host ? require('./debug') : require('spa-develop/debug');
 	
@@ -1534,10 +1424,10 @@
 	// );
 	
 	// inherit SPA tools
-	__webpack_require__(/*! spa-app/lib/develop/wamp */ 19);
-	__webpack_require__(/*! spa-app/lib/develop/events */ 22);
-	__webpack_require__(/*! spa-app/lib/develop/hooks */ 24);
-	__webpack_require__(/*! spa-app/lib/develop/static */ 25);
+	__webpack_require__(/*! spa-app/lib/develop/wamp */ 17);
+	__webpack_require__(/*! spa-app/lib/develop/events */ 20);
+	__webpack_require__(/*! spa-app/lib/develop/hooks */ 22);
+	__webpack_require__(/*! spa-app/lib/develop/static */ 23);
 	
 	// STB tools
 	if ( app.host ) {
@@ -1546,7 +1436,7 @@
 	}
 	
 	//require('./proxy');
-	__webpack_require__(/*! stb-app/lib/develop/events */ 27);
+	__webpack_require__(/*! stb-app/lib/develop/events */ 25);
 	
 	// the application itself
 	// "js" directory is resolved by webpack to
@@ -1554,12 +1444,12 @@
 	//require('js/main');
 
 
-/***/ },
-/* 16 */
+/***/ }),
+/* 14 */
 /*!**********************************!*\
   !*** ./~/stb-shim-bind/index.js ***!
   \**********************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -1597,12 +1487,12 @@
 	}
 
 
-/***/ },
-/* 17 */
+/***/ }),
+/* 15 */
 /*!***********************************!*\
   !*** ./~/stb-shim-frame/index.js ***!
   \***********************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -1627,18 +1517,18 @@
 	
 
 
-/***/ },
-/* 18 */
+/***/ }),
+/* 16 */
 /*!****************************************!*\
   !*** ./~/spa-app/lib/develop/debug.js ***!
   \****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * Logger.
 	 *
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -1939,22 +1829,22 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-app/lib/develop/debug.js"))
 
-/***/ },
-/* 19 */
+/***/ }),
+/* 17 */
 /*!***************************************!*\
   !*** ./~/spa-app/lib/develop/wamp.js ***!
   \***************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	'use strict';
 	
 	var app       = __webpack_require__(/*! ../core */ 3),
-	    Wamp      = __webpack_require__(/*! spa-wamp */ 20),
+	    Wamp      = __webpack_require__(/*! spa-wamp */ 18),
 	    stringify = __webpack_require__(/*! cjs-query */ 5).stringify;
 	
 	
@@ -1998,21 +1888,21 @@
 	}
 
 
-/***/ },
-/* 20 */
+/***/ }),
+/* 18 */
 /*!*****************************!*\
   !*** ./~/spa-wamp/index.js ***!
   \*****************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	'use strict';
 	
-	var CjsWamp = __webpack_require__(/*! cjs-wamp */ 21);
+	var CjsWamp = __webpack_require__(/*! cjs-wamp */ 19);
 	
 	
 	/**
@@ -2097,16 +1987,16 @@
 	module.exports = Wamp;
 
 
-/***/ },
-/* 21 */
+/***/ }),
+/* 19 */
 /*!*****************************!*\
   !*** ./~/cjs-wamp/index.js ***!
   \*****************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	'use strict';
@@ -2129,7 +2019,7 @@
 	    var self = this;
 	
 	    console.assert(typeof this === 'object', 'must be constructed via new');
-	    
+	
 	    // parent constructor call
 	    Emitter.call(this);
 	
@@ -2261,18 +2151,18 @@
 	module.exports = Wamp;
 
 
-/***/ },
-/* 22 */
+/***/ }),
+/* 20 */
 /*!*****************************************!*\
   !*** ./~/spa-app/lib/develop/events.js ***!
   \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Additional dev events.
 	 *
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	'use strict';
@@ -2283,7 +2173,7 @@
 	    app      = __webpack_require__(/*! ../core */ 3),
 	    //Wamp     = require('spa-wamp'),
 	    //request  = require('spa-request'),
-	    gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 23),
+	    gremlins = __webpack_require__(/*! gremlins.js/gremlins.min.js */ 21),
 	    events   = {};
 	    //app;
 	    //dom     = require('spa-dom'),
@@ -2336,16 +2226,18 @@
 	events.keydown = function ( event ) {
 	    switch ( event.keyCode ) {
 	        // key b
-	        case 66:
+	        /*case 66:
 	            if ( event.altKey && app.develop.wamp ) {
 	                app.develop.wamp.call('runTask', {id: 'build'}, function ( error, result ) {
 	                    console.log('task build executed: ', error, result);
 	                });
 	            }
-	            break;
+	            break;/**/
+	
 	        // numpad 0
 	        case 96:
-	            debug.info('full app reload', null, {tags: ['reload']});
+	            //debug.info('full app reload', null, {tags: ['reload']});
+	            console.log('full app reload');
 	            location.hash = '';
 	            location.reload();
 	            break;
@@ -2419,9 +2311,11 @@
 	        //    break;
 	
 	        // numpad 9
-	        case 105:
+	        /*case 105:
 	            // outline components and inner structures
-	            debug.info('toggle develop/release css layout', null, {tags: ['css', 'toggle']});
+	            //debug.info('toggle develop/release css layout', null, {tags: ['css', 'toggle']});
+	            console.log('toggle develop/release css layout');
+	            // get through all css links
 	            Array.prototype.forEach.call(document.querySelectorAll('link[rel=stylesheet]'), function ( link ) {
 	                if ( link.href.indexOf('/release.') === -1 ) {
 	                    link.href = link.href.replace('/develop.', '/release.');
@@ -2429,16 +2323,18 @@
 	                    link.href = link.href.replace('/release.', '/develop.');
 	                }
 	            });
-	            break;
+	            break;/**/
 	
 	        // numpad .
 	        case 110:
 	            // CSS reload
-	            debug.info('CSS reload', null, {tags: ['css', 'reload']});
+	            //debug.info('CSS reload', null, {tags: ['css', 'reload']});
+	            console.log('CSS reload');
 	            // get through all css links
-	            Array.prototype.forEach.call(document.head.getElementsByTagName('link'), function ( tag ) {
+	            Array.prototype.forEach.call(document.querySelectorAll('link[rel=stylesheet]'), function ( link ) {
 	                // get base name, modify and apply
-	                tag.href = tag.href.split('?')[0] + '?' + Date.now();
+	                link.href = link.href.split('?')[0] + '?' + Date.now();
+	                console.log(link.href);
 	            });
 	            break;
 	    }
@@ -2454,26 +2350,26 @@
 	module.exports = events;
 
 
-/***/ },
-/* 23 */
+/***/ }),
+/* 21 */
 /*!***************************************!*\
   !*** ./~/gremlins.js/gremlins.min.js ***!
   \***************************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	!function(e,n){if("object"==typeof exports&&"object"==typeof module)module.exports=n();else if("function"==typeof define&&define.amd)define(n);else{var t=n();for(var a in t)("object"==typeof exports?exports:e)[a]=t[a]}}(this,function(){return function(e){function n(a){if(t[a])return t[a].exports;var r=t[a]={exports:{},id:a,loaded:!1};return e[a].call(r.exports,r,r.exports,n),r.loaded=!0,r.exports}var t={};return n.m=e,n.c=t,n.p="http://localhost:8080/",n(0)}([function(e,n,t){e.exports=t(6)},function(e,n,t){var a;a=function(e){"use strict";function n(e,n){for(var t in n)!function(t){e[t]=function(a){return arguments.length?(n[t]=a,e):n[t]}}(t)}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;!function(){function r(e,n){if(e||(e={}),!n)return e;for(var t in n)"undefined"==typeof e[t]&&(e[t]=n[t]);return e}function i(e,n){if(e)throw new RangeError(n)}var o=9007199254740992,s=-o,l="0123456789",u="abcdefghijklmnopqrstuvwxyz",c=u.toUpperCase(),m=l+"abcdef",h=function(e){void 0!==e&&("function"==typeof e?this.random=e:this.seed=e),"undefined"==typeof this.random&&(this.mt=this.mersenne_twister(e),this.random=function(){return this.mt.random(this.seed)})};h.prototype.bool=function(e){return e=r(e,{likelihood:50}),i(e.likelihood<0||e.likelihood>100,"Chance: Likelihood accepts values from 0 to 100."),100*this.random()<e.likelihood},h.prototype.character=function(e){e=r(e);var n,t,a="!@#$%^&*()[]";return i(e.alpha&&e.symbols,"Chance: Cannot specify both alpha and symbols."),n="lower"===e.casing?u:"upper"===e.casing?c:u+c,t=e.pool?e.pool:e.alpha?n:e.symbols?a:n+l+a,t.charAt(this.natural({max:t.length-1}))},h.prototype.floating=function(e){var n;e=r(e,{fixed:4});var t=Math.pow(10,e.fixed);i(e.fixed&&e.precision,"Chance: Cannot specify both fixed and precision.");var a=o/t,s=-a;i(e.min&&e.fixed&&e.min<s,"Chance: Min specified is out of range with fixed. Min should be, at least, "+s),i(e.max&&e.fixed&&e.max>a,"Chance: Max specified is out of range with fixed. Max should be, at most, "+a),e=r(e,{min:s,max:a}),n=this.integer({min:e.min*t,max:e.max*t});var l=(n/t).toFixed(e.fixed);return parseFloat(l)},h.prototype.integer=function(e){var n,t;e=r(e,{min:s,max:o}),t=Math.max(Math.abs(e.min),Math.abs(e.max));do n=this.natural({max:t}),n=this.bool()?n:-1*n;while(n<e.min||n>e.max);return n},h.prototype.natural=function(e){return e=r(e,{min:0,max:o}),i(e.min>e.max,"Chance: Min cannot be greater than Max."),Math.floor(this.random()*(e.max-e.min+1)+e.min)},h.prototype.normal=function(e){e=r(e,{mean:0,dev:1});var n,t,a,i,o=e.mean,s=e.dev;do t=2*this.random()-1,a=2*this.random()-1,n=t*t+a*a;while(n>=1);return i=t*Math.sqrt(-2*Math.log(n)/n),s*i+o},h.prototype.string=function(e){e=r(e);for(var n=e.length||this.natural({min:5,max:20}),t="",a=e.pool,i=0;n>i;i++)t+=this.character({pool:a});return t},h.prototype.capitalize=function(e){return e.charAt(0).toUpperCase()+e.substr(1)},h.prototype.mixin=function(e){for(var n in e)h.prototype[n]=e[n];return this},h.prototype.pick=function(e,n){return n&&1!==n?this.shuffle(e).slice(0,n):e[this.natural({max:e.length-1})]},h.prototype.shuffle=function(e){for(var n=e.slice(0),t=[],a=0,r=Number(n.length),i=0;r>i;i++)a=this.natural({max:n.length-1}),t[i]=n[a],n.splice(a,1);return t},h.prototype.paragraph=function(e){e=r(e);for(var n=e.sentences||this.natural({min:3,max:7}),t=[],a=0;n>a;a++)t.push(this.sentence());return t.join(" ")},h.prototype.sentence=function(e){e=r(e);for(var n,t=e.words||this.natural({min:12,max:18}),a=[],i=0;t>i;i++)a.push(this.word());return n=a.join(" "),n=this.capitalize(n)+"."},h.prototype.syllable=function(e){e=r(e);for(var n,t=e.length||this.natural({min:2,max:3}),a="bcdfghjklmnprstvwz",i="aeiou",o=a+i,s="",l=0;t>l;l++)n=this.character(0===l?{pool:o}:-1===a.indexOf(n)?{pool:a}:{pool:i}),s+=n;return s},h.prototype.word=function(e){e=r(e),i(e.syllables&&e.length,"Chance: Cannot specify both syllables AND length.");var n=e.syllables||this.natural({min:1,max:3}),t="";if(e.length){do t+=this.syllable();while(t.length<e.length);t=t.substring(0,e.length)}else for(var a=0;n>a;a++)t+=this.syllable();return t},h.prototype.age=function(e){e=r(e);var n;switch(e.type){case"child":n=this.natural({min:1,max:12});break;case"teen":n=this.natural({min:13,max:19});break;case"adult":n=this.natural({min:18,max:120});break;case"senior":n=this.natural({min:65,max:120});break;default:n=this.natural({min:1,max:120})}return n},h.prototype.birthday=function(e){return e=r(e,{year:(new Date).getFullYear()-this.age(e)}),this.date(e)};var d=["Sophia","Emma","Isabella","Jacob","Mason","Ethan","Noah","Olivia","William","Liam","Jayden","Michael","Ava","Alexander","Aiden","Daniel","Matthew","Elijah","Emily","James","Anthony","Benjamin","Abigail","Joshua","Andrew","David","Joseph","Logan","Jackson","Mia","Christopher","Gabriel","Madison","Samuel","Ryan","Lucas","John","Nathan","Isaac","Dylan","Caleb","Elizabeth","Chloe","Christian","Landon","Jonathan","Carter","Ella","Luke","Owen","Brayden","Avery","Gavin","Wyatt","Addison","Isaiah","Aubrey","Henry","Eli","Hunter","Lily","Jack","Natalie","Evan","Sofia","Jordan","Nicholas","Tyler","Aaron","Charlotte","Zoey","Jeremiah","Julian","Cameron","Grace","Hannah","Amelia","Harper","Levi","Lillian","Brandon","Angel","Austin","Connor","Adrian","Robert","Samantha","Charles","Evelyn","Victoria","Thomas","Brooklyn","Sebastian","Zoe","Colton","Jaxon","Layla","Kevin","Zachary","Ayden","Dominic","Blake","Jose","Hailey","Oliver","Justin","Bentley","Leah","Jason","Chase","Ian","Kaylee","Anna","Aaliyah","Gabriella","Josiah","Allison","Parker","Xavier","Nevaeh","Alexis","Adam","Audrey","Cooper","Savannah","Sarah","Alyssa","Claire","Taylor","Riley","Camila","Nathaniel","Arianna","Ashley","Grayson","Jace","Brianna","Carson","Sophie","Peyton","Nolan","Tristan","Luis","Brody","Bella","Khloe","Genesis","Alexa","Juan","Hudson","Serenity","Kylie","Aubree","Scarlett","Bryson","Carlos","Stella","Maya","Easton","Katherine","Julia","Damian","Alex","Kayden","Ryder","Lucy","Madelyn","Jesus","Cole","Autumn","Makayla","Kayla","Mackenzie","Micah","Vincent","Max","Lauren","Jaxson","Gianna","Eric","Ariana","Asher","Hayden","Faith","Alexandra","Melanie","Sydney","Bailey","Caroline","Naomi","Morgan","Kennedy","Ellie","Jasmine","Eva","Skylar","Diego","Kimberly","Violet","Molly","Miles","Steven","Aria","Ivan","Jocelyn","Trinity","Elias","Aidan","Maxwell","London","Bryce","Lydia","Madeline","Antonio","Giovanni","Reagan","Timothy","Bryan","Piper","Andrea","Santiago","Annabelle","Maria","Colin","Richard","Braxton","Kaleb","Brooke","Kyle","Kaden","Preston","Payton","Miguel","Jonah","Paisley","Paige","Lincoln","Ruby","Nora","Riley","Mariah","Leo","Victor","Brady","Jeremy","Mateo","Brian","Jaden","Ashton","Patrick","Rylee","Declan","Lilly","Brielle","Sean","Joel","Gael","Sawyer","Alejandro","Jade","Marcus","Destiny","Leonardo","Jesse","Caden","Jake","Kaiden","Nicole","Mila","Wesley","Kendall","Liliana","Camden","Kaitlyn","Natalia","Sadie","Edward","Brantley","Jordyn","Roman","Vanessa","Mary","Mya","Penelope","Isabelle","Alice","Axel","Silas","Jude","Grant","Reese","Gabrielle","Hadley","Katelyn","Angelina","Rachel","Isabel","Eleanor","Cayden","Emmanuel","George","Clara","Brooklynn","Jessica","Maddox","Malachi","Bradley","Alan","Weston","Elena","Gage","Aliyah","Vivian","Laila","Sara","Amy","Devin","Eliana","Greyson","Lyla","Juliana","Kenneth","Mark","Oscar","Tanner","Rylan","Valeria","Adriana","Nicolas","Makenzie","Harrison","Elise","Mckenzie","Derek","Quinn","Delilah","Peyton","Ezra","Cora","Kylee","Tucker","Emmett","Avery","Cody","Rebecca","Gracie","Izabella","Calvin","Andres","Jorge","Abel","Paul","Abraham","Kai","Josephine","Alaina","Michelle","Jennifer","Collin","Theodore","Ezekiel","Eden","Omar","Jayce","Valentina","Conner","Bennett","Aurora","Catherine","Stephanie","Trevor","Valerie","Eduardo","Peter","Maximus","Jayla","Jaiden","Willow","Jameson","Seth","Daisy","Alana","Melody","Hazel","Kingston","Summer","Melissa","Javier","Margaret","Travis","Kinsley","Kinley","Garrett","Everett","Ariel","Lila","Graham","Giselle","Ryleigh","Xander","Haley","Julianna","Ivy","Alivia","Cristian","Brynn","Damien","Ryker","Griffin","Keira","Daniela","Aniyah","Angela","Kate","Londyn","Corbin","Myles","Hayden","Harmony","Adalyn","Luca","Zane","Francisco","Ricardo","Alexis","Stephen","Zayden","Megan","Allie","Gabriela","Iker","Drake","Alayna","Lukas","Presley","Charlie","Spencer","Zion","Erick","Jenna","Josue","Alexandria","Ashlyn","Adrianna","Jada","Jeffrey","Trenton","Fiona","Chance","Norah","Paxton","Elliot","Emery","Fernando","Maci","Miranda","Keegan","Landen","Ximena","Amaya","Manuel","Amir","Shane","Cecilia","Raymond","Andre","Ana","Shelby","Katie","Hope","Callie","Jordan","Luna","Leilani","Eliza","Mckenna","Angel","Genevieve","Makenna","Isla","Lola","Danielle","Chelsea","Leila","Tessa","Adelyn","Camille","Mikayla","Adeline","Adalynn","Sienna","Esther","Jacqueline","Emerson","Arabella","Maggie","Athena","Lucia","Lexi","Ayla"];h.prototype.first=function(){return this.pick(d)},h.prototype.gender=function(){return this.pick(["Male","Female"])};var p=["Smith","Johnson","Williams","Jones","Brown","Davis","Miller","Wilson","Moore","Taylor","Anderson","Thomas","Jackson","White","Harris","Martin","Thompson","Garcia","Martinez","Robinson","Clark","Rodriguez","Lewis","Lee","Walker","Hall","Allen","Young","Hernandez","King","Wright","Lopez","Hill","Scott","Green","Adams","Baker","Gonzalez","Nelson","Carter","Mitchell","Perez","Roberts","Turner","Phillips","Campbell","Parker","Evans","Edwards","Collins","Stewart","Sanchez","Morris","Rogers","Reed","Cook","Morgan","Bell","Murphy","Bailey","Rivera","Cooper","Richardson","Cox","Howard","Ward","Torres","Peterson","Gray","Ramirez","James","Watson","Brooks","Kelly","Sanders","Price","Bennett","Wood","Barnes","Ross","Henderson","Coleman","Jenkins","Perry","Powell","Long","Patterson","Hughes","Flores","Washington","Butler","Simmons","Foster","Gonzales","Bryant","Alexander","Russell","Griffin","Diaz","Hayes","Myers","Ford","Hamilton","Graham","Sullivan","Wallace","Woods","Cole","West","Jordan","Owens","Reynolds","Fisher","Ellis","Harrison","Gibson","McDonald","Cruz","Marshall","Ortiz","Gomez","Murray","Freeman","Wells","Webb","Simpson","Stevens","Tucker","Porter","Hunter","Hicks","Crawford","Henry","Boyd","Mason","Morales","Kennedy","Warren","Dixon","Ramos","Reyes","Burns","Gordon","Shaw","Holmes","Rice","Robertson","Hunt","Black","Daniels","Palmer","Mills","Nichols","Grant","Knight","Ferguson","Rose","Stone","Hawkins","Dunn","Perkins","Hudson","Spencer","Gardner","Stephens","Payne","Pierce","Berry","Matthews","Arnold","Wagner","Willis","Ray","Watkins","Olson","Carroll","Duncan","Snyder","Hart","Cunningham","Bradley","Lane","Andrews","Ruiz","Harper","Fox","Riley","Armstrong","Carpenter","Weaver","Greene","Lawrence","Elliott","Chavez","Sims","Austin","Peters","Kelley","Franklin","Lawson","Fields","Gutierrez","Ryan","Schmidt","Carr","Vasquez","Castillo","Wheeler","Chapman","Oliver","Montgomery","Richards","Williamson","Johnston","Banks","Meyer","Bishop","McCoy","Howell","Alvarez","Morrison","Hansen","Fernandez","Garza","Harvey","Little","Burton","Stanley","Nguyen","George","Jacobs","Reid","Kim","Fuller","Lynch","Dean","Gilbert","Garrett","Romero","Welch","Larson","Frazier","Burke","Hanson","Day","Mendoza","Moreno","Bowman","Medina","Fowler","Brewer","Hoffman","Carlson","Silva","Pearson","Holland","Douglas","Fleming","Jensen","Vargas","Byrd","Davidson","Hopkins","May","Terry","Herrera","Wade","Soto","Walters","Curtis","Neal","Caldwell","Lowe","Jennings","Barnett","Graves","Jimenez","Horton","Shelton","Barrett","Obrien","Castro","Sutton","Gregory","McKinney","Lucas","Miles","Craig","Rodriquez","Chambers","Holt","Lambert","Fletcher","Watts","Bates","Hale","Rhodes","Pena","Beck","Newman","Haynes","McDaniel","Mendez","Bush","Vaughn","Parks","Dawson","Santiago","Norris","Hardy","Love","Steele","Curry","Powers","Schultz","Barker","Guzman","Page","Munoz","Ball","Keller","Chandler","Weber","Leonard","Walsh","Lyons","Ramsey","Wolfe","Schneider","Mullins","Benson","Sharp","Bowen","Daniel","Barber","Cummings","Hines","Baldwin","Griffith","Valdez","Hubbard","Salazar","Reeves","Warner","Stevenson","Burgess","Santos","Tate","Cross","Garner","Mann","Mack","Moss","Thornton","Dennis","McGee","Farmer","Delgado","Aguilar","Vega","Glover","Manning","Cohen","Harmon","Rodgers","Robbins","Newton","Todd","Blair","Higgins","Ingram","Reese","Cannon","Strickland","Townsend","Potter","Goodwin","Walton","Rowe","Hampton","Ortega","Patton","Swanson","Joseph","Francis","Goodman","Maldonado","Yates","Becker","Erickson","Hodges","Rios","Conner","Adkins","Webster","Norman","Malone","Hammond","Flowers","Cobb","Moody","Quinn","Blake","Maxwell","Pope","Floyd","Osborne","Paul","McCarthy","Guerrero","Lindsey","Estrada","Sandoval","Gibbs","Tyler","Gross","Fitzgerald","Stokes","Doyle","Sherman","Saunders","Wise","Colon","Gill","Alvarado","Greer","Padilla","Simon","Waters","Nunez","Ballard","Schwartz","McBride","Houston","Christensen","Klein","Pratt","Briggs","Parsons","McLaughlin","Zimmerman","French","Buchanan","Moran","Copeland","Roy","Pittman","Brady","McCormick","Holloway","Brock","Poole","Frank","Logan","Owen","Bass","Marsh","Drake","Wong","Jefferson","Park","Morton","Abbott","Sparks","Patrick","Norton","Huff","Clayton","Massey","Lloyd","Figueroa","Carson","Bowers","Roberson","Barton","Tran","Lamb","Harrington","Casey","Boone","Cortez","Clarke","Mathis","Singleton","Wilkins","Cain","Bryan","Underwood","Hogan","McKenzie","Collier","Luna","Phelps","McGuire","Allison","Bridges","Wilkerson","Nash","Summers","Atkins"];h.prototype.last=function(){return this.pick(p)},h.prototype.name=function(e){e=r(e);var n,t=this.first(),a=this.last();return n=e.middle?t+" "+this.first()+" "+a:e.middle_initial?t+" "+this.character({alpha:!0,casing:"upper"})+". "+a:t+" "+a,e.prefix&&(n=this.prefix()+" "+n),n},h.prototype.name_prefixes=function(){return[{name:"Doctor",abbreviation:"Dr."},{name:"Miss",abbreviation:"Miss"},{name:"Misses",abbreviation:"Mrs."},{name:"Mister",abbreviation:"Mr."}]},h.prototype.prefix=function(e){return this.name_prefix(e)},h.prototype.name_prefix=function(e){return e=r(e),e.full?this.pick(this.name_prefixes()).name:this.pick(this.name_prefixes()).abbreviation},h.prototype.color=function(e){function n(e,n){return[e,e,e].join(n||"")}e=r(e,{format:this.pick(["hex","shorthex","rgb"]),grayscale:!1});var t=e.grayscale;if("hex"===e.format)return"#"+(t?n(this.hash({length:2})):this.hash({length:6}));if("shorthex"===e.format)return"#"+(t?n(this.hash({length:1})):this.hash({length:3}));if("rgb"===e.format)return t?"rgb("+n(this.natural({max:255}),",")+")":"rgb("+this.natural({max:255})+","+this.natural({max:255})+","+this.natural({max:255})+")";throw new Error('Invalid format provided. Please provide one of "hex", "shorthex", or "rgb"')},h.prototype.domain=function(e){return e=r(e),this.word()+"."+(e.tld||this.tld())},h.prototype.email=function(e){return e=r(e),this.word()+"@"+(e.domain||this.domain())},h.prototype.fbid=function(){return parseInt("10000"+this.natural({max:1e11}),10)},h.prototype.hashtag=function(){return"#"+this.word()},h.prototype.ip=function(){return this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})+"."+this.natural({max:255})},h.prototype.ipv6=function(){for(var e="",n=0;8>n;n++)e+=this.hash({length:4})+":";return e.substr(0,e.length-1)},h.prototype.klout=function(){return this.natural({min:1,max:99})},h.prototype.tlds=function(){return["com","org","edu","gov","co.uk","net","io"]},h.prototype.tld=function(){return this.pick(this.tlds())},h.prototype.twitter=function(){return"@"+this.word()},h.prototype.address=function(e){return e=r(e),this.natural({min:5,max:2e3})+" "+this.street(e)},h.prototype.areacode=function(e){e=r(e,{parens:!0});var n=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:8}).toString()+this.natural({min:0,max:9}).toString();return e.parens?"("+n+")":n},h.prototype.city=function(){return this.capitalize(this.word({syllables:3}))},h.prototype.coordinates=function(e){return e=r(e),this.latitude(e)+", "+this.longitude(e)},h.prototype.latitude=function(e){return e=r(e,{fixed:5}),this.floating({min:-90,max:90,fixed:e.fixed})},h.prototype.longitude=function(e){return e=r(e,{fixed:5}),this.floating({min:0,max:180,fixed:e.fixed})},h.prototype.phone=function(e){e=r(e,{formatted:!0}),e.formatted||(e.parens=!1);var n=this.areacode(e).toString(),t=this.natural({min:2,max:9}).toString()+this.natural({min:0,max:9}).toString()+this.natural({min:0,max:9}).toString(),a=this.natural({min:1e3,max:9999}).toString();return e.formatted?n+" "+t+"-"+a:n+t+a},h.prototype.postal=function(){var e=this.character({pool:"XVTSRPNKLMHJGECBA"}),n=e+this.natural({max:9})+this.character({alpha:!0,casing:"upper"}),t=this.natural({max:9})+this.character({alpha:!0,casing:"upper"})+this.natural({max:9});return n+" "+t},h.prototype.provinces=function(){return[{name:"Alberta",abbreviation:"AB"},{name:"British Columbia",abbreviation:"BC"},{name:"Manitoba",abbreviation:"MB"},{name:"New Brunswick",abbreviation:"NB"},{name:"Newfoundland and Labrador",abbreviation:"NL"},{name:"Nova Scotia",abbreviation:"NS"},{name:"Ontario",abbreviation:"ON"},{name:"Prince Edward Island",abbreviation:"PE"},{name:"Quebec",abbreviation:"QC"},{name:"Saskatchewan",abbreviation:"SK"},{name:"Northwest Territories",abbreviation:"NT"},{name:"Nunavut",abbreviation:"NU"},{name:"Yukon",abbreviation:"YT"}]},h.prototype.province=function(e){return e&&e.full?this.pick(this.provinces()).name:this.pick(this.provinces()).abbreviation},h.prototype.radio=function(e){e=r(e,{side:"?"});var n="";switch(e.side.toLowerCase()){case"east":case"e":n="W";break;case"west":case"w":n="K";break;default:n=this.character({pool:"KW"})}return n+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})+this.character({alpha:!0,casing:"upper"})},h.prototype.state=function(e){return e&&e.full?this.pick(this.states()).name:this.pick(this.states()).abbreviation},h.prototype.states=function(){return[{name:"Alabama",abbreviation:"AL"},{name:"Alaska",abbreviation:"AK"},{name:"American Samoa",abbreviation:"AS"},{name:"Arizona",abbreviation:"AZ"},{name:"Arkansas",abbreviation:"AR"},{name:"Armed Forces Europe",abbreviation:"AE"},{name:"Armed Forces Pacific",abbreviation:"AP"},{name:"Armed Forces the Americas",abbreviation:"AA"},{name:"California",abbreviation:"CA"},{name:"Colorado",abbreviation:"CO"},{name:"Connecticut",abbreviation:"CT"},{name:"Delaware",abbreviation:"DE"},{name:"District of Columbia",abbreviation:"DC"},{name:"Federated States of Micronesia",abbreviation:"FM"},{name:"Florida",abbreviation:"FL"},{name:"Georgia",abbreviation:"GA"},{name:"Guam",abbreviation:"GU"},{name:"Hawaii",abbreviation:"HI"},{name:"Idaho",abbreviation:"ID"},{name:"Illinois",abbreviation:"IL"},{name:"Indiana",abbreviation:"IN"},{name:"Iowa",abbreviation:"IA"},{name:"Kansas",abbreviation:"KS"},{name:"Kentucky",abbreviation:"KY"},{name:"Louisiana",abbreviation:"LA"},{name:"Maine",abbreviation:"ME"},{name:"Marshall Islands",abbreviation:"MH"},{name:"Maryland",abbreviation:"MD"},{name:"Massachusetts",abbreviation:"MA"},{name:"Michigan",abbreviation:"MI"},{name:"Minnesota",abbreviation:"MN"},{name:"Mississippi",abbreviation:"MS"},{name:"Missouri",abbreviation:"MO"},{name:"Montana",abbreviation:"MT"},{name:"Nebraska",abbreviation:"NE"},{name:"Nevada",abbreviation:"NV"},{name:"New Hampshire",abbreviation:"NH"},{name:"New Jersey",abbreviation:"NJ"},{name:"New Mexico",abbreviation:"NM"},{name:"New York",abbreviation:"NY"},{name:"North Carolina",abbreviation:"NC"},{name:"North Dakota",abbreviation:"ND"},{name:"Northern Mariana Islands",abbreviation:"MP"},{name:"Ohio",abbreviation:"OH"},{name:"Oklahoma",abbreviation:"OK"},{name:"Oregon",abbreviation:"OR"},{name:"Pennsylvania",abbreviation:"PA"},{name:"Puerto Rico",abbreviation:"PR"},{name:"Rhode Island",abbreviation:"RI"},{name:"South Carolina",abbreviation:"SC"},{name:"South Dakota",abbreviation:"SD"},{name:"Tennessee",abbreviation:"TN"},{name:"Texas",abbreviation:"TX"},{name:"Utah",abbreviation:"UT"},{name:"Vermont",abbreviation:"VT"},{name:"Virgin Islands, U.S.",abbreviation:"VI"},{name:"Virginia",abbreviation:"VA"},{name:"Washington",abbreviation:"WA"},{name:"West Virginia",abbreviation:"WV"},{name:"Wisconsin",abbreviation:"WI"},{name:"Wyoming",abbreviation:"WY"}]},h.prototype.street=function(e){e=r(e);var n=this.word({syllables:2});return n=this.capitalize(n),n+=" ",n+=e.short_suffix?this.street_suffix().abbreviation:this.street_suffix().name},h.prototype.street_suffix=function(){return this.pick(this.street_suffixes())},h.prototype.street_suffixes=function(){return[{name:"Avenue",abbreviation:"Ave"},{name:"Boulevard",abbreviation:"Blvd"},{name:"Center",abbreviation:"Ctr"},{name:"Circle",abbreviation:"Cir"},{name:"Court",abbreviation:"Ct"},{name:"Drive",abbreviation:"Dr"},{name:"Extension",abbreviation:"Ext"},{name:"Glen",abbreviation:"Gln"},{name:"Grove",abbreviation:"Grv"},{name:"Heights",abbreviation:"Hts"},{name:"Highway",abbreviation:"Hwy"},{name:"Junction",abbreviation:"Jct"},{name:"Key",abbreviation:"Key"},{name:"Lane",abbreviation:"Ln"},{name:"Loop",abbreviation:"Loop"},{name:"Manor",abbreviation:"Mnr"},{name:"Mill",abbreviation:"Mill"},{name:"Park",abbreviation:"Park"},{name:"Parkway",abbreviation:"Pkwy"},{name:"Pass",abbreviation:"Pass"},{name:"Path",abbreviation:"Path"},{name:"Pike",abbreviation:"Pike"},{name:"Place",abbreviation:"Pl"},{name:"Plaza",abbreviation:"Plz"},{name:"Point",abbreviation:"Pt"},{name:"Ridge",abbreviation:"Rdg"},{name:"River",abbreviation:"Riv"},{name:"Road",abbreviation:"Rd"},{name:"Square",abbreviation:"Sq"},{name:"Street",abbreviation:"St"},{name:"Terrace",abbreviation:"Ter"},{name:"Trail",abbreviation:"Trl"},{name:"Turnpike",abbreviation:"Tpke"},{name:"View",abbreviation:"Vw"},{name:"Way",abbreviation:"Way"}]},h.prototype.tv=function(e){return this.radio(e)},h.prototype.zip=function(e){for(var n="",t=0;5>t;t++)n+=this.natural({max:9}).toString();if(e&&e.plusfour===!0)for(n+="-",t=0;4>t;t++)n+=this.natural({max:9}).toString();return n},h.prototype.ampm=function(){return this.bool()?"am":"pm"},h.prototype.date=function(e){var n,t=this.month({raw:!0});e=r(e,{year:parseInt(this.year(),10),month:t.numeric-1,day:this.natural({min:1,max:t.days}),hour:this.hour(),minute:this.minute(),second:this.second(),millisecond:this.millisecond(),american:!0,string:!1});var a=new Date(e.year,e.month,e.day,e.hour,e.minute,e.second,e.millisecond);return n=e.american?a.getMonth()+1+"/"+a.getDate()+"/"+a.getFullYear():a.getDate()+"/"+(a.getMonth()+1)+"/"+a.getFullYear(),e.string?n:a},h.prototype.hammertime=function(e){return this.date(e).getTime()},h.prototype.hour=function(e){e=r(e);var n=e.twentyfour?24:12;return this.natural({min:1,max:n})},h.prototype.millisecond=function(){return this.natural({max:999})},h.prototype.minute=h.prototype.second=function(){return this.natural({max:59})},h.prototype.month=function(e){e=r(e);var n=this.pick(this.months());return e.raw?n:n.name},h.prototype.months=function(){return[{name:"January",short_name:"Jan",numeric:"01",days:31},{name:"February",short_name:"Feb",numeric:"02",days:28},{name:"March",short_name:"Mar",numeric:"03",days:31},{name:"April",short_name:"Apr",numeric:"04",days:30},{name:"May",short_name:"May",numeric:"05",days:31},{name:"June",short_name:"Jun",numeric:"06",days:30},{name:"July",short_name:"Jul",numeric:"07",days:31},{name:"August",short_name:"Aug",numeric:"08",days:31},{name:"September",short_name:"Sep",numeric:"09",days:30},{name:"October",short_name:"Oct",numeric:"10",days:31},{name:"November",short_name:"Nov",numeric:"11",days:30},{name:"December",short_name:"Dec",numeric:"12",days:31}]},h.prototype.second=function(){return this.natural({max:59})},h.prototype.timestamp=function(){return this.natural({min:1,max:parseInt((new Date).getTime()/1e3,10)})},h.prototype.year=function(e){return e=r(e,{min:(new Date).getFullYear()}),e.max="undefined"!=typeof e.max?e.max:e.min+100,this.natural(e).toString()},h.prototype.cc=function(e){e=r(e);var n,t,a;n=this.cc_type(e.type?{name:e.type,raw:!0}:{raw:!0}),t=n.prefix.split(""),a=n.length-n.prefix.length-1;for(var i=0;a>i;i++)t.push(this.integer({min:0,max:9}));return t.push(this.luhn_calculate(t.join(""))),t.join("")},h.prototype.cc_types=function(){return[{name:"American Express",short_name:"amex",prefix:"34",length:15},{name:"Bankcard",short_name:"bankcard",prefix:"5610",length:16},{name:"China UnionPay",short_name:"chinaunion",prefix:"62",length:16},{name:"Diners Club Carte Blanche",short_name:"dccarte",prefix:"300",length:14},{name:"Diners Club enRoute",short_name:"dcenroute",prefix:"2014",length:15},{name:"Diners Club International",short_name:"dcintl",prefix:"36",length:14},{name:"Diners Club United States & Canada",short_name:"dcusc",prefix:"54",length:16},{name:"Discover Card",short_name:"discover",prefix:"6011",length:16},{name:"InstaPayment",short_name:"instapay",prefix:"637",length:16},{name:"JCB",short_name:"jcb",prefix:"3528",length:16},{name:"Laser",short_name:"laser",prefix:"6304",length:16},{name:"Maestro",short_name:"maestro",prefix:"5018",length:16},{name:"Mastercard",short_name:"mc",prefix:"51",length:16},{name:"Solo",short_name:"solo",prefix:"6334",length:16},{name:"Switch",short_name:"switch",prefix:"4903",length:16},{name:"Visa",short_name:"visa",prefix:"4",length:16},{name:"Visa Electron",short_name:"electron",prefix:"4026",length:16}]},h.prototype.cc_type=function(e){e=r(e);var n=this.cc_types(),t=null;if(e.name){for(var a=0;a<n.length;a++)if(n[a].name===e.name||n[a].short_name===e.name){t=n[a];break}if(null===t)throw new Error("Credit card type '"+e.name+"'' is not suppoted")}else t=this.pick(n);return e.raw?t:t.name},h.prototype.dollar=function(e){e=r(e,{max:1e4,min:0});var n=this.floating({min:e.min,max:e.max,fixed:2}).toString(),t=n.split(".")[1];return void 0===t?n+=".00":t.length<2&&(n+="0"),0>n?"-$"+n.replace("-",""):"$"+n},h.prototype.exp=function(e){e=r(e);var n={};return n.year=this.exp_year(),n.year===(new Date).getFullYear()?n.month=this.exp_month({future:!0}):n.month=this.exp_month(),e.raw?n:n.month+"/"+n.year},h.prototype.exp_month=function(e){e=r(e);var n,t;if(e.future){do n=this.month({raw:!0}).numeric,t=parseInt(n,10);while(t<(new Date).getMonth())}else n=this.month({raw:!0}).numeric;return n},h.prototype.exp_year=function(){return this.year({max:(new Date).getFullYear()+10})},h.prototype.d4=function(){return this.natural({min:1,max:4})},h.prototype.d6=function(){return this.natural({min:1,max:6})},h.prototype.d8=function(){return this.natural({min:1,max:8})},h.prototype.d10=function(){return this.natural({min:1,max:10})},h.prototype.d12=function(){return this.natural({min:1,max:12})},h.prototype.d20=function(){return this.natural({min:1,max:20})},h.prototype.d30=function(){return this.natural({min:1,max:30})},h.prototype.d100=function(){return this.natural({min:1,max:100})},h.prototype.rpg=function(e,n){if(n=r(n),null===e)throw new Error("A type of die roll must be included");var t=e.toLowerCase().split("d"),a=[];if(2!==t.length||!parseInt(t[0],10)||!parseInt(t[1],10))throw new Error("Invalid format provided. Please provide #d# where the first # is the number of dice to roll, the second # is the max of each die");for(var i=t[0];i>0;i--)a[i-1]=this.natural({min:1,max:t[1]});return"undefined"!=typeof n.sum&&n.sum?a.reduce(function(e,n){return e+n}):a},h.prototype.guid=function(e){e=e||{version:5};var n="ABCDEF1234567890",t="AB89",a=this.string({pool:n,length:8})+"-"+this.string({pool:n,length:4})+"-"+e.version+this.string({pool:n,length:3})+"-"+this.string({pool:t,length:1})+this.string({pool:n,length:3})+"-"+this.string({pool:n,length:12});return a},h.prototype.hash=function(e){e=r(e,{length:40,casing:"lower"});var n="upper"===e.casing?m.toUpperCase():m;return this.string({pool:n,length:e.length})},h.prototype.luhn_check=function(e){var n=e.toString(),t=+n.substring(n.length-1);return t===this.luhn_calculate(+n.substring(0,n.length-1))},h.prototype.luhn_calculate=function(e){for(var n=e.toString().split("").reverse(),t=0,a=0,r=n.length;r>a;++a){var i=+n[a];a%2===0&&(i*=2,i>9&&(i-=9)),t+=i}return 9*t%10},h.prototype.mersenne_twister=function(e){return new f(e)},h.prototype.VERSION="0.5.4";var f=function(e){void 0===e&&(e=(new Date).getTime()),this.N=624,this.M=397,this.MATRIX_A=2567483615,this.UPPER_MASK=2147483648,this.LOWER_MASK=2147483647,this.mt=new Array(this.N),this.mti=this.N+1,this.init_genrand(e)};f.prototype.init_genrand=function(e){for(this.mt[0]=e>>>0,this.mti=1;this.mti<this.N;this.mti++)e=this.mt[this.mti-1]^this.mt[this.mti-1]>>>30,this.mt[this.mti]=(1812433253*((4294901760&e)>>>16)<<16)+1812433253*(65535&e)+this.mti,this.mt[this.mti]>>>=0},f.prototype.init_by_array=function(e,n){var t,a,r=1,i=0;for(this.init_genrand(19650218),t=this.N>n?this.N:n;t;t--)a=this.mt[r-1]^this.mt[r-1]>>>30,this.mt[r]=(this.mt[r]^(1664525*((4294901760&a)>>>16)<<16)+1664525*(65535&a))+e[i]+i,this.mt[r]>>>=0,r++,i++,r>=this.N&&(this.mt[0]=this.mt[this.N-1],r=1),i>=n&&(i=0);for(t=this.N-1;t;t--)a=this.mt[r-1]^this.mt[r-1]>>>30,this.mt[r]=(this.mt[r]^(1566083941*((4294901760&a)>>>16)<<16)+1566083941*(65535&a))-r,this.mt[r]>>>=0,r++,r>=this.N&&(this.mt[0]=this.mt[this.N-1],r=1);this.mt[0]=2147483648},f.prototype.genrand_int32=function(){var e,n=new Array(0,this.MATRIX_A);if(this.mti>=this.N){var t;for(this.mti===this.N+1&&this.init_genrand(5489),t=0;t<this.N-this.M;t++)e=this.mt[t]&this.UPPER_MASK|this.mt[t+1]&this.LOWER_MASK,this.mt[t]=this.mt[t+this.M]^e>>>1^n[1&e];for(;t<this.N-1;t++)e=this.mt[t]&this.UPPER_MASK|this.mt[t+1]&this.LOWER_MASK,this.mt[t]=this.mt[t+(this.M-this.N)]^e>>>1^n[1&e];e=this.mt[this.N-1]&this.UPPER_MASK|this.mt[0]&this.LOWER_MASK,this.mt[this.N-1]=this.mt[this.M-1]^e>>>1^n[1&e],this.mti=0}return e=this.mt[this.mti++],e^=e>>>11,e^=e<<7&2636928640,e^=e<<15&4022730752,e^=e>>>18,e>>>0},f.prototype.genrand_int31=function(){return this.genrand_int32()>>>1},f.prototype.genrand_real1=function(){return this.genrand_int32()*(1/4294967295)},f.prototype.random=function(){return this.genrand_int32()*(1/4294967296)},f.prototype.genrand_real3=function(){return(this.genrand_int32()+.5)*(1/4294967296)},f.prototype.genrand_res53=function(){var e=this.genrand_int32()>>>5,n=this.genrand_int32()>>>6;return(67108864*e+n)*(1/9007199254740992)},"undefined"!=typeof e&&e.exports&&(n=e.exports=h),n.Chance=h,a=function(){return h}.call(n,t,n,e),!(void 0!==a&&(e.exports=a)),"object"==typeof window&&"object"==typeof window.document&&(window.Chance=h,window.chance=new h)}()},function(e,n,t){var a;a=function(e){"use strict";function n(){this.message="This gremlin requires a randomizer to run. Please call randomizer(randomizerObject) before executing the gremlin",this.toString=function(){return this.message}}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";function n(e,n,t,a){var r=n.length;e=e.slice(0);var i=function(e,n){if(!e.length)return"function"==typeof a?a():!0;var o=e.shift();o.apply(t,n),o.length===r&&i(e,n,a)};n.push(function(){i(e,n,a)}),i(e,n,a)}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";function n(){this.message="This mogwai requires a logger to run. Please call logger(loggerObject) before executing the mogwai",this.toString=function(){return this.message}}return n}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";function n(e,n){for(var t=0,a=n.length;a>t;t++)for(var r in e)"function"!=typeof n[t][r]||n[t][r]()||n[t][r](e[r])}var a=t(2),r={species:{clicker:t(10),toucher:t(13),formFiller:t(11),scroller:t(12),typer:t(14)},mogwais:{alert:t(7),fps:t(8),gizmo:t(9)},strategies:{allTogether:t(15),bySpecies:t(16),distribution:t(17)}},i=t(4),o=function(){this._gremlins=[],
 	this._mogwais=[],this._strategies=[],this._beforeCallbacks=[],this._afterCallbacks=[],this._logger=console,this._randomizer=new a};return o.prototype.gremlin=function(e){return this._gremlins.push(e),this},o.prototype.allGremlins=function(){for(var e in r.species)this.gremlin(r.species[e]());return this},o.prototype.mogwai=function(e){return this._mogwais.push(e),this},o.prototype.allMogwais=function(){for(var e in r.mogwais)this.mogwai(r.mogwais[e]());return this},o.prototype.strategy=function(e){return this._strategies.push(e),this},o.prototype.before=function(e){return this._beforeCallbacks.push(e),this},o.prototype.after=function(e){return this._afterCallbacks.push(e),this},o.prototype.logger=function(e){return arguments.length?(this._logger=e,this):this._logger},o.prototype.log=function(e){this._logger.log(e)},o.prototype.randomizer=function(e){return arguments.length?(this._randomizer=e,this):this._randomizer},o.prototype.seed=function(e){return this._randomizer=new a(e),this},o.prototype.unleash=function(e,t){0===this._gremlins.length&&this.allGremlins(),0===this._mogwais.length&&this.allMogwais(),0===this._strategies.length&&this.strategy(r.strategies.distribution());var a=[].concat(this._gremlins,this._mogwais),o=a.concat(this._strategies,this._beforeCallbacks,this._afterCallbacks);n({logger:this._logger,randomizer:this._randomizer},o);var s=this._beforeCallbacks;s=s.concat(this._mogwais);for(var l=this._afterCallbacks,u=0,c=a.length;c>u;u++)"function"==typeof a[u].cleanUp&&l.push(a[u].cleanUp);var m=this;i(s,[],m,function(){i(m._strategies,[m._gremlins,e],m,function(){i(l,[],m,function(){"function"==typeof t&&t()})})})},o.prototype.stop=function(){for(var e=this._strategies,n=0,t=e.length;t>n;n++)e[n].stop()},r.createHorde=function(){return new o},window&&(window.gremlins=r),r}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(5));return function(){function e(){return o.randomizer.bool()}function t(){return o.randomizer.sentence()}function r(){if(!o.logger)throw new a;-1!==o.watchEvents.indexOf("alert")&&(window.alert=function(e){o.logger.warn("mogwai ","alert     ",e,"alert")}),-1!==o.watchEvents.indexOf("confirm")&&(window.confirm=function(e){o.confirmResponse(),o.logger.warn("mogwai ","alert     ",e,"confirm")}),-1!==o.watchEvents.indexOf("prompt")&&(window.prompt=function(e){o.promptResponse(),o.logger.warn("mogwai ","alert     ",e,"prompt")})}var i=["alert","confirm","prompt"],o={watchEvents:i,confirmResponse:e,promptResponse:t,logger:null,randomizer:null},s=window.alert,l=window.confirm,u=window.prompt;return r.cleanUp=function(){return window.alert=s,window.confirm=l,window.prompt=u,r},n(r,o),r}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=t(5);return function(){function e(e){return 10>e?"error":20>e?"warn":"log"}function t(e){e-l>s.delay&&(r(e),l=e),o&&window.requestAnimationFrame(t)}function r(){function e(e){t=e,window.requestAnimationFrame(n)}function n(e){var n=16>e-t?60:1e3/(e-t),a=s.levelSelector(n);s.logger[a]("mogwai ","fps       ",n)}var t;window.requestAnimationFrame(e)}function i(){if(!s.logger)throw new a;o=!0,window.requestAnimationFrame(t)}window.requestAnimationFrame||(window.requestAnimationFrame=window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame||function(e){window.setTimeout(e,1e3/60)});var o,s={delay:500,levelSelector:e,logger:null},l=-(1/0);return i.cleanUp=function(){return o=!1,i},n(i,s),i}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1);return function(){function e(){function e(){if(n++,n==r.maxErrors){if(i.stop(),!r.logger)return;window.setTimeout(function(){r.logger.warn("mogwai ","gizmo     ","stopped test execution after ",r.maxErrors,"errors")},4)}}var n=0,i=this;t=window.onerror,window.onerror=function(n,a,r){return e(),t?t(n,a,r):!1},a=console.error,console.error=function(){e(),a.apply(console,arguments)}}var t,a,r={maxErrors:10,logger:null};return e.cleanUp=function(){return window.onerror=t,console.error=a.bind(console),e},n(e,r),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){return[u.randomizer.natural({max:o.documentElement.clientWidth-1}),u.randomizer.natural({max:o.documentElement.clientHeight-1})]}function t(e,n){var t=o.createElement("div");t.style.zIndex=2e3,t.style.border="3px solid red",t.style["border-radius"]="50%",t.style.borderRadius="50%",t.style.width="40px",t.style.height="40px",t.style["box-sizing"]="border-box",t.style.position="absolute",t.style.webkitTransition="opacity 1s ease-out",t.style.mozTransition="opacity 1s ease-out",t.style.transition="opacity 1s ease-out",t.style.left=e-20+"px",t.style.top=n-20+"px";var a=s.appendChild(t);setTimeout(function(){s.removeChild(a)},1e3),setTimeout(function(){a.style.opacity=0},50)}function r(){return!0}function i(){if(!u.randomizer)throw new a;var e,n,t,r,i=0;do if(e=u.positionSelector(),n=e[0],t=e[1],r=o.elementFromPoint(n,t),i++,i>u.maxNbTries)return!1;while(!r||!u.canClick(r));var s=o.createEvent("MouseEvents"),l=u.randomizer.pick(u.clickTypes);s.initMouseEvent(l,!0,!0,window,0,0,0,n,t,!1,!1,!1,!1,0,null),r.dispatchEvent(s),"function"==typeof u.showAction&&u.showAction(n,t,l),u.logger&&"function"==typeof u.logger.log&&u.logger.log("gremlin","clicker   ",l,"at",n,t)}var o=window.document,s=o.body,l=["click","click","click","click","click","click","dblclick","dblclick","mousedown","mouseup","mouseover","mouseover","mouseover","mousemove","mouseout"],u={clickTypes:l,positionSelector:e,showAction:t,canClick:r,maxNbTries:10,logger:null,randomizer:null};return n(i,u),i}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(e){"undefined"==typeof e.attributes["data-old-border"]&&(e.attributes["data-old-border"]=e.style.border);var n=e.attributes["data-old-border"];e.style.border="1px solid red",setTimeout(function(){e.style.border=n},500)}function t(){return!0}function r(){if(!p.randomizer)throw new a;var e=[];for(var n in p.elementMapTypes)p.elementMapTypes.hasOwnProperty(n)&&e.push(n);var t,r=0;do{var i=h.querySelectorAll(e.join(","));if(0===i.length)return!1;if(t=p.randomizer.pick(i),r++,r>p.maxNbTries)return!1}while(!t||!p.canFillElement(t));var o=null;for(var s in p.elementMapTypes)if(m(t,s)){o=s;break}var l=p.elementMapTypes[o](t);"function"==typeof p.showAction&&p.showAction(t),p.logger&&"function"==typeof p.logger.log&&p.logger.log("gremlin","formFiller","input",l,"in",t)}function i(e){var n=p.randomizer.character();return e.value+=n,n}function o(e){var n=p.randomizer.character({pool:"0123456789"});return e.value+=n,n}function s(e){var n=e.querySelectorAll("option");if(0!==n.length){for(var t=p.randomizer.pick(n),a=0,r=n.length;r>a;a++){var i=n[a];i.selected=i.value==t.value}return t.value}}function l(e){var n=h.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),e.dispatchEvent(n),e.value}function u(e){var n=h.createEvent("MouseEvents");return n.initMouseEvent("click",!0,!0,window,0,0,0,0,0,!1,!1,!1,!1,0,null),e.dispatchEvent(n),e.value}function c(e){var n=p.randomizer.email();return e.value=n,n}function m(e,n){if(e.webkitMatchesSelector)m=function(e,n){return e.webkitMatchesSelector(n)};else if(e.mozMatchesSelector)m=function(e,n){return e.mozMatchesSelector(n)};else if(e.msMatchesSelector)m=function(e,n){return e.msMatchesSelector(n)};else{if(!e.oMatchesSelector)throw new Error("Unsupported browser");m=function(e,n){return e.oMatchesSelector(n)}}return m(e,n)}var h=window.document,d={textarea:i,'input[type="text"]':i,'input[type="password"]':i,'input[type="number"]':o,select:s,'input[type="radio"]':l,'input[type="checkbox"]':u,'input[type="email"]':c,"input:not([type])":i},p={elementMapTypes:d,showAction:e,canFillElement:t,maxNbTries:10,logger:null,randomizer:null};return n(r,p),r}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){var e=Math.max(s.scrollWidth,s.offsetWidth,o.scrollWidth,o.offsetWidth,o.clientWidth),n=Math.max(s.scrollHeight,s.offsetHeight,o.scrollHeight,o.offsetHeight,o.clientHeight);return[l.randomizer.natural({max:e-o.clientWidth}),l.randomizer.natural({max:n-o.clientHeight})]}function t(e,n){var t=i.createElement("div");t.style.zIndex=2e3,t.style.border="3px solid red",t.style.width=o.clientWidth-25+"px",t.style.height=o.clientHeight-25+"px",t.style.position="absolute",t.style.webkitTransition="opacity 1s ease-out",t.style.mozTransition="opacity 1s ease-out",t.style.transition="opacity 1s ease-out",t.style.left=e+10+"px",t.style.top=n+10+"px";var a=s.appendChild(t);setTimeout(function(){s.removeChild(a)},1e3),setTimeout(function(){a.style.opacity=0},50)}function r(){if(!l.randomizer)throw new a;var e=l.positionSelector(),n=e[0],t=e[1];window.scrollTo(n,t),"function"==typeof l.showAction&&l.showAction(n,t),"function"==typeof l.logger.log&&l.logger.log("gremlin","scroller  ","scroll to",n,t)}var i=window.document,o=i.documentElement,s=i.body,l={positionSelector:e,showAction:t,logger:null,randomizer:null};return n(r,l),r}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){return[h.randomizer.natural({max:u.documentElement.clientWidth-1}),h.randomizer.natural({max:u.documentElement.clientHeight-1})]}function t(e){var n=u.createDocumentFragment();e.forEach(function(e){var t=u.createElement("div");t.style.zIndex=2e3,t.style.background="red",t.style["border-radius"]="50%",t.style.borderRadius="50%",t.style.width="20px",t.style.height="20px",t.style.position="absolute",t.style.webkitTransition="opacity .5s ease-out",t.style.mozTransition="opacity .5s ease-out",t.style.transition="opacity .5s ease-out",t.style.left=e.x-10+"px",t.style.top=e.y-10+"px";var a=n.appendChild(t);setTimeout(function(){c.removeChild(a)},500),setTimeout(function(){a.style.opacity=0},50)}),u.body.appendChild(n)}function r(){return!0}function i(e,n,t,a){var r,i,o,s=e[0],l=e[1],u=[];if(1===n)return[{x:s,y:l}];for(t=t||100,a=null!==a?a*Math.PI/180:0,r=2*Math.PI/n,i=0;n>i;i++)o=r*i+a,u.push({x:s+t*Math.cos(o),y:l+t*Math.sin(o)});return u}function o(e,n,t){var a=[],r=u.createEvent("Event");r.initEvent("touch"+t,!0,!0),a.identifiedTouch=a.item=function(e){return this[e]||{}},e.forEach(function(e,t){var r=Math.round(e.x),i=Math.round(e.y);a.push({pageX:r,pageY:i,clientX:r,clientY:i,screenX:r,screenY:i,target:n,identifier:t})}),r.touches="end"==t?[]:a,r.targetTouches="end"==t?[]:a,r.changedTouches=a,n.dispatchEvent(r),h.showAction(e)}function s(e,n,t,a,r){function s(){var m=a.radius;1!==a.scale&&(m=a.radius-a.radius*(1-a.scale)*(1/u)*c);var h=n[0]+a.distanceX/u*c,d=n[1]+a.distanceY/u*c,p="number"==typeof a.rotation?a.rotation/u*c:null,f=i([h,d],t.length,m,p),y=1==c,b=c==u;if(y)o(f,e,"start");else{if(b)return o(f,e,"end"),r(f);o(f,e,"move")}setTimeout(s,l),c++}var l=10,u=Math.ceil(a.duration/l),c=1;s()}function l(e){function n(n,t){"function"==typeof h.showAction&&h.showAction(n),h.logger&&"function"==typeof h.logger.log&&h.logger.log("gremlin","toucher   ",l,"at",r,i,t),e()}if(!h.randomizer)throw new a;var t,r,i,o,s=0;do if(t=h.positionSelector(),r=t[0],i=t[1],o=u.elementFromPoint(r,i),s++,s>h.maxNbTries)return;while(!o||!h.canTouch(o));var l=h.randomizer.pick(h.touchTypes);d[l](t,o,n)}var u=window.document,c=u.body,m=["tap","tap","tap","doubletap","gesture","gesture","gesture","multitouch","multitouch"],h={touchTypes:m,positionSelector:e,showAction:t,canTouch:r,maxNbTries:10,logger:null,randomizer:null,maxTouches:2},d={tap:function(e,n,t){var a=i(e,1),r={duration:h.randomizer.integer({min:20,max:700})};o(a,n,"start"),setTimeout(function(){o(a,n,"end"),t(a,r)},r.duration)},doubletap:function(e,n,t){d.tap(e,n,function(){setTimeout(function(){d.tap(e,n,t)},30)})},gesture:function p(e,n,t){var p={distanceX:h.randomizer.integer({min:-100,max:200}),distanceY:h.randomizer.integer({min:-100,max:200}),duration:h.randomizer.integer({min:20,max:500})},a=i(e,1,p.radius);s(n,e,a,p,function(e){t(e,p)})},multitouch:function(e,n,t){var a=h.randomizer.integer({min:2,max:h.maxTouches}),r={scale:h.randomizer.floating({min:0,max:2}),rotation:h.randomizer.natural({min:-100,max:100}),radius:h.randomizer.integer({min:50,max:200}),distanceX:h.randomizer.integer({min:-20,max:20}),distanceY:h.randomizer.integer({min:-20,max:20}),duration:h.randomizer.integer({min:100,max:1500})},o=i(e,a,r.radius);s(n,e,o,r,function(e){t(e,r)})}};return n(l,h),l}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(1),a=(t(2),t(3));return function(){function e(){return c.randomizer.natural({min:3,max:254})}function t(e,n){return o.elementFromPoint(e,n)}function r(e,n,t,a){var r=o.createElement("div");r.style.zIndex=2e3,r.style.border="3px solid orange",r.style["border-radius"]="50%",r.style.borderRadius="50%",r.style.width="40px",r.style.height="40px",r.style["box-sizing"]="border-box",r.style.position="absolute",r.style.webkitTransition="opacity 1s ease-out",r.style.mozTransition="opacity 1s ease-out",r.style.transition="opacity 1s ease-out",r.style.left=n+"px",r.style.top=t+"px",r.style.textAlign="center",r.style.paddingTop="7px",r.innerHTML=String.fromCharCode(a);var i=l.appendChild(r);setTimeout(function(){l.removeChild(i)},1e3),setTimeout(function(){i.style.opacity=0},50)}function i(){if(!c.randomizer)throw new a;var e=o.createEventObject?o.createEventObject():o.createEvent("Events"),n=c.randomizer.pick(c.eventTypes),t=c.keyGenerator(),r=c.randomizer.natural({max:s.clientWidth-1}),i=c.randomizer.natural({max:s.clientHeight-1}),l=c.targetElement(r,i);e.initEvent&&e.initEvent(n,!0,!0),e.keyCode=t,e.which=t,e.keyCodeVal=t,l.dispatchEvent?l.dispatchEvent(e):l.fireEvent("on"+n,e),"function"==typeof c.showAction&&c.showAction(l,r,i,t),c.logger&&"function"==typeof c.logger.log&&c.logger.log("gremlin","typer       type",String.fromCharCode(t),"at",r,i)}var o=window.document,s=o.documentElement,l=o.body,u=["keypress","keyup","keydown"],c={eventTypes:u,showAction:r,keyGenerator:e,targetElement:t,logger:null,randomizer:null};return n(i,c),i}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(4),a=t(1);return function(){function e(e,a,s){function l(t){n(e,[],m,t)}function u(e){return r?void 0:e>=c?t():void l(function(){setTimeout(function(){u(++e)},o.delay)})}var c=a&&a.nb?a.nb:o.nb,m=this;r=!1,i=s,u(0)}function t(){"function"==typeof i&&i(),i=null}var r,i,o={delay:10,nb:100};return e.stop=function(){r=!0,setTimeout(t,4)},a(e,o),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(4),a=t(1);return function(){function e(e,a,s){function l(e,t,a){return r?void 0:t>=c?a():void n([e],[],m,function(){setTimeout(function(){l(e,++t,a)},o.delay)})}function u(){return r?void 0:0===e.length?t():void l(e.shift(),0,u)}var c=a&&a.nb?a.nb:o.nb,e=e.slice(0),m=this;r=!1,i=s,u()}function t(){"function"==typeof i&&i(),i=null}var r,i,o={delay:10,nb:200};return e.stop=function(){r=!0,setTimeout(t,4)},a(e,o),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))},function(e,n,t){var a;a=function(e){"use strict";var n=t(4),a=t(1),r=t(2);return function(){function e(e,a,r){function c(t,a,r){return s?void 0:a>=m?o():void n([t],[],d,function(){setTimeout(function(){c(i(e,h),++a,r)},u.delay)})}var m=a&&a.nb?a.nb:u.nb,e=e.slice(0),h=0===u.distribution.length?t(e):u.distribution,d=this;return 0===m?r():(s=!1,l=r,void c(i(e,h),0,c))}function t(e){var n=e.length;if(0===n)return[];for(var t=[],a=1/n,r=0;n>r;r++)t.push(a);return t}function i(e,n){for(var t=0,a=u.randomizer.floating({min:0,max:1}),r=0,i=e.length;i>r;r++)if(t+=n[r],t>=a)return e[r];return function(){}}function o(){"function"==typeof l&&l(),l=null}var s,l,u={distribution:[],delay:10,nb:1e3,randomizer:new r};return e.stop=function(){s=!0,setTimeout(o,4)},a(e,u),e}}.call(n,t,n,e),!(void 0!==a&&(e.exports=a))}])});
 
-/***/ },
-/* 24 */
+/***/ }),
+/* 22 */
 /*!****************************************!*\
   !*** ./~/spa-app/lib/develop/hooks.js ***!
   \****************************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -2507,18 +2403,18 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-app/lib/develop/hooks.js"))
 
-/***/ },
-/* 25 */
+/***/ }),
+/* 23 */
 /*!*****************************************!*\
   !*** ./~/spa-app/lib/develop/static.js ***!
   \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Static files reload on change.
 	 *
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	'use strict';
@@ -2534,11 +2430,11 @@
 	//console.log(require('spa-gulp-livereload/config').default.tinylr);
 	//console.log(LIVERELOAD);
 	
-	__webpack_require__(/*! livereload-js/dist/livereload.js */ 26);
+	__webpack_require__(/*! livereload-js/dist/livereload.js */ 24);
 	
 	// livereload activation
 	//if ( config.livereload ) {
-	    // load external script
+	// load external script
 	//document.head.appendChild(tag('script', {
 	//    type: 'text/javascript',
 	//    src: '/node_modules/livereload-js/dist/livereload.js?host=' + location.hostname + '&port=' + LIVERELOAD.port
@@ -2546,12 +2442,12 @@
 	//}
 
 
-/***/ },
-/* 26 */
+/***/ }),
+/* 24 */
 /*!********************************************!*\
   !*** ./~/livereload-js/dist/livereload.js ***!
   \********************************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 	(function() {
@@ -2563,11 +2459,13 @@
 	
 	  exports.Connector = Connector = (function() {
 	    function Connector(options, WebSocket, Timer, handlers) {
+	      var path;
 	      this.options = options;
 	      this.WebSocket = WebSocket;
 	      this.Timer = Timer;
 	      this.handlers = handlers;
-	      this._uri = "ws" + (this.options.https ? "s" : "") + "://" + this.options.host + ":" + this.options.port + "/livereload";
+	      path = this.options.path ? "" + this.options.path : "livereload";
+	      this._uri = "ws" + (this.options.https ? "s" : "") + "://" + this.options.host + ":" + this.options.port + "/" + path;
 	      this._nextDelay = this.options.mindelay;
 	      this._connectionDesired = false;
 	      this.protocol = 0;
@@ -2833,7 +2731,7 @@
 	
 	},{}],4:[function(require,module,exports){
 	(function() {
-	  var Connector, LiveReload, Options, Reloader, Timer,
+	  var Connector, LiveReload, Options, ProtocolError, Reloader, Timer,
 	    __hasProp = {}.hasOwnProperty;
 	
 	  Connector = require('./connector').Connector;
@@ -2843,6 +2741,8 @@
 	  Options = require('./options').Options;
 	
 	  Reloader = require('./reloader').Reloader;
+	
+	  ProtocolError = require('./protocol').ProtocolError;
 	
 	  exports.LiveReload = LiveReload = (function() {
 	    function LiveReload(window) {
@@ -2955,11 +2855,12 @@
 	    };
 	
 	    LiveReload.prototype.performReload = function(message) {
-	      var _ref, _ref1;
+	      var _ref, _ref1, _ref2;
 	      this.log("LiveReload received reload request: " + (JSON.stringify(message, null, 2)));
 	      return this.reloader.reload(message.path, {
 	        liveCSS: (_ref = message.liveCSS) != null ? _ref : true,
 	        liveImg: (_ref1 = message.liveImg) != null ? _ref1 : true,
+	        reloadMissingCSS: (_ref2 = message.reloadMissingCSS) != null ? _ref2 : true,
 	        originalPath: message.originalPath || '',
 	        overrideURL: message.overrideURL || '',
 	        serverURL: "http://" + this.options.host + ":" + this.options.port
@@ -3037,7 +2938,7 @@
 	
 	}).call(this);
 	
-	},{"./connector":1,"./options":5,"./reloader":7,"./timer":9}],5:[function(require,module,exports){
+	},{"./connector":1,"./options":5,"./protocol":6,"./reloader":7,"./timer":9}],5:[function(require,module,exports){
 	(function() {
 	  var Options;
 	
@@ -3201,14 +3102,22 @@
 	  var IMAGE_STYLES, Reloader, numberOfMatchingSegments, pathFromUrl, pathsMatch, pickBestMatch, splitUrl;
 	
 	  splitUrl = function(url) {
-	    var hash, index, params;
+	    var comboSign, hash, index, params;
 	    if ((index = url.indexOf('#')) >= 0) {
 	      hash = url.slice(index);
 	      url = url.slice(0, index);
 	    } else {
 	      hash = '';
 	    }
-	    if ((index = url.indexOf('?')) >= 0) {
+	    comboSign = url.indexOf('??');
+	    if (comboSign >= 0) {
+	      if (comboSign + 1 !== url.lastIndexOf('?')) {
+	        index = url.lastIndexOf('?');
+	      }
+	    } else {
+	      index = url.indexOf('?');
+	    }
+	    if (index >= 0) {
 	      params = url.slice(index);
 	      url = url.slice(0, index);
 	    } else {
@@ -3316,24 +3225,28 @@
 	          return;
 	        }
 	      }
-	      if (options.liveCSS) {
-	        if (path.match(/\.css$/i)) {
-	          if (this.reloadStylesheet(path)) {
-	            return;
-	          }
-	        }
-	      }
-	      if (options.liveImg) {
-	        if (path.match(/\.(jpe?g|png|gif)$/i)) {
-	          this.reloadImages(path);
+	      if (options.liveCSS && path.match(/\.css(?:\.map)?$/i)) {
+	        if (this.reloadStylesheet(path)) {
 	          return;
 	        }
+	      }
+	      if (options.liveImg && path.match(/\.(jpe?g|png|gif)$/i)) {
+	        this.reloadImages(path);
+	        return;
+	      }
+	      if (options.isChromeExtension) {
+	        this.reloadChromeExtension();
+	        return;
 	      }
 	      return this.reloadPage();
 	    };
 	
 	    Reloader.prototype.reloadPage = function() {
 	      return this.window.document.location.reload();
+	    };
+	
+	    Reloader.prototype.reloadChromeExtension = function() {
+	      return this.window.chrome.runtime.reload();
 	    };
 	
 	    Reloader.prototype.reloadImages = function(path) {
@@ -3465,10 +3378,14 @@
 	          this.reattachStylesheetLink(match.object);
 	        }
 	      } else {
-	        this.console.log("LiveReload will reload all stylesheets because path '" + path + "' did not match any specific one");
-	        for (_l = 0, _len3 = links.length; _l < _len3; _l++) {
-	          link = links[_l];
-	          this.reattachStylesheetLink(link);
+	        if (this.options.reloadMissingCSS) {
+	          this.console.log("LiveReload will reload all stylesheets because path '" + path + "' did not match any specific one. To disable this behavior, set 'options.reloadMissingCSS' to 'false'.");
+	          for (_l = 0, _len3 = links.length; _l < _len3; _l++) {
+	            link = links[_l];
+	            this.reattachStylesheetLink(link);
+	          }
+	        } else {
+	          this.console.log("LiveReload will not reload path '" + path + "' because the stylesheet was not found on the page and 'options.reloadMissingCSS' was set to 'false'.");
 	        }
 	      }
 	      return true;
@@ -3738,12 +3655,12 @@
 	},{}]},{},[8]);
 
 
-/***/ },
-/* 27 */
+/***/ }),
+/* 25 */
 /*!*****************************************!*\
   !*** ./~/stb-app/lib/develop/events.js ***!
   \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Additional dev events.
@@ -3763,7 +3680,7 @@
 	    //request = require('spa-request'),
 	    //dom     = require('spa-dom'),
 	    //storage = require('./storage'),
-	    grid      = __webpack_require__(/*! ./grid */ 28),
+	    grid      = __webpack_require__(/*! ./grid */ 26),
 	    events    = {};
 	
 	
@@ -3808,7 +3725,7 @@
 	events.load = function () {
 	    // export to globals div for develop HTML elements
 	    //window.$develop = document.body.appendChild(document.createElement('div'));
-	   // window.$develop.className = 'develop';
+	    // window.$develop.className = 'develop';
 	
 	    // apply dev css
 	    //document.body.classList.add('develop');
@@ -3826,6 +3743,8 @@
 	
 	
 	events.keydown = function ( event ) {
+	    var xhr, gSTB;
+	
 	    switch ( event.keyCode ) {
 	        //// numpad 0
 	        //case 96:
@@ -3877,38 +3796,39 @@
 	        //    break;
 	
 	        // numpad 7
-	        //case 103:
-	        //    if ( !app.data.host ) {
-	        //        debug.log('SpyJS in this mode is available only on STB devices.', 'red');
-	        //    } else {
-	        //        // SpyJS enable/disable
-	        //        if ( !localStorage.getItem('spyjs.active') ) {
-	        //            // try to "ping" proxy server
-	        //            request.ajax(document.location.protocol + '//' + location.hostname + ':3546', {
-	        //                method: 'get',
-	        //                onload: function () {
-	        //                    // proxy seems ready
-	        //                    //isSpyJs = true;
-	        //                    localStorage.setItem('spyjs.active', true);
-	        //                    debug.log('SpyJS: enable', 'red');
-	        //                    debug.log('SpyJS: set proxy to ' + location.hostname + ':' + 3546);
-			//
-	        //                    gSTB.SetWebProxy(location.hostname, 3546, '', '', '');
-	        //                    location.reload();
-	        //                },
-	        //                onerror: function () {
-	        //                    debug.log('SpyJS: no connection (check SpyJS is started on the server)', 'red');
-	        //                }
-	        //            });
-	        //        } else {
-	        //            //isSpyJs = false;
-	        //            localStorage.setItem('spyjs.active', false);
-	        //            gSTB.ResetWebProxy();
-	        //            debug.log('SpyJS: disable', 'red');
-	        //            location.reload();
-	        //        }
-	        //    }
-	        //    break;
+	        case 103:
+	            gSTB = window.gSTB || window.parent.gSTB || window.top.gSTB;
+	
+	            // SpyJS enable/disable
+	            if ( app.develop.storage.getItem('spyjs.active') ) {
+	                //isSpyJs = false;
+	                app.develop.storage.setItem('spyjs.active', false);
+	                gSTB.ResetWebProxy();
+	                debug.log('SpyJS: disable', 'red');
+	                location.reload();
+	            } else {
+	                // try to "ping" proxy server
+	                xhr = new XMLHttpRequest();
+	                xhr.open('GET', document.location.protocol + '//' + location.hostname + ':3546');
+	
+	                xhr.onload = function () {
+	                    // proxy seems ready
+	                    //isSpyJs = true;
+	                    app.develop.storage.setItem('spyjs.active', true);
+	                    debug.log('SpyJS: enable', 'red');
+	                    debug.log('SpyJS: set proxy to ' + location.hostname + ':' + 3546);
+	
+	                    gSTB.SetWebProxy(location.hostname, 3546, '', '', '');
+	                    location.reload();
+	                };
+	
+	                xhr.onerror = function () {
+	                    debug.log('SpyJS: no connection (check SpyJS is started on the server)', 'red');
+	                };
+	
+	                xhr.send();
+	            }
+	            break;
 	
 	        // numpad 8
 	        //case 104:
@@ -3956,12 +3876,12 @@
 	module.exports = events;
 
 
-/***/ },
-/* 28 */
+/***/ }),
+/* 26 */
 /*!***************************************!*\
   !*** ./~/stb-app/lib/develop/grid.js ***!
   \***************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Visual grid with cursor.
@@ -4061,7 +3981,7 @@
 	            this.cursorY = Math.round(event.y / 10) * 10;
 	        } else if ( !event.ctrlKey ) {
 	            // snap to the nearest line
-	            this.points.concat(this.snaps).some(function ( point ) {
+	            this.points.concat(this.snaps).forEach(function ( point ) {
 	                if ( Math.abs(point.x - self.cursorX) <= 10 ) {
 	                    self.cursorX = point.x;
 	                }
@@ -4256,16 +4176,16 @@
 	};
 
 
-/***/ },
-/* 29 */
+/***/ }),
+/* 27 */
 /*!********************************!*\
   !*** ./~/spa-gettext/index.js ***!
   \********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -4273,7 +4193,7 @@
 	'use strict';
 	
 	var Emitter = __webpack_require__(/*! cjs-emitter */ 4),
-	    Gettext = __webpack_require__(/*! cjs-gettext */ 30),
+	    Gettext = __webpack_require__(/*! cjs-gettext */ 28),
 	    loader  = new Emitter();
 	
 	
@@ -4318,8 +4238,12 @@
 	    var xhr;
 	
 	    if ( true ) {
-	        if ( !config.name || typeof config.name !== 'string' ) { throw new Error(__filename + ': config.name must be a nonempty string'); }
-	        if ( typeof callback !== 'function' ) { throw new Error(__filename + ': wrong callback type'); }
+	        if ( !config.name || typeof config.name !== 'string' ) {
+	            throw new Error(__filename + ': config.name must be a nonempty string');
+	        }
+	        if ( typeof callback !== 'function' ) {
+	            throw new Error(__filename + ': wrong callback type');
+	        }
 	    }
 	
 	    // defaults
@@ -4380,16 +4304,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-gettext/index.js"))
 
-/***/ },
-/* 30 */
+/***/ }),
+/* 28 */
 /*!********************************!*\
   !*** ./~/cjs-gettext/index.js ***!
   \********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -4456,10 +4380,12 @@
 	        var n;
 	
 	        if ( true ) {
-	            if ( Number(value) !== value ) { throw new Error(__filename + ': value must be a number'); }
+	            if ( Number(value) !== value ) {
+	                throw new Error(__filename + ': value must be a number');
+	            }
 	        }
 	
-	        if ( data && meta ) {
+	        if ( data && meta && data[''][msgId] ) {
 	            // translation
 	            return data[''][msgId][eval('n = ' + value + '; ' + meta.plural)];
 	        }
@@ -4479,12 +4405,12 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/cjs-gettext/index.js"))
 
-/***/ },
-/* 31 */
+/***/ }),
+/* 29 */
 /*!******************************!*\
   !*** ./src/js/pages/main.js ***!
   \******************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Main page implementation.
@@ -4492,156 +4418,263 @@
 	
 	'use strict';
 	
-	var app        = __webpack_require__(/*! mag-app */ 1),
-	    Page       = __webpack_require__(/*! stb-component-page */ 32),
-	    dom        = __webpack_require__(/*! spa-dom */ 35),
-	    keys       = __webpack_require__(/*! stb-keys */ 8),
-	    Footer     = __webpack_require__(/*! mag-component-footer */ 36),
-	    Panel      = __webpack_require__(/*! mag-component-panel */ 38),
-	    PanelSet   = __webpack_require__(/*! mag-component-panel-set */ 40),
-	    LayoutList = __webpack_require__(/*! mag-component-layout-list */ 41),
-	    appExit    = __webpack_require__(/*! ../modules/app.exit */ 43),
-	    page       = new Page({$node: window.pageMain});
+	var app            = __webpack_require__(/*! mag-app */ 1),
+	    Page           = __webpack_require__(/*! stb-component-page */ 30),
+	    dom            = __webpack_require__(/*! spa-dom */ 33),
+	    keys           = __webpack_require__(/*! stb-keys */ 34),
+	    Footer         = __webpack_require__(/*! mag-component-footer */ 36),
+	    Panel          = __webpack_require__(/*! mag-component-panel */ 38),
+	    PanelSet       = __webpack_require__(/*! mag-component-panel-set */ 40),
+	    LayoutList     = __webpack_require__(/*! mag-component-layout-list */ 41),
+	    ModalMessage   = __webpack_require__(/*! mag-component-modal */ 43),
+	    RadioList      = __webpack_require__(/*! mag-component-radio-list */ 46),
+	    ModalCheckList = __webpack_require__(/*! mag-component-modal-check-list */ 47),
+	    ScrollBar      = __webpack_require__(/*! stb-component-scrollbar */ 49),
+	    ScrollArea     = __webpack_require__(/*! mag-component-scroll-area */ 51),
+	
+	    appExit    = __webpack_require__(/*! ../modules/app.exit */ 52),
+	    longText   = __webpack_require__(/*! ../modules/text */ 53),
+	    page       = new Page({$node: document.getElementById('pageMain')}),
+	
+	    scroll = new ScrollBar({}),
+	    scrollArea = new ScrollArea({
+	        propagate: true,
+	        step: 5,
+	        scroll: scroll
+	    }),
+	
+	    panelSet, mainPanel, footer,
+	    mainList, modalCheckList, headerAmount,
+	    modalRadio, modalScroll,
+	
+	    footerData = [
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-menu'
+	                },
+	                _('Show')
+	            ],
+	            click: function () {
+	                footer.show();
+	            },
+	            value: _('Show footer')
+	        },
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-menu'
+	                },
+	                _('Hide')
+	            ],
+	            click: function () {
+	                footer.hide();
+	            },
+	            value: _('Hide footer')
+	        }
+	    ],
+	
+	    playData = [
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-video'
+	                },
+	                _('Play video file 1')
+	            ],
+	            value: _('You may change url to your test file in code.'),
+	            data: {
+	                play: true,
+	                name: 'Video file 1',
+	                // Change url to your test video file
+	                url: 'http://movietrailers.apple.com/movies/independent/indivisible/indivisible-trailer-1_h1080p.mov',
+	                type: 'video'
+	            }
+	        },
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-video'
+	                },
+	                _('Play video file 2')
+	            ],
+	            value: _('You may change url to your test file in code.') + '<p>' + _('Some long text:') + '</p>' + longText,
+	            data: {
+	                play: true,
+	                name: 'Video file 2',
+	                /// Change url to your test video file
+	                url: 'https://trailers.apple.com/movies/sony_pictures/alpha/alpha-featurette-1_h720p.mov',
+	                type: 'video'
+	            }
+	        },
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-audio'
+	                },
+	                _('Play audio file 1')
+	            ],
+	            value: _('You may change url to your test file in code.') + '<p>' + _('Some long text:') + '</p>' + longText,
+	            data: {
+	                play: true,
+	                name: 'Audio file 1',
+	                // Change url to your test audio file
+	                url: 'http://s1.stopmusic.net/AC_DC_-_Highway_to_Hell.mp3',
+	                type: 'audio'
+	            }
+	        }
+	    ],
+	
+	    notificationData = [
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-warning'
+	                },
+	                _('Show warning notification')
+	            ],
+	            click: function () {
+	                window.core.notify({
+	                    title: 'Warning notification',
+	                    icon: 'info',
+	                    type: 'warning',
+	                    timeout: 5000
+	                });
+	
+	            },
+	            value: _('Show warning notification. Closed by timeout.')
+	        },
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-ok'
+	                },
+	                _('Show success notification')
+	            ],
+	            click: function () {
+	                window.core.notify({
+	                    title: 'Confirm message.',
+	                    icon: 'info',
+	                    type: 'success',
+	                    buttons: [
+	                        {
+	                            value: _('Cancel'),
+	                            click: function () {
+	                                console.log('pressed cancel');
+	                            }
+	                        },
+	                        {
+	                            value: _('Ok'),
+	                            click: function () {
+	                                console.log('pressed ok');
+	                            }
+	                        }
+	                    ]
+	                });
+	
+	            },
+	            value: _('Show confirm. Closed by button click or "back" press.')
+	        },
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-warning'
+	                },
+	                _('Show error notification')
+	            ],
+	            click: function () {
+	                window.core.notify({
+	                    title: 'Error alert',
+	                    icon: 'alert',
+	                    type: 'error',
+	                    buttons: [
+	                        {
+	                            value: _('Close'),
+	                            click: function () {
+	                                console.log('pressed close');
+	                            }
+	                        }
+	                    ]
+	                });
+	
+	            },
+	            value: _('Show error alert. Closed by button click or "back" press.')
+	        }
+	    ],
+	
+	    modalsData = [
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-menu'
+	                },
+	                _('Show modal check list')
+	            ],
+	            click: function () {
+	                panelSet.blur();
+	                modalCheckList.show();
+	            },
+	            value: _('Show modal check list. Used mag-component-modal-check-list.')
+	        },
+	        {
+	            items: [
+	                {
+	                    className: 'theme-icon theme-icon-menu'
+	                },
+	                _('Show modal radio list')
+	            ],
+	            click: function () {
+	                panelSet.blur();
+	                modalRadio.show();
+	            },
+	            value: _('Show modal with radio list. Used mag-component-modal and mag-component-radio-list.')
+	        }
+	    ];
+	
+	
+	function play ( data, playerContext ) {
+	    var intent = core.intent({
+	        action: 'play',
+	        mime: 'content/' + data.type,
+	        data: {
+	            title: data.name,
+	            uri: data.url
+	        },
+	        events: {
+	            end: function () {
+	                console.log('playing end');
+	                // cycling playing this file
+	                play(data, playerContext);
+	            },
+	            stop: function () {
+	                console.log('playing stop');
+	                playerContext = null;
+	                intent.close();
+	            },
+	            error: function () {
+	                console.log('playing error');
+	                playerContext = null;
+	                intent.close();
+	            }
+	        },
+	        context: playerContext
+	    }, function ( error, context ) {
+	        if ( error ) {
+	            console.error('Play error', error);
+	        }
+	        // you can save context and start play next file in this player
+	        playerContext = context;
+	        console.log(context);
+	    });
+	}
 	
 	
 	page.once('show', function () {
-	    page.footer = new Footer({
-	        parent: page,
-	        visible: true,
-	        data: {
-	            left: {code: keys.menu},
-	            middle: [
-	                {code: keys.f1, title: _('Action')},
-	                {code: keys.f2, title: _('Action')},
-	                {code: keys.f3, title: _('Action')},
-	                {code: keys.f4, title: _('Action')}
-	            ],
-	            right: {code: keys.frame}
-	        }
-	    });
+	    panelSet.panels[1].focus();
 	
-	    page.add(
-	        app.panelSet = new PanelSet({
-	            panels: [
-	                new Panel({
-	                    size: 1,
-	                    title: [
-	                        {
-	                            value: _('menu'),
-	                            className: 'some class'
-	                        }
-	                    ],
-	                    children: [
-	                        new LayoutList({
-	                            focusIndex: 0,
-	                            cycle: true,
-	                            size: 4,
-	                            data: [
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-folder'
-	                                        },
-	                                        _('Item')
-	                                    ]
-	                                },
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-folder'
-	                                        },
-	                                        _('Item')
-	                                    ]
-	                                },
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-folder'
-	                                        },
-	                                        _('Item')
-	                                    ]
-	                                },
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-exit'
-	                                        },
-	                                        _('Exit')
-	                                    ],
-	                                    click: appExit.goExit
-	                                }
-	                            ]
-	                        })
-	                    ]
-	                }),
-	                new Panel({
-	                    size: 1,
-	                    title: [
-	                        {
-	                            value: _('files'),
-	                            className: 'some class'
-	                        },
-	                        dom.tag('div', {className: 'amountContainer'}, dom.tag('div', {className: 'amount'}, 4))
-	                    ],
-	                    main: true,
-	                    children: [
-	                        new LayoutList({
-	                            focusIndex: 0,
-	                            cycle: true,
-	                            size: 4,
-	                            data: [
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-file'
-	                                        },
-	                                        _('Item')
-	                                    ]
-	                                },
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-file'
-	                                        },
-	                                        _('Item')
-	                                    ]
-	                                },
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-file'
-	                                        },
-	                                        _('Item')
-	                                    ]
-	                                },
-	                                {
-	                                    items: [
-	                                        {
-	                                            className: 'theme-icon theme-icon-file'
-	                                        },
-	                                        _('Item')
-	                                    ]
-	                                }
-	                            ]
-	                        })
-	                    ]
-	                }),
-	                new Panel({
-	                    size: 1,
-	                    title: [
-	                        {
-	                            value: _('info'),
-	                            className: 'some class'
-	                        }
-	                    ],
-	                    children: []
-	                })
-	            ]
-	        })
-	    );
-	
-	    app.panelSet.panels[1].focus();
+	    app.ready();
 	});
+	
 	
 	page.addListener('keydown', function ( event ) {
 	    if ( event.code === keys.back ) {
@@ -4650,16 +4683,318 @@
 	});
 	
 	
+	panelSet = new PanelSet({
+	    panels: [
+	        new Panel({
+	            size: 1,
+	            title: [
+	                {
+	                    value: _('menu'),
+	                    className: 'some class'
+	                }
+	            ],
+	            children: [
+	                new LayoutList({
+	                    focusIndex: 0,
+	                    cycle: true,
+	                    size: 7,
+	                    data: [
+	                        {
+	                            items: [
+	                                {
+	                                    className: 'theme-icon theme-icon-menu'
+	                                },
+	                                _('Footer')
+	                            ],
+	                            click: function () {
+	                                mainPanel.$title.$node.children[0].innerText = _('Footer');
+	                                headerAmount.innerText = footerData.length;
+	                                mainList.setData({data: footerData, focusIndex: 0});
+	                            }
+	                        },
+	                        {
+	                            items: [
+	                                {
+	                                    className: 'theme-icon theme-icon-rc-vk'
+	                                },
+	                                _('Virtual keyboard')
+	                            ],
+	                            click: function () {
+	                                window.core.intent({
+	                                    action: 'keyboard',
+	                                    data: {
+	                                        value: 'current value',
+	                                        title: _('Title text')
+	                                    },
+	                                    events: {
+	                                        done: function ( data ) {
+	                                            console.log(data);
+	                                        }
+	                                    }
+	                                }, function ( error ) {
+	                                    console.error('Keyboard return', error);
+	                                });
+	                            }
+	                        },
+	                        {
+	                            items: [
+	                                {
+	                                    className: 'theme-icon theme-icon-menu'
+	                                },
+	                                _('Modals')
+	                            ],
+	                            click: function () {
+	                                mainPanel.$title.$node.children[0].innerText = _('Modals');
+	                                headerAmount.innerText = modalsData.length;
+	                                mainList.setData({data: modalsData, focusIndex: 0});
+	                            }
+	                        },
+	                        {
+	                            items: [
+	                                {
+	                                    className: 'theme-icon theme-icon-rc-play-pause'
+	                                },
+	                                _('Play')
+	                            ],
+	                            click: function () {
+	                                mainPanel.$title.$node.children[0].innerText = _('Play');
+	                                headerAmount.innerText = playData.length;
+	                                mainList.setData({data: playData, focusIndex: 0});
+	                            }
+	                        },
+	                        {
+	                            items: [
+	                                {
+	                                    className: 'theme-icon theme-icon-warning'
+	                                },
+	                                _('Notifications')
+	                            ],
+	                            click: function () {
+	                                mainPanel.$title.$node.children[0].innerText = _('Notifications');
+	                                headerAmount.innerText = notificationData.length;
+	                                mainList.setData({data: notificationData, focusIndex: 0});
+	                            }
+	                        },
+	                        {
+	                            items: [
+	                                {
+	                                    className: 'theme-icon theme-icon-exit'
+	                                },
+	                                _('Exit')
+	                            ],
+	                            click: appExit.goExit
+	                        }
+	                    ]
+	                })
+	            ]
+	        }),
+	        mainPanel = new Panel({
+	            size: 1,
+	            title: [
+	                {
+	                    value: _('Footer')
+	                },
+	                dom.tag('div', {className: 'amountContainer'}, headerAmount = dom.tag('div', {className: 'amount'}, footerData.length))
+	            ],
+	            main: true,
+	            children: [
+	                mainList = new LayoutList({
+	                    focusIndex: 0,
+	                    cycle: true,
+	                    size: 7,
+	                    data: footerData,
+	                    events: {
+	                        'focus:item': function ( event ) {
+	                            console.log(event);
+	                            scrollArea.$body.innerHTML = event.$curr.value;
+	                            scrollArea.init();
+	                        },
+	                        // you can use click event in item or this event
+	                        'click:item': function ( event ) {
+	                            if ( event.$item.data.data && event.$item.data.data.play ) {
+	                                play(event.$item.data.data);
+	                            }
+	                        }
+	                    }
+	                })
+	            ]
+	        }),
+	        new Panel({
+	            size: 1,
+	            title: [
+	                {
+	                    value: _('info')
+	                }
+	            ],
+	            children: [scrollArea, scroll]
+	        })
+	    ]
+	});
+	page.add(panelSet);
+	
+	
+	footer = new Footer({
+	    parent: page,
+	    visible: true,
+	    data: {
+	        left: {
+	            code: keys.menu,
+	            action: function () {
+	                console.log('pressed menu');
+	            }
+	        },
+	        middle: [
+	            {
+	                code: keys.f1,
+	                title: _('Action 1'),
+	                action: function () {
+	                    console.log('pressed f1');
+	                }
+	            },
+	            {
+	                code: keys.f2,
+	                title: _('Action 2'),
+	                action: function () {
+	                    console.log('pressed f2');
+	                }
+	            },
+	            {
+	                code: keys.f3,
+	                title: _('Action 3'),
+	                action: function () {
+	                    console.log('pressed f3');
+	                }
+	            },
+	            {
+	                code: keys.f4,
+	                title: _('Action 4'),
+	                action: function () {
+	                    console.log('pressed f4');
+	                }
+	            }
+	        ],
+	        right: {
+	            code: keys.frame,
+	            action: function () {
+	                console.log('pressed frame');
+	            }
+	        }
+	    }
+	});
+	
+	
+	modalCheckList = new ModalCheckList({
+	    title: _('Modal check list'),
+	    titleCounter: false,
+	    className: 'sort',
+	    events: {
+	        show: function () {
+	            this.focus();
+	        },
+	        hide: function () {
+	            panelSet.focus();
+	        },
+	        'checked:change': function ( event ) {
+	            console.log(event);
+	        }
+	    },
+	    list: {
+	        focusIndex: 0,
+	        size: 3,
+	        events: {
+	            keydown: function ( event ) {
+	                LayoutList.prototype.defaultEvents.keydown.call(this, event);
+	                switch ( event.code ) {
+	                    case keys.back:
+	                        modalCheckList.hide();
+	                        // stop event propagation
+	                        event.stop = true;
+	                        break;
+	                }
+	            }
+	        },
+	        data: [
+	            // unique item
+	            {state: true, title: 'Unique item', value: 1, unique: true},
+	            {state: false, title: 'Item 1', value: 2},
+	            {state: false, title: 'Item 2', value: 3}
+	        ]
+	    }
+	});
+	page.add(modalCheckList);
+	
+	
+	modalRadio = new ModalMessage({
+	    visible: false,
+	    title: _('Modal radio list'),
+	    events: {
+	        show: function () {
+	            this.children[0].focus();
+	        },
+	        hide: function () {
+	            panelSet.focus();
+	        }
+	    },
+	    children: [
+	        new RadioList({
+	            focusIndex: 0,
+	            size: 5,
+	            data: [
+	                {state: false, title: 'Some title 1', value: 1},
+	                {state: true, title: 'Some title 2', value: 2},
+	                {state: false, title: 'Some title 3', value: 3},
+	                {state: false, title: 'Some title 4', value: 4},
+	                {state: false, title: 'Some title 5', value: 5},
+	                {state: false, title: 'Some title 6', value: 6},
+	                {state: false, title: 'Some title 7', value: 7},
+	                {state: false, title: 'Some title 8', value: 8},
+	                {state: false, title: 'Some title 9', value: 9}
+	            ],
+	            cycle: true,
+	            scroll: modalScroll = new ScrollBar({}),
+	            events: {
+	                select: function ( data ) {
+	                    console.log(data);
+	                },
+	                keydown: function ( event ) {
+	                    RadioList.prototype.defaultEvents.keydown.call(this, event);
+	                    switch ( event.code ) {
+	                        case keys.back:
+	                            modalRadio.hide();
+	                            // stop event propagation
+	                            event.stop = true;
+	                            break;
+	                    }
+	                }
+	            }
+	        }),
+	        modalScroll
+	    ]
+	});
+	page.add(modalRadio);
+	
+	
+	if ( true ) {
+	    window.mainPanel = mainPanel;
+	    window.mainList = mainList;
+	    window.panelSet = panelSet;
+	    window.modalCheckList = modalCheckList;
+	    window.scrollArea = scrollArea;
+	    window.modalRadio = modalRadio;
+	    window.longText = longText;
+	}
+	
+	
 	// public
 	module.exports = page;
 
 
-/***/ },
-/* 32 */
+/***/ }),
+/* 30 */
 /*!***************************************!*\
   !*** ./~/stb-component-page/index.js ***!
   \***************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -4669,29 +5004,29 @@
 	'use strict';
 	
 	// public
-	module.exports = __webpack_require__(/*! spa-component-page */ 33);
+	module.exports = __webpack_require__(/*! spa-component-page */ 31);
 	
 	// correct component name
 	module.exports.prototype.name = 'stb-component-page';
 
 
-/***/ },
-/* 33 */
+/***/ }),
+/* 31 */
 /*!***************************************!*\
   !*** ./~/spa-component-page/index.js ***!
   \***************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
 	
 	'use strict';
 	
-	var Component = __webpack_require__(/*! spa-component */ 34);
+	var Component = __webpack_require__(/*! spa-component */ 32);
 	
 	
 	/**
@@ -4722,9 +5057,13 @@
 	    console.assert(typeof this === 'object', 'must be constructed via new');
 	
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
 	        // init parameters checks
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
+	        }
 	    }
 	
 	    /**
@@ -4775,16 +5114,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-component-page/index.js"))
 
-/***/ },
-/* 34 */
+/***/ }),
+/* 32 */
 /*!**********************************!*\
   !*** ./~/spa-component/index.js ***!
   \**********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -4843,14 +5182,28 @@
 	    console.assert(typeof this === 'object', 'must be constructed via new');
 	
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
 	        // init parameters checks
-	        if ( config.id        && typeof config.id !== 'string'         ) { throw new Error(__filename + ': wrong or empty config.id'); }
-	        if ( config.className && typeof config.className !== 'string'  ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	        if ( config.$node     && !(config.$node instanceof Element)    ) { throw new Error(__filename + ': wrong config.$node type'); }
-	        if ( config.$body     && !(config.$body instanceof Element)    ) { throw new Error(__filename + ': wrong config.$body type'); }
-	        if ( config.parent    && !(config.parent instanceof Component) ) { throw new Error(__filename + ': wrong config.parent type'); }
-	        if ( config.children  && !Array.isArray(config.children)       ) { throw new Error(__filename + ': wrong config.children type'); }
+	        if ( config.id && typeof config.id !== 'string' ) {
+	            throw new Error(__filename + ': wrong or empty config.id');
+	        }
+	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
+	        }
+	        if ( config.$node && !(config.$node instanceof Element) ) {
+	            throw new Error(__filename + ': wrong config.$node type');
+	        }
+	        if ( config.$body && !(config.$body instanceof Element) ) {
+	            throw new Error(__filename + ': wrong config.$body type');
+	        }
+	        if ( config.parent && !(config.parent instanceof Component) ) {
+	            throw new Error(__filename + ': wrong config.parent type');
+	        }
+	        if ( config.children && !Array.isArray(config.children) ) {
+	            throw new Error(__filename + ': wrong config.children type');
+	        }
 	    }
 	
 	    /**
@@ -4916,6 +5269,7 @@
 	
 	    // set CSS class names
 	    //this.$node.className += ' component ' + (config.className || '');
+	    // previous approach is not good as it mess with components hierarchy
 	    this.$node.className = this.name + ' ' + (config.className || '');
 	
 	    // apply component id if given, generate otherwise
@@ -4945,8 +5299,12 @@
 	        config.events = config.events || {};
 	
 	        if ( true ) {
-	            if ( typeof config.events !== 'object' ) { throw new Error(__filename + ': wrong config.events type'); }
-	            if ( typeof this.defaultEvents !== 'object' ) { throw new Error(__filename + ': wrong this.defaultEvents type'); }
+	            if ( typeof config.events !== 'object' ) {
+	                throw new Error(__filename + ': wrong config.events type');
+	            }
+	            if ( typeof this.defaultEvents !== 'object' ) {
+	                throw new Error(__filename + ': wrong this.defaultEvents type');
+	            }
 	        }
 	
 	        for ( name in this.defaultEvents ) {
@@ -4957,8 +5315,8 @@
 	
 	    if ( config.events ) {
 	        // apply all given events
-	        Object.keys(config.events).forEach(function ( name ) {
-	            self.addListener(name, config.events[name]);
+	        Object.keys(config.events).forEach(function ( eventName ) {
+	            self.addListener(eventName, config.events[eventName]);
 	        });
 	    }
 	
@@ -5052,7 +5410,9 @@
 	        child = arguments[index];
 	
 	        if ( true ) {
-	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+	            if ( !(child instanceof Component) ) {
+	                throw new Error(__filename + ': wrong child type');
+	            }
 	        }
 	
 	        // apply
@@ -5128,7 +5488,9 @@
 	    // really inserted somewhere
 	    if ( this.parent ) {
 	        if ( true ) {
-	            if ( !(this.parent instanceof Component) ) { throw new Error(__filename + ': wrong this.parent type'); }
+	            if ( !(this.parent instanceof Component) ) {
+	                throw new Error(__filename + ': wrong this.parent type');
+	            }
 	        }
 	
 	        // active at the moment
@@ -5142,14 +5504,13 @@
 	    // remove all children
 	    this.children.forEach(function ( child ) {
 	        if ( true ) {
-	            if ( !(child instanceof Component) ) { throw new Error(__filename + ': wrong child type'); }
+	            if ( !(child instanceof Component) ) {
+	                throw new Error(__filename + ': wrong child type');
+	            }
 	        }
 	
 	        child.remove();
 	    });
-	
-	    // remove all listeners
-	    this.events = {};
 	
 	    this.$node.parentNode.removeChild(this.$node);
 	
@@ -5162,6 +5523,9 @@
 	         */
 	        this.emit('remove');
 	    }
+	
+	    // remove all listeners
+	    this.events = {};
 	
 	    //debug.log('component ' + this.name + '#' + this.id + ' remove', 'red');
 	    debug.info('remove component ' + this.name + '#' + this.id, null, {
@@ -5300,7 +5664,7 @@
 	    }
 	
 	    // nothing was done
-	    return true;
+	    return false;
 	};
 	
 	
@@ -5337,7 +5701,7 @@
 	    }
 	
 	    // nothing was done
-	    return true;
+	    return false;
 	};
 	
 	
@@ -5346,18 +5710,18 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-component/index.js"))
 
-/***/ },
-/* 35 */
+/***/ }),
+/* 33 */
 /*!****************************!*\
   !*** ./~/spa-dom/index.js ***!
   \****************************/
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * HTML elements low-level handling.
 	 *
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	'use strict';
@@ -5407,9 +5771,7 @@
 	            if ( arguments[index] ) {
 	                // regular HTML tag or plain data
 	                node.appendChild(
-	                    typeof arguments[index] === 'object' ?
-	                    arguments[index] :
-	                    document.createTextNode(arguments[index])
+	                    typeof arguments[index] === 'object' ? arguments[index] : document.createTextNode(arguments[index])
 	                );
 	            }
 	        }
@@ -5481,9 +5843,7 @@
 	            if ( arguments[index] ) {
 	                // regular HTML tag or plain data
 	                tagDst.appendChild(
-	                    typeof arguments[index] === 'object' ?
-	                    arguments[index] :
-	                    document.createTextNode(arguments[index])
+	                    typeof arguments[index] === 'object' ? arguments[index] : document.createTextNode(arguments[index])
 	                );
 	            }
 	        }
@@ -5506,7 +5866,8 @@
 	 * dom.remove(div1, div2, div3);
 	 */
 	dom.remove = function ( nodes ) {
-	    var count = 0,  // amount of successfully removed nodes
+	    // amount of successfully removed nodes
+	    var count = 0,
 	        index;
 	
 	    // walk through all the given elements
@@ -5534,16 +5895,184 @@
 	module.exports = dom;
 
 
-/***/ },
+/***/ }),
+/* 34 */
+/*!*****************************!*\
+  !*** ./~/stb-keys/index.js ***!
+  \*****************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Global list of non-printable control key codes.
+	 *
+	 * At the moment `keypress` and `keydown` events are emitted for the same keys (for both printable and non-printable characters).
+	 *
+	 * WARNING!!! All codes in this file (except 'volumeUp' and 'volumeDown')
+	 * are used in window 'keydown' handler to prevent wrong 'keypress' firings.
+	 * If you add new code to this file 'keypress' event with this code will never fire.
+	 *
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	'use strict';
+	
+	var keys = __webpack_require__(/*! spa-keys */ 35);
+	
+	
+	// extend with additional codes
+	keys.back         = keys.backspace;
+	keys.channelNext  = keys.tab;        // Tab
+	keys.channelPrev  = keys.tab + 's';  // Shift+Tab
+	keys.ok           = keys.enter;      // Enter
+	keys.exit         = keys.escape;     // Esc
+	keys.volumeUp     = 107;             // NUMPAD +
+	keys.volumeDown   = 109;             // NUMPAD -
+	keys.f1           = 112 + 'c';       // Ctrl+F1
+	keys.f2           = 113 + 'c';       // Ctrl+F2
+	keys.f3           = 114 + 'c';       // Ctrl+F3
+	keys.f4           = 115 + 'c';       // Ctrl+F4
+	keys.refresh      = 116 + 'c';       // Ctrl+F5
+	keys.frame        = 117 + 'c';       // Ctrl+F6
+	keys.phone        = 119 + 'c';       // Ctrl+F8
+	keys.set          = 120 + 'c';       // Ctrl+F9
+	keys.tv           = 121 + 'c';       // Ctrl+F10
+	keys.menu         = 122 + 'c';       // Ctrl+F11
+	keys.app          = 123 + 'c';       // Ctrl+F12
+	keys.rewind       = 66  + 'a';       // Alt+B
+	keys.forward      = 70  + 'a';       // Alt+F
+	keys.audio        = 71  + 'a';       // Alt+G
+	keys.standby      = 74  + 'a';       // Alt+J
+	keys.keyboard     = 76  + 'a';       // Alt+L
+	keys.usbMounted   = 80  + 'a';       // Alt+P
+	keys.usbUnmounted = 81  + 'a';       // Alt+Q
+	keys.playPause    = 82  + 'a';       // Alt+R
+	keys.play         = -1;              // should be redefined on some platforms
+	keys.pause        = -1;              // should be redefined on some platforms
+	keys.stop         = 83  + 'a';       // Alt+S
+	keys.power        = 85  + 'a';       // Alt+U
+	keys.record       = 87  + 'a';       // Alt+W
+	keys.info         = 89  + 'a';       // Alt+Y
+	keys.mute         = 192 + 'a';
+	keys.digit0       = 48;
+	keys.digit1       = 49;
+	keys.digit2       = 50;
+	keys.digit3       = 51;
+	keys.digit4       = 52;
+	keys.digit5       = 53;
+	keys.digit6       = 54;
+	keys.digit7       = 55;
+	keys.digit8       = 56;
+	keys.digit9       = 57;
+	
+	
+	// public
+	module.exports = keys;
+	
+	// public
+	// module.exports = {
+	//     getCode: function ( event ) {
+	//         var code = event.keyCode;
+	//
+	//         // apply key modifiers
+	//         if ( event.shiftKey ) { code += 1000; }
+	//         if ( event.altKey )   { code += 2000; }
+	//
+	//         return code;
+	//     },
+	//
+	//     codes: {
+	//         back:         8,    // Backspace
+	//         channelPrev:  1009, // Shift+Tab
+	//         channelNext:  9,    // Tab
+	//         ok:           13,   // Enter
+	//         exit:         27,   // Esc
+	//         pageUp:       33,
+	//         pageDown:     34,
+	//         end:          35,
+	//         home:         36,
+	//         left:         37,
+	//         up:           38,
+	//         right:        39,
+	//         down:         40,
+	//         'delete':     46,
+	//         volumeUp:     107,  // NUMPAD +
+	//         volumeDown:   109,  // NUMPAD -
+	//         f1:           112,  // F1
+	//         f2:           113,  // F2
+	//         f3:           114,  // F3
+	//         f4:           115,  // F4
+	//         refresh:      116,  // F5
+	//         frame:        117,  // F6
+	//         phone:        119,  // F8
+	//         set:          120,  // F9
+	//         tv:           121,  // F10
+	//         menu:         122,  // F11
+	//         app:          123,  // F12
+	//         rewind:       2066, // Alt+B
+	//         forward:      2070, // Alt+F
+	//         audio:        2071, // Alt+G
+	//         standby:      2074, // Alt+J
+	//         keyboard:     2076, // Alt+L
+	//         usbMounted:   2080, // Alt+P
+	//         usbUnmounted: 2081, // Alt+Q
+	//         playPause:    2082, // Alt+R
+	//         stop:         2083, // Alt+S
+	//         power:        2085, // Alt+U
+	//         record:       2087, // Alt+W
+	//         info:         2089, // Alt+Y
+	//         mute:         2192
+	//     }
+	// };
+
+
+/***/ }),
+/* 35 */
+/*!*****************************!*\
+  !*** ./~/spa-keys/index.js ***!
+  \*****************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Global list of non-printable control key codes.
+	 *
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @license GNU GENERAL PUBLIC LICENSE Version 3
+	 */
+	
+	'use strict';
+	
+	// public
+	module.exports = {
+	    backspace: 8,
+	    tab:       9,
+	    enter:     13,
+	    escape:    27,
+	    space:     32,
+	    pageUp:    33,
+	    pageDown:  34,
+	    end:       35,
+	    home:      36,
+	    left:      37,
+	    up:        38,
+	    right:     39,
+	    down:      40,
+	    insert:    45,
+	    // not "delete" because of old browsers issue
+	    del:       46
+	};
+
+
+/***/ }),
 /* 36 */
 /*!*****************************************!*\
   !*** ./~/mag-component-footer/index.js ***!
   \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @copyright Dmitry Fedotov <bas.jsdev@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -5551,8 +6080,7 @@
 	'use strict';
 	
 	var Component = __webpack_require__(/*! stb-component */ 37),
-	    dom       = __webpack_require__(/*! spa-dom */ 35),
-	    keys      = __webpack_require__(/*! stb-keys */ 8),
+	    keys      = __webpack_require__(/*! stb-keys */ 34),
 	    classes   = {};
 	
 	
@@ -5570,18 +6098,6 @@
 	classes[keys.keyboard] = 'theme-icon-rc-vk';
 	classes[keys.refresh] = 'theme-icon-rc-refresh';
 	classes[keys.frame] = 'theme-icon-rc-aspect';
-	//classes[keys.channelNext] = 'theme-icon-next';
-	//classes[keys.channelPrev] = 'theme-icon-previous';
-	//classes[keys.volumeUp] = 'theme-icon-volumeUp';
-	//classes[keys.volumeDown] = 'theme-icon-volumeDown';
-	//classes[keys.set] = 'theme-icon-set';
-	//classes[keys.tv] = 'theme-icon-tv';
-	//classes[keys.app] = 'theme-icon-app';
-	//classes[keys.rewind] = 'theme-icon-rewind';
-	//classes[keys.forward] = 'theme-icon-forward';
-	//classes[keys.stop] = 'theme-icon-stop';
-	//classes[keys.power] = 'theme-icon-power';
-	//classes[keys.mute] = 'theme-icon-mute';
 	
 	/**
 	 * Footer.
@@ -5620,8 +6136,10 @@
 	 * });
 	 */
 	
+	/* eslint max-statements: 0 */
 	function Footer ( config ) {
-	    var self;
+	    var currentTab = 0,
+	        self = this;
 	
 	    // sanitize
 	    config = config || {};
@@ -5640,40 +6158,87 @@
 	
 	    this.tab = 0;
 	
-	    this.$node.appendChild(dom.tag('table', {},
-	        dom.tag('tr', {},
-	            dom.tag('td', {},
-	                this.$left = dom.tag('div', {className: 'theme-icon'})
-	            ),
-	            dom.tag('td', {className: 'central'},
-	                this.tabs[0].$body = dom.tag('div', {className: 'wrapper hidden'},
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'}))
-	                ),
-	                this.tabs[1].$body = dom.tag('div', {className: 'wrapper hidden'},
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'})),
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'}))
-	                ),
-	                this.tabs[2].$body = dom.tag('div', {className: 'wrapper hidden'},
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'})),
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'})),
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'}))
-	                ),
-	                this.tabs[3].$body = dom.tag('div', {className: 'wrapper hidden'},
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'})),
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'})),
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'})),
-	                    dom.tag('div', {className: 'button'}, dom.tag('div'), dom.tag('div', {className: 'title'}))
-	                )
-	            ),
-	            dom.tag('td', {},
-	                this.$right = dom.tag('div', {className: 'theme-icon'})
-	            )
-	        )
-	    ));
+	    this.$table = this.$node.appendChild(document.createElement('table'));
+	
+	    this.$table.insertRow();
+	    this.$table.rows[0].insertCell(-1);
+	    this.$left = this.$table.rows[0].cells[0].appendChild(document.createElement('div'));
+	    this.$left.className = 'theme-icon';
+	
+	    this.$table.rows[0].insertCell(-1);
+	    this.$table.rows[0].cells[1].className = 'central';
+	
+	
+	    this.tabs[currentTab].$body = this.$table.rows[0].cells[1].appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.className = 'wrapper hidden';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	
+	    ++currentTab;
+	    this.tabs[currentTab].$body = this.$table.rows[0].cells[1].appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.className = 'wrapper hidden';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	
+	    ++currentTab;
+	    this.tabs[currentTab].$body = this.$table.rows[0].cells[1].appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.className = 'wrapper hidden';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	
+	    ++currentTab;
+	    this.tabs[currentTab].$body = this.$table.rows[0].cells[1].appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.className = 'wrapper hidden';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	    this.tabs[currentTab].$body.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.className = 'button';
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.appendChild(document.createElement('div'));
+	    this.tabs[currentTab].$body.lastChild.lastChild.className = 'title';
+	
+	    this.$table.rows[0].insertCell(-1);
+	    this.$right = this.$table.rows[0].cells[2].appendChild(document.createElement('div'));
+	    this.$right.className = 'theme-icon';
 	
 	    this.init(config.data);
-	
-	    self = this;
 	
 	    this.parent.addListener('keydown', function ( event ) {
 	        var currTab = self.tabs[self.tab];
@@ -5700,10 +6265,17 @@
 	 *
 	 * @param {Object} [config] footer buttons config
 	 * @param {Object} [config.left] left button config
+	 * @param {number} [config.left.code] left button key code
+	 * @param {boolean} [config.left.disabled] left button is disabled
+	 * @param {Object} [config.left.action] left button press (click) action
 	 * @param {Object} [config.middle] middle buttons config
 	 * @param {Object} [config.right] right button config
+	 * @param {number} [config.right.code] right button key code
+	 * @param {boolean} [config.right.disabled] right button is disabled
+	 * @param {Object} [config.right.action] right button press (click) action
 	 * @param {number} [config.middle.code] button key code
 	 * @param {Object} [config.middle.title] button title
+	 * @param {boolean} [config.middle.disabled] button is disabled
 	 * @param {Object} [config.middle.action] button press (click) action
 	 *
 	 * page.Footer.init({
@@ -5714,7 +6286,7 @@
 	 *         {code: 55, action: function () {}},
 	 *         {code: keys.f1, title: 'stop', action: function () {}},
 	 *         {code: 9000, className: 'customIcon', title: 'start', action: function () {}},
-	 *         {code: keys.f4, title: 'end', action: function () {}}
+	 *         {code: keys.f4, title: 'end', disabled: true}
 	 *     ],
 	 *     right: {
 	 *         code: 65, action: function () {}
@@ -5723,13 +6295,27 @@
 	 *
 	 */
 	Footer.prototype.init = function ( config ) {
-	    var i, $tab, $tabChildren;
+	    var index, $tab, $tabChildren;
 	
 	    config = config || {};
 	
 	    if ( true ) {
 	        if ( config.middle && config.middle.length > 4 ) {
 	            throw new Error(__filename + ': only 4 buttons allowed in footer');
+	        }
+	        if ( config.middle && Array.isArray(config.middle) ) {
+	            for ( index = 0; index < config.middle.length; index++ ) {
+	                if ( typeof config.middle[index].action !== 'function' && !config.middle[index].disabled ) {
+	                    throw new Error(__filename + ': action must be a function');
+	                }
+	                ++index;
+	            }
+	        }
+	        if ( config.left && typeof config.left.action !== 'function' && !config.left.disabled ) {
+	            throw new Error(__filename + ': action must be a function');
+	        }
+	        if ( config.right && typeof config.right.action !== 'function' && !config.right.disabled ) {
+	            throw new Error(__filename + ': action must be a function');
 	        }
 	    }
 	
@@ -5740,29 +6326,47 @@
 	
 	    // left button
 	    if ( config.left ) {
-	        $tab.codes[config.left.code] = {action: config.left.action};
 	        this.$left.className = config.left.className || ('theme-icon ' + (classes[config.left.code] || 'theme-icon-warning'));
-	        this.$left.style.visibility = 'inherit';
+	        if ( config.left.disabled ) {
+	            this.$left.classList.add('disabled');
+	        } else {
+	            $tab.codes[config.left.code] = {action: config.left.action};
+	            this.$left.style.visibility = 'inherit';
+	            this.$left.onclick = config.left.action;
+	        }
 	    } else if ( this.$left.style.visibility !== 'hidden' ) {
 	        this.$left.style.visibility = 'hidden';
 	    }
 	
 	    // right button
 	    if ( config.right ) {
-	        $tab.codes[config.right.code] = {action: config.right.action};
 	        this.$right.className = config.right.className || ('theme-icon ' + (classes[config.right.code] || 'theme-icon-warning'));
-	        this.$right.style.visibility = 'inherit';
+	        if ( config.right.disabled ) {
+	            this.$right.classList.add('disabled');
+	        } else {
+	            $tab.codes[config.right.code] = {action: config.right.action};
+	            this.$right.style.visibility = 'inherit';
+	            this.$right.onclick = config.right.action;
+	        }
 	    } else if ( this.$right.style.visibility !== 'hidden' ) {
 	        this.$right.style.visibility = 'hidden';
 	    }
 	
 	    // middle buttons
 	    if ( config.middle && config.middle.length ) {
-	        for ( i = 0; i < config.middle.length; i++ ) {
-	            $tab.codes[config.middle[i].code] = {action: config.middle[i].action};
-	            $tabChildren = $tab.$body.children[i].children; // shortcut
-	            $tabChildren[0].className = 'iconImg ' + (config.middle[i].className || ('theme-icon ' + (classes[config.middle[i].code] || 'theme-icon-warning')));
-	            $tabChildren[1].innerText = config.middle[i].title || '';
+	        for ( index = 0; index < config.middle.length; index++ ) {
+	            $tab.codes[config.middle[index].code] = {action: config.middle[index].action};
+	            if ( config.middle[index].disabled ) {
+	                $tab.$body.children[index].classList.add('disabled');
+	            } else {
+	                $tab.$body.children[index].classList.remove('disabled');
+	                $tab.$body.children[index].onclick = config.middle[index].action;
+	            }
+	            $tabChildren = $tab.$body.children[index].children; // shortcut
+	            $tabChildren[0].className = 'iconImg ' +
+	                (config.middle[index].className || ('theme-icon ' + (classes[config.middle[index].code] || 'theme-icon-warning')));
+	
+	            $tabChildren[1].innerText = config.middle[index].title || '';
 	        }
 	        $tab.$body.classList.remove('hidden');
 	    }
@@ -5774,12 +6378,12 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-footer/index.js"))
 
-/***/ },
+/***/ }),
 /* 37 */
 /*!**********************************!*\
   !*** ./~/stb-component/index.js ***!
   \**********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -5789,19 +6393,19 @@
 	'use strict';
 	
 	// public
-	module.exports = __webpack_require__(/*! spa-component */ 34);
+	module.exports = __webpack_require__(/*! spa-component */ 32);
 
 
-/***/ },
+/***/ }),
 /* 38 */
 /*!****************************************!*\
   !*** ./~/mag-component-panel/index.js ***!
   \****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @copyright Boris Aleynikov <aleynikov.boris@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -5864,8 +6468,9 @@
 	        if ( typeof config !== 'object' ) {
 	            throw new Error(__filename + ': wrong config type');
 	        }
-	        if ( config.hasOwnProperty('className') && typeof config.className !== 'string' ) {
-	            throw new Error(__filename + ': wrong config.className, must be a string');
+	        // init parameters checks
+	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
 	        }
 	    }
 	
@@ -5940,7 +6545,7 @@
 	 * @type {{focus: Function}} try to focus first child component if it present
 	 */
 	Panel.prototype.defaultEvents = {
-	    focus : function () {
+	    focus: function () {
 	        if ( this.children.length ) {
 	            this.children[0].focus();
 	        }
@@ -5990,16 +6595,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-panel/index.js"))
 
-/***/ },
+/***/ }),
 /* 39 */
 /*!*****************************************!*\
   !*** ./~/mag-component-layout/index.js ***!
   \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @copyright Boris Aleynikov <aleynikov.boris@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -6007,7 +6612,7 @@
 	'use strict';
 	
 	var Component = __webpack_require__(/*! stb-component */ 37),
-	    keys      = __webpack_require__(/*! stb-keys */ 8);
+	    keys      = __webpack_require__(/*! stb-keys */ 34);
 	
 	/**
 	 * Layout component implementation
@@ -6019,6 +6624,8 @@
 	 * @param {Array} [config.data] array of items to add to layout
 	 */
 	function Layout ( config ) {
+	    var self = this;
+	
 	    // sanitize
 	    config = config || {};
 	
@@ -6029,9 +6636,13 @@
 	    this.focusIndex = 0;
 	
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
 	        // init parameters checks
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+	        if ( 'className' in config && config.className !== undefined && typeof config.className !== 'string' ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
+	        }
 	    }
 	
 	    //config.className = 'layout ' + (config.className || '');
@@ -6050,22 +6661,22 @@
 	    this.addListener('keydown', function ( event ) {
 	        switch ( event.code ) {
 	            case keys.right:
-	                if ( this.children.length && this.focusIndex < this.children.length - 1 ) {
-	                    this.children[++this.focusIndex].focus();
+	                if ( self.children.length && self.focusIndex < self.children.length - 1 ) {
+	                    self.children[++self.focusIndex].focus();
 	                }
 	                break;
 	            case keys.left:
-	                if ( this.children.length && this.focusIndex > 0 ) {
-	                    this.children[--this.focusIndex].focus();
+	                if ( self.children.length && self.focusIndex > 0 ) {
+	                    self.children[--self.focusIndex].focus();
 	                }
 	                break;
 	            case keys.back:
-	                // focus parent
-	                this.parent.focus();
-	
 	                // focus parent focused item if parent is layout list
-	                if ( this.parent &&  this.$parentItem ) {
-	                    this.parent.focusItem(this.$parentItem);
+	                if ( self.parent ) {
+	                    self.parent.focus();
+	                    if ( self.$parentItem ) {
+	                        self.parent.focusItem(self.$parentItem);
+	                    }
 	                }
 	                break;
 	        }
@@ -6091,8 +6702,12 @@
 	    var index, item;
 	
 	    if ( true ) {
-	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
-	        if ( !Array.isArray(data) ) { throw new Error(__filename + ': wrong data type'); }
+	        if ( arguments.length !== 1 ) {
+	            throw new Error(__filename + ': wrong arguments number');
+	        }
+	        if ( !Array.isArray(data) ) {
+	            throw new Error(__filename + ': wrong data type');
+	        }
 	    }
 	
 	    // rows
@@ -6100,24 +6715,25 @@
 	        // cell value
 	        item = data[index];
 	        // plain text
-	        if ( typeof item !== 'object' ) {
-	            // wrap with defaults
-	            data[index] = {
-	                value: data[index],
-	                wrap : true
-	            };
-	        } else {
+	        if ( typeof item === 'object' ) {
 	            // HTML element or component
 	            if ( item instanceof Component || item instanceof HTMLElement ) {
 	                data[index] = {
 	                    value: item,
-	                    wrap : false
+	                    wrap: false
 	                };
 	            } else {
 	                data[index].wrap = true;
 	            }
+	        } else {
+	            // wrap with defaults
+	            data[index] = {
+	                value: data[index],
+	                wrap: true
+	            };
 	        }
 	    }
+	
 	    return data;
 	}
 	
@@ -6138,6 +6754,13 @@
 	    }
 	
 	    this.data = data;
+	
+	    /**
+	     * @this Component
+	     */
+	    function componentClickHandler (  ) {
+	        self.focusIndex = this.index;
+	    }
 	
 	    for ( index = 0; index < data.length; index++ ) {
 	        item = data[index];
@@ -6169,9 +6792,7 @@
 	            item.value.index = this.children.length;
 	
 	            // change layout focus index if click component
-	            item.value.addListener('click', function () {
-	                self.focusIndex = this.index;
-	            });
+	            item.value.addListener('click', componentClickHandler);
 	
 	            // append component
 	            if ( item.wrap ) {
@@ -6199,16 +6820,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-layout/index.js"))
 
-/***/ },
+/***/ }),
 /* 40 */
 /*!********************************************!*\
   !*** ./~/mag-component-panel-set/index.js ***!
   \********************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @copyright Boris Aleynikov <aleynikov.boris@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -6216,7 +6837,7 @@
 	'use strict';
 	
 	var Component = __webpack_require__(/*! stb-component */ 37),
-	    keys      = __webpack_require__(/*! stb-keys */ 8);
+	    keys      = __webpack_require__(/*! stb-keys */ 34);
 	
 	/**
 	 * Magsdk panel set implementation
@@ -6229,14 +6850,18 @@
 	 */
 	function PanelSet ( config ) {
 	    var self = this,
-	        i;
+	        index;
 	
 	    config = config || {};
 	
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
 	        // init parameters checks
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
+	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
+	        }
 	        if ( config.panels && !Array.isArray(config.panels) || !config.panels.length ) {
 	            throw new Error(__filename + ': wrong config.panels type');
 	        }
@@ -6298,12 +6923,12 @@
 	    }
 	
 	    // add special listener
-	    for ( i = 0; i < this.panels.length; i++ ) {
-	        this.panels[i].addListeners({
+	    for ( index = 0; index < this.panels.length; index++ ) {
+	        this.panels[index].addListeners({
 	            keydown: keydownHandler
 	        });
 	        // set panels indexes
-	        this.panels[i].index = i;
+	        this.panels[index].index = index;
 	    }
 	
 	    /*if ( config.focusIndex && config.focusIndex < this.panels.length ) {
@@ -6343,16 +6968,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-panel-set/index.js"))
 
-/***/ },
+/***/ }),
 /* 41 */
 /*!**********************************************!*\
   !*** ./~/mag-component-layout-list/index.js ***!
   \**********************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @copyright Boris Aleynikov <aleynikov.boris@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -6443,7 +7068,7 @@
 	
 	    //config.className = 'layoutList ' + (config.className || '');
 	
-	    config.propagate = config.propagate || true;
+	    config.propagate = config.propagate === undefined ? true : config.propagate;
 	
 	    /**
 	     * Set data layout to be fixed to cache HTML elements
@@ -6500,13 +7125,18 @@
 	 * @param {Object} config to render layout element
 	 */
 	LayoutList.prototype.renderItemDefault = function ( $item, config ) {
-	    var layout, i;
+	    var layout, layoutConfig,
+	        currentNode,
+	        currentData,
+	        i;
 	
-	    if ( $item.ready && this.fixedData && !$item.innerHTML.length ) {
+	    if ( $item.ready && this.fixedData ) {
 	        for ( i = 0; i < config.items.length; i++ ) {
-	            if ( typeof config.items[i].value === 'string' ) {
-	                $item.layout.$node.childNodes[i].innerText = config.items[i].value;
-	                $item.layout.$node.childNodes[i].className = config.items[i].className;
+	            currentData = config.items[i];
+	            if ( typeof currentData.value === 'string' || currentData.value === undefined ) {
+	                currentNode = $item.layout.$node.childNodes[i];
+	                currentNode.innerText = currentData.value || '';
+	                currentNode.className = currentData.className || '';
 	            }
 	        }
 	    } else {
@@ -6515,11 +7145,16 @@
 	            $item.removeChild($item.firstChild);
 	        }
 	
-	        layout = new Layout({
+	        layoutConfig = {
 	            focusable: false,
-	            data: config.items,
-	            className: config.className
-	        });
+	            data: config.items
+	        };
+	
+	        if ( config.className ) {
+	            layoutConfig.className = config.className;
+	        }
+	
+	        layout = new Layout(layoutConfig);
 	
 	        $item.appendChild(layout.$node);
 	        $item.layout = layout;
@@ -6529,7 +7164,7 @@
 	        // focus layoutList if click on layout
 	        layout.addListener('click', function () {
 	            // add inner property to set that event comes from inner component
-	            this.parent.emit('click:item', {$item: $item, inner: true});
+	            layout.parent.emit('click:item', {$item: $item, inner: true});
 	        });
 	
 	        if ( config.click ) {
@@ -6575,9 +7210,9 @@
 	    }
 	
 	    if ( config.data && config.data.length ) {
-	       this.$noData.classList.add('hidden');
+	        this.$noData.classList.add('hidden');
 	    } else {
-	       this.$noData.classList.remove('hidden');
+	        this.$noData.classList.remove('hidden');
 	    }
 	};
 	
@@ -6588,12 +7223,12 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-layout-list/index.js"))
 
-/***/ },
+/***/ }),
 /* 42 */
 /*!***************************************!*\
   !*** ./~/mag-component-list/index.js ***!
   \***************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
@@ -6601,11 +7236,12 @@
 	 */
 	
 	/* eslint no-path-concat: 0 */
+	/* eslint complexity: [error, 37] */
 	
 	'use strict';
 	
 	var Component = __webpack_require__(/*! stb-component */ 37),
-	    keys      = __webpack_require__(/*! stb-keys */ 8);
+	    keys      = __webpack_require__(/*! stb-keys */ 34);
 	
 	
 	/**
@@ -6641,7 +7277,7 @@
 	 * @param {number}   [config.focusIndex]  list item index to make item focused (move view window to this position)
 	 * @param {boolean}  [config.cycle=true]  allow or not to jump to the opposite side of a list when there is nowhere to go next
 	 * @param {boolean}  [config.scroll=null] associated ScrollBar component link
-	 * @param {object}   [config.provider]      data provider
+	 * @param {Object}   [config.provider]    data provider
 	 *
 	 * @fires module:stb/ui/list~List#click:item
 	 */
@@ -6659,9 +7295,6 @@
 	            throw new Error(__filename + ': wrong config type');
 	        }
 	        // init parameters checks
-	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
-	            throw new Error(__filename + ': wrong or empty config.className');
-	        }
 	        if ( config.type && Number(config.type) !== config.type ) {
 	            throw new Error(__filename + ': config.type must be a number');
 	        }
@@ -6729,8 +7362,6 @@
 	     */
 	    this.provider = null;
 	
-	
-	    config.className = config.className || '';
 	
 	    if ( this.type === this.TYPE_HORIZONTAL ) {
 	        config.className += ' horizontal';
@@ -6901,7 +7532,7 @@
 	 * @return {Array} reworked incoming data
 	 */
 	function normalize ( data ) {
-	    var i, item;
+	    var idx, item;
 	
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) {
@@ -6913,14 +7544,14 @@
 	    }
 	
 	    // rows
-	    for ( i = 0; i < data.length; i++ ) {
+	    for ( idx = 0; idx < data.length; idx++ ) {
 	        // cell value
-	        item = data[i];
+	        item = data[idx];
 	        // primitive value
 	        if ( typeof item !== 'object' ) {
 	            // wrap with defaults
-	            item = data[i] = {
-	                value: data[i]
+	            item = data[idx] = {
+	                value: data[idx]
 	            };
 	        }
 	
@@ -6964,7 +7595,7 @@
 	                }
 	            }
 	        },
-	        item, i;
+	        item, idx;
 	
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) {
@@ -7029,9 +7660,9 @@
 	        }
 	
 	        // create new items
-	        for ( i = 0; i < this.size; i++ ) {
+	        for ( idx = 0; idx < this.size; idx++ ) {
 	            item = document.createElement('div');
-	            item.index = i;
+	            item.index = idx;
 	            //item.className = 'item theme-list-item';
 	            item.className = 'item';
 	
@@ -7089,7 +7720,7 @@
 	    // apply list of items
 	
 	    if ( config.data ) {
-	        if ( false ) {
+	        if ( true ) {
 	            if ( !Array.isArray(config.data) ) { throw new Error(__filename + ': wrong config.data type'); }
 	        }
 	        // prepare user data
@@ -7177,7 +7808,7 @@
 	 * @fires module:stb/ui/list~List#move:view
 	 */
 	List.prototype.renderView = function ( index ) {
-	    var $item, i, itemData, prevIndex, currIndex;
+	    var $item, idx, itemData, prevIndex, currIndex;
 	
 	    if ( true ) {
 	        if ( arguments.length !== 1 ) {
@@ -7202,9 +7833,9 @@
 	        this.viewIndex = currIndex = index;
 	
 	        // rebuild all visible items
-	        for ( i = 0; i < this.size; i++ ) {
+	        for ( idx = 0; idx < this.size; idx++ ) {
 	            // shortcuts
-	            $item    = this.$body.children[i];
+	            $item    = this.$body.children[idx];
 	            itemData = this.data[index];
 	
 	            // real item or stub
@@ -7242,7 +7873,7 @@
 	
 	        // update a linked scroll component
 	        if ( this.scroll ) {
-	            this.scroll.scrollTo(this.provider? this.provider.head + this.provider.pos : this.viewIndex);
+	            this.scroll.scrollTo(this.provider ? this.provider.head + this.provider.pos : this.viewIndex);
 	        }
 	
 	        // full rebuild
@@ -7252,26 +7883,6 @@
 	    // nothing was done
 	    return false;
 	};
-	
-	
-	/**
-	 * Jump to the opposite side.
-	 *
-	 * @event module:stb/ui/list~List#cycle
-	 *
-	 * @type {Object}
-	 * @property {number} direction key code initiator of movement
-	 */
-	
-	
-	/**
-	 * Attempt to go beyond the edge of the list.
-	 *
-	 * @event module:stb/ui/list~List#overflow
-	 *
-	 * @type {Object}
-	 * @property {number} direction key code initiator of movement
-	 */
 	
 	
 	/**
@@ -7300,6 +7911,7 @@
 	    if ( !this.data.length ) {
 	        return;
 	    }
+	
 	    switch ( direction ) {
 	        case keys.left:
 	            if ( this.type === this.TYPE_HORIZONTAL ) {
@@ -7315,34 +7927,30 @@
 	                    } else {
 	                        this.focusItem(this.$focusItem.previousSibling);
 	                    }
-	                } else {
-	                    if ( this.provider ) {
-	                        this.provider.get(direction, function ( error, data, pos ) {
-	                            if ( error ) {
-	                                if ( self.events['data:error'] ) {
-	                                    /**
+	                } else if ( this.provider ) {
+	                    this.provider.get(direction, function ( error, data, pos ) {
+	                        if ( error ) {
+	                            if ( self.events['data:error'] ) {
+	                                /**
 	                                     * Provider get error while take new data
 	                                     *
 	                                     * @event module:stb/ui/list~List#data:error
 	                                     */
-	                                    self.emit('data:error', error);
-	                                }
-	                            } else {
-	                                if ( data ) {
-	                                    self.setData({data: data, focusIndex: pos || pos === 0 ? pos : self.$focusItem.index});
-	                                }
+	                                self.emit('data:error', error);
 	                            }
-	                        });
-	                    } else {
-	                        // already at the beginning
-	                        if ( this.cycle ) {
-	                            // jump to the end of the list
-	                            this.move(keys.end);
+	                        } else if ( data ) {
+	                            self.setData({data: data, focusIndex: pos || pos === 0 ? pos : self.$focusItem.index});
 	                        }
-	                        if ( this.events['overflow'] ) {
-	                            // notify listeners
-	                            this.emit('overflow', {direction: direction, cycle: this.cycle});
-	                        }
+	                    });
+	                } else {
+	                    // already at the beginning
+	                    if ( this.cycle ) {
+	                        // jump to the end of the list
+	                        this.move(keys.end);
+	                    }
+	                    if ( this.events['overflow'] ) {
+	                        // notify listeners
+	                        this.emit('overflow', {direction: direction, cycle: this.cycle});
 	                    }
 	                }
 	            }
@@ -7361,34 +7969,30 @@
 	                    } else {
 	                        this.focusItem(this.$focusItem.nextSibling);
 	                    }
-	                } else {
-	                    if ( this.provider ) {
-	                        this.provider.get(direction, function ( error, data, pos ) {
-	                            if ( error ) {
-	                                if ( self.events['data:error'] ) {
-	                                    /**
+	                } else if ( this.provider ) {
+	                    this.provider.get(direction, function ( error, data, pos ) {
+	                        if ( error ) {
+	                            if ( self.events['data:error'] ) {
+	                                /**
 	                                     * Provider get error while take new data
 	                                     *
 	                                     * @event module:stb/ui/list~List#data:error
 	                                     */
-	                                    self.emit('data:error', error);
-	                                }
-	                            } else {
-	                                if ( data ) {
-	                                    self.setData({data: data, focusIndex: pos || pos === 0 ? pos : self.$focusItem.index});
-	                                }
+	                                self.emit('data:error', error);
 	                            }
-	                        });
-	                    } else {
-	                        // already at the beginning
-	                        if ( this.cycle ) {
-	                            // jump to the beginning of the list
-	                            this.move(keys.home);
+	                        } else if ( data ) {
+	                            self.setData({data: data, focusIndex: pos || pos === 0 ? pos : self.$focusItem.index});
 	                        }
-	                        if ( this.events['overflow'] ) {
-	                            // notify listeners
-	                            this.emit('overflow', {direction: direction, cycle: this.cycle});
-	                        }
+	                    });
+	                } else {
+	                    // already at the beginning
+	                    if ( this.cycle ) {
+	                        // jump to the beginning of the list
+	                        this.move(keys.home);
+	                    }
+	                    if ( this.events['overflow'] ) {
+	                        // notify listeners
+	                        this.emit('overflow', {direction: direction, cycle: this.cycle});
 	                    }
 	                }
 	            }
@@ -7405,12 +8009,11 @@
 	                             */
 	                            self.emit('data:error', error);
 	                        }
-	                    } else {
-	                        if ( data ) {
-	                            self.setData({data: data, focusIndex: pos? pos : 0});
-	                        }
+	                    } else if ( data ) {
+	                        self.setData({data: data, focusIndex: pos ? pos : 0});
 	                    }
 	                });
+	
 	                return;
 	            }
 	            if ( this.viewIndex < this.size ) {
@@ -7426,6 +8029,8 @@
 	        case keys.pageDown:
 	            if ( this.provider ) {
 	                this.provider.get(direction, function ( error, data, pos ) {
+	                    var focusIndex;
+	
 	                    if ( error ) {
 	                        if ( self.events['data:error'] ) {
 	                            /**
@@ -7435,10 +8040,14 @@
 	                             */
 	                            self.emit('data:error', error);
 	                        }
-	                    } else {
-	                        if ( data ) {
-	                            self.setData({data: data, focusIndex: pos || pos === 0 ? pos : data.length < self.size ?  data.length - 1 : self.size - 1});
+	                    } else if ( data ) {
+	                        if ( pos || pos === 0 ) {
+	                            focusIndex = pos;
+	                        } else {
+	                            focusIndex = data.length < self.size ?  data.length - 1 : self.size - 1;
 	                        }
+	
+	                        self.setData({data: data, focusIndex: focusIndex});
 	                    }
 	                });
 	                break;
@@ -7471,10 +8080,8 @@
 	                             */
 	                            self.emit('data:error', error);
 	                        }
-	                    } else {
-	                        if ( data ) {
-	                            self.setData({data: data, focusIndex: pos ? pos : 0});
-	                        }
+	                    } else if ( data ) {
+	                        self.setData({data: data, focusIndex: pos ? pos : 0});
 	                    }
 	                });
 	                break;
@@ -7485,6 +8092,8 @@
 	        case keys.end:
 	            if ( this.provider ) {
 	                this.provider.get(direction, function ( error, data, pos ) {
+	                    var focusIndex;
+	
 	                    if ( error ) {
 	                        if ( self.events['data:error'] ) {
 	                            /**
@@ -7494,10 +8103,14 @@
 	                             */
 	                            self.emit('data:error', error);
 	                        }
-	                    } else {
-	                        if ( data ) {
-	                            self.setData({data: data, focusIndex: pos || pos === 0 ? pos : data.length < self.size ?  data.length - 1 : self.size - 1});
+	                    } else if ( data ) {
+	                        if ( pos || pos === 0 ) {
+	                            focusIndex = pos;
+	                        } else {
+	                            focusIndex = data.length < self.size ?  data.length - 1 : self.size - 1;
 	                        }
+	
+	                        self.setData({data: data, focusIndex: focusIndex});
 	                    }
 	                });
 	                break;
@@ -7625,7 +8238,7 @@
 	 * @fires module:stb/ui/list~List#blur:item
 	 */
 	List.prototype.blurItem = function ( $item ) {
-	    if ( false ) {
+	    if ( true ) {
 	        if ( arguments.length !== 1 ) { throw new Error(__filename + ': wrong arguments number'); }
 	    }
 	
@@ -7650,6 +8263,7 @@
 	             */
 	            this.emit('blur:item', {$item: $item});
 	        }
+	
 	        return true;
 	    }
 	
@@ -7740,142 +8354,16 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-list/index.js"))
 
-/***/ },
+/***/ }),
 /* 43 */
-/*!************************************!*\
-  !*** ./src/js/modules/app.exit.js ***!
-  \************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Exit from an app in three ways.
-	 *
-	 * @module app.exit
-	 * @author Yaroslav Surilov <y.surilov@infomir.com>
-	 */
-	
-	'use strict';
-	
-	var app  = __webpack_require__(/*! mag-app */ 1);
-	
-	
-	module.exports = {
-	    /**
-	     * Go back to Launcher from an app, app is saved in Task Manager's list.
-	     */
-	    goBack: function () {
-	        core.call('stop');
-	    },
-	
-	    /**
-	     * Hide an app and exit to Launcher.
-	     */
-	    goHome: function () {
-	        core.call('hide');
-	    },
-	
-	    /**
-	     * Exit from an app to Launcher, app isn't saved in Task Manager's list.
-	     * Destroy application instance.
-	     * If callback function provided, and callback returns boolean 'true', application will stay alive.
-	     *
-	     * @param [callback] provide callback if you want to handle exit result, or cancel it
-	     */
-	    goExit: function ( callback ) {
-	        var ModalMessage  = __webpack_require__(/*! mag-component-modal */ 44),
-	            LayoutList    = __webpack_require__(/*! mag-component-layout-list */ 41),
-	            keys          = __webpack_require__(/*! stb-keys */ 8),
-	            previousFocus = app.activePage.activeComponent,
-	            exitModal;
-	
-	        app.activePage.add(exitModal = new ModalMessage({
-	            title: _('Exit'),
-	            events: {
-	                show: function () {
-	                    app.panelSet.blur();
-	                    this.children[0].focus();
-	                },
-	                hide: function () {
-	                    previousFocus.focus();
-	                }
-	            },
-	            children: [
-	                new LayoutList({
-	                    className: 'padded',
-	                    size: 2,
-	                    focusIndex: 0,
-	                    cycle: true,
-	                    data: [
-	                        {
-	                            items: [
-	                                {
-	                                    value: _('Exit')
-	                                }
-	                            ],
-	                            click: function () {
-	                                if ( typeof callback === 'function' ) {
-	                                    if ( callback(true) ) {
-	                                        exitModal.hide();
-	                                        exitModal.remove();
-	                                        return;
-	                                    }
-	                                }
-	
-	                                exitModal.hide();
-	                                exitModal.remove();
-	                                core.call('exit');
-	                            }
-	                        },
-	                        {
-	                            items: [
-	                                {
-	                                    value: _('Cancel')
-	                                }
-	                            ],
-	                            click: function () {
-	                                if ( typeof callback === 'function' ) {
-	                                    callback(false);
-	                                }
-	                                exitModal.hide();
-	                                exitModal.remove();
-	                                app.panelSet.focus();
-	                            }
-	                        }
-	                    ],
-	                    events: {
-	                        keydown: function ( event ) {
-	                            LayoutList.prototype.defaultEvents.keydown.call(this, event);
-	                            if ( event.code === keys.back ) {
-	                                event.stop = true;
-	                                if ( typeof callback === 'function' ) {
-	                                    callback(false);
-	                                }
-	                                exitModal.hide();
-	                                exitModal.remove();
-	                                app.panelSet.focus();
-	                            }
-	                        }
-	                    }
-	                })
-	            ]
-	        }));
-	
-	        exitModal.show();
-	        exitModal.focus();
-	    }
-	};
-
-
-/***/ },
-/* 44 */
 /*!****************************************!*\
   !*** ./~/mag-component-modal/index.js ***!
   \****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Fedotov <bas.jsdev@gmail.com>
+	 * @copyright Dmitry Fedotov <bas.jsdev@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
@@ -7883,8 +8371,9 @@
 	'use strict';
 	
 	
-	var StbComponentModal = __webpack_require__(/*! stb-component-modal */ 45),
-	    Component         = __webpack_require__(/*! stb-component */ 37);
+	var StbComponentModal = __webpack_require__(/*! stb-component-modal */ 44),
+	    Component         = __webpack_require__(/*! stb-component */ 37),
+	    keys              = __webpack_require__(/*! stb-keys */ 34);
 	
 	
 	/**
@@ -7917,8 +8406,8 @@
 	 * page.add(modalSort);
 	 */
 	function Modal ( config ) {
-	    var $overlay, $body,
-	        self = this;
+	    var self = this,
+	        $overlay, $body, onkeydown;
 	
 	    // sanitize
 	    config = config || {};
@@ -7949,6 +8438,17 @@
 	    config.visible = config.visible || false;
 	    // add default close by click
 	    config.events.click = config.events.click || function () { self.hide(); };
+	    // add close window behavior, when pushed a back button or a menu button
+	    onkeydown = config.events.keydown;
+	    config.events.keydown = function ( event ) {
+	        if ( onkeydown ) {
+	            onkeydown.call(this, event);
+	        }
+	        if ( event.code === keys.back || event.code === keys.menu ) {
+	            event.stop = true;
+	            self.hide();
+	        }
+	    };
 	
 	    // parent constructor call
 	    StbComponentModal.call(this, config);
@@ -8018,12 +8518,12 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-modal/index.js"))
 
-/***/ },
-/* 45 */
+/***/ }),
+/* 44 */
 /*!****************************************!*\
   !*** ./~/stb-component-modal/index.js ***!
   \****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @license The MIT License (MIT)
@@ -8033,29 +8533,29 @@
 	'use strict';
 	
 	// public
-	module.exports = __webpack_require__(/*! spa-component-modal */ 46);
+	module.exports = __webpack_require__(/*! spa-component-modal */ 45);
 	
 	// correct component name
 	module.exports.prototype.name = 'stb-component-modal';
 
 
-/***/ },
-/* 46 */
+/***/ }),
+/* 45 */
 /*!****************************************!*\
   !*** ./~/spa-component-modal/index.js ***!
   \****************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__filename) {/**
 	 * @license The MIT License (MIT)
-	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
 	 */
 	
 	/* eslint no-path-concat: 0 */
 	
 	'use strict';
 	
-	var Component = __webpack_require__(/*! spa-component */ 34);
+	var Component = __webpack_require__(/*! spa-component */ 32);
 	
 	
 	/**
@@ -8071,10 +8571,16 @@
 	    config = config || {};
 	
 	    if ( true ) {
-	        if ( typeof config !== 'object' ) { throw new Error(__filename + ': wrong config type'); }
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
 	        // init parameters checks
-	        if ( config.className && typeof config.className !== 'string' ) { throw new Error(__filename + ': wrong or empty config.className'); }
-	        if ( config.$body ) { throw new Error(__filename + ': config.$body should not be provided in ModalBox manually'); }
+	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
+	        }
+	        if ( config.$body ) {
+	            throw new Error(__filename + ': config.$body should not be provided manually');
+	        }
 	    }
 	
 	    // create centered div
@@ -8102,6 +8608,1563 @@
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-component-modal/index.js"))
 
-/***/ }
+/***/ }),
+/* 46 */
+/*!*********************************************!*\
+  !*** ./~/mag-component-radio-list/index.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Boris Aleynikov <aleynikov.boris@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var List             = __webpack_require__(/*! mag-component-list */ 42),
+	    classChecked     = 'checked',
+	    classIcon        = 'theme-icon theme-icon-radio',
+	    classIconActive  = 'theme-icon theme-icon-radio-active';
+	
+	
+	/**
+	 * Base radio list implementation
+	 *
+	 * @constructor
+	 * @extends List
+	 *
+	 * @param {Object} [config={}] init parameters (all inherited from the parent)
+	 * @param {string} [config.classIcon] icon default state class name
+	 * @param {string} [config.classIconActive] icon active state class name
+	 * @param {string} [config.classChecked] checked item class
+	 */
+	function RadioList ( config ) {
+	    var self = this;
+	
+	    if ( config.classIcon ) {
+	        classIcon = config.classIcon;
+	    }
+	    if ( config.classIconActive ) {
+	        classIconActive = config.classIconActive;
+	    }
+	    if ( config.classChecked ) {
+	        classIcon = config.classChecked;
+	    }
+	
+	    /**
+	     * Checked item data
+	     *
+	     * @type {Element}
+	     */
+	    this.checkedData = null;
+	
+	    /**
+	     * Checked element index
+	     *
+	     * @type {number}
+	     */
+	    this.checkedIndex = null;
+	
+	    List.call(this, config);
+	
+	    this.addListener('click:item', function ( event ) {
+	        var $item = event.$item,
+	            previousCheckedData = self.checkedData;
+	
+	        self.checkIndex($item.index);
+	
+	        if ( previousCheckedData !== $item.data ) {
+	            /**
+	             * Select element from list
+	             *
+	             * @event select
+	             * @property {Element} $item object
+	             */
+	            self.emit('select', $item);
+	        }
+	    });
+	}
+	
+	
+	RadioList.prototype = Object.create(List.prototype);
+	RadioList.prototype.constructor = RadioList;
+	
+	// set component name
+	RadioList.prototype.name = 'mag-component-radio-list';
+	
+	RadioList.prototype.init = function ( config ) {
+	    config = config || {};
+	    List.prototype.init.call(this, config);
+	};
+	
+	
+	/**
+	 * Set data and render inner structures and HTML.
+	 *
+	 * @param {Object} config init parameters (subset of constructor config params)
+	 */
+	RadioList.prototype.setData = function ( config ) {
+	    List.prototype.setData.call(this, config);
+	
+	    this.defaultCheckedIndex = this.checkedIndex;
+	
+	    if ( this.$focusItem ) {
+	        this.defaultFocusIndex = this.$focusItem.index;
+	    } else {
+	        this.defaultFocusIndex = 0;
+	    }
+	};
+	
+	
+	/**
+	 * Reset data to default state and render inner structures and HTML.
+	 */
+	RadioList.prototype.resetData = function () {
+	    this.checkIndex(this.defaultCheckedIndex);
+	    this.focusIndex(this.defaultFocusIndex);
+	};
+	
+	
+	/**
+	 * Set all states to false and render inner structures and HTML.
+	 *
+	 * @param {number} [focusIndex] focus index
+	 */
+	RadioList.prototype.clearChecked = function ( focusIndex ) {
+	    var index = 0;
+	
+	    for ( index; index < this.data.length; index++ ) {
+	        this.data[index].state = false;
+	    }
+	
+	    // no focusIndex, focusIndex may be 0
+	    if ( !focusIndex && focusIndex !== 0 ) {
+	        focusIndex = this.$focusItem ? this.$focusItem.index : 0;
+	    }
+	
+	    this.setData({data: this.data, focusIndex: focusIndex});
+	};
+	
+	
+	/**
+	 * Default render function
+	 *
+	 * @param {Element} $item in list
+	 * @param {Object} data to render layout element
+	 * @param {string} [data.title] title of checkbox
+	 * @param {boolean} [data.state] state of checkbox: checked or not
+	 * @param {string} [data.value] special value of item
+	 */
+	RadioList.prototype.renderItemDefault = function ( $item, data ) {
+	    var table,
+	        tr,
+	        td,
+	        check;
+	
+	    if ( $item.ready ) {
+	        $item.$title.innerText = data.title || '';
+	
+	        if ( data.state ) {
+	            $item.classList.add(classChecked);
+	            $item.checkBox.className = classIconActive;
+	        } else {
+	            $item.classList.remove(classChecked);
+	            $item.checkBox.className = classIcon;
+	        }
+	
+	        $item.state = data.state;
+	        $item.value = data.value;
+	
+	    } else {
+	        $item.innerHTML = '';
+	        table = document.createElement('table');
+	        tr = document.createElement('tr');
+	        td = document.createElement('td');
+	        check = document.createElement('div');
+	
+	        if ( data.state ) {
+	            $item.classList.add(classChecked);
+	            check.className = classIconActive;
+	        } else {
+	            $item.classList.remove(classChecked);
+	            check.className = classIcon;
+	        }
+	
+	        table.appendChild(tr);
+	        td.appendChild(check);
+	
+	        td.className = 'checkBoxWrapper';
+	        tr.appendChild(td);
+	
+	        td = document.createElement('td');
+	        td.className = 'title';
+	        td.innerText = data.title || '';
+	        tr.appendChild(td);
+	
+	        $item.checkBox = check;
+	        $item.state = data.state;
+	        $item.value = data.value;
+	        $item.$title = td;
+	
+	        $item.appendChild(table);
+	
+	        if ( data.state ) {
+	            this.checkedData = data;
+	            this.checkedIndex = $item.index;
+	        }
+	
+	        $item.ready = true;
+	    }
+	};
+	
+	
+	/**
+	 * Check element by index
+	 *
+	 * @param {number} index of element to check
+	 */
+	RadioList.prototype.checkIndex = function ( index ) {
+	    var $node;
+	
+	    if ( true ) {
+	        if ( index >= this.data.length ) {
+	            throw new Error(__filename + ': wrong index to check');
+	        }
+	    }
+	
+	    // do not need to do the same
+	    if ( index === this.checkedIndex ) { return; }
+	
+	    if ( this.checkedIndex !== null && this.$node.children.length ) {
+	        this.data[this.checkedIndex].state = false;
+	        $node = this.getItemNodeByIndex(this.checkedIndex);
+	        if ( $node ) {
+	            $node.checkBox.className = classIcon;
+	            $node.classList.remove(classChecked);
+	        }
+	    }
+	
+	    $node = this.getItemNodeByIndex(index);
+	    if ( $node ) {
+	        $node.checkBox.className = classIconActive;
+	        $node.classList.add(classChecked);
+	        $node.state = true;
+	    }
+	
+	    this.data[index].state = true;
+	    this.checkedData = this.data[index];
+	    this.checkedIndex = index;
+	};
+	
+	
+	/**
+	 * Get list item node by item index
+	 *
+	 * @param {number} index of item to find node
+	 * @return {?Element} item node link
+	 */
+	RadioList.prototype.getItemNodeByIndex = function ( index ) {
+	    var children = this.$node.children;
+	
+	    index -= this.viewIndex;
+	    if ( index < this.size && index >= 0 ) {
+	        return children[index];
+	    }
+	
+	    return null;
+	};
+	
+	RadioList.prototype.renderItem = RadioList.prototype.renderItemDefault;
+	
+	module.exports = RadioList;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-radio-list/index.js"))
+
+/***/ }),
+/* 47 */
+/*!***************************************************!*\
+  !*** ./~/mag-component-modal-check-list/index.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Dmitry Fedotov <bas.jsdev@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	
+	var Modal     = __webpack_require__(/*! mag-component-modal */ 43),
+	    CheckList = __webpack_require__(/*! mag-component-check-list */ 48),
+	    Scroll    = __webpack_require__(/*! stb-component-scrollbar */ 49),
+	    dom       = __webpack_require__(/*! spa-dom */ 33);
+	
+	
+	/**
+	 * Modal window implementation.
+	 *
+	 * @constructor
+	 * @extends Modal
+	 *
+	 * @param {Object} [config={}] init parameters (all inherited from the parent)
+	 * @param {String} [config.title] message title
+	 * @param {boolean} [config.titleCounter] counter in title
+	 * @param {String} [config.className] message class name
+	 * @param {String} [config.icon] icon at header
+	 * @param {boolean} [config.visible] visibility flag
+	 * @param {Array} [config.children] content (inherited from the parent)
+	 * @param {Object} [config.list] all init parameters for mag-component-check-list constructor
+	 *
+	 * @example
+	 * var modalCheckList = new ModalCheckList({
+	 *     title: 'sort',
+	 *     events: {
+	 *         hide: function () {
+	 *             page.panelSet.focus();
+	 *         }
+	 *     },
+	 *     list: {
+	 *         size: 2,
+	 *         data: [
+	 *             {state: true, title: 'All content', value: 1, unique: true},
+	 *             {state: false, title: 'Music', value: 2},
+	 *             {state: false, title: 'Video', value: 3}
+	 *         ]
+	 *     }
+	 * });
+	 *
+	 * page.add(modalCheckList);
+	 *
+	 * leftPanel.add(leftPanelList = new LayoutList({
+	 *     size: 6,
+	 *     data: [
+	 *         {
+	 *             items: page.modalCheckList.getListItem(),
+	 *             click: function () {
+	 *                 panelSet.blur();
+	 *                 modalCheckList.show();
+	 *             }
+	 *         }
+	 *     ]
+	 * }));
+	 *
+	 */
+	
+	
+	function ModalCheckList ( config ) {
+	    var self = this,
+	        index, listClickEvents;
+	
+	    if ( true ) {
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
+	        if ( !config.list ) {
+	            throw new Error(__filename + ': wrong or empty mag-component-check-list component config config.list');
+	        }
+	    }
+	
+	    // sanitize
+	    config = config || {};
+	    config.list = config.list || {};
+	    config.list.events = config.list.events || {};
+	    config.children = config.children || [];
+	
+	    this.scroll = new Scroll({});
+	    config.list.scroll = this.scroll;
+	
+	    this.list = new CheckList(config.list);
+	
+	    for ( index = 0; index < this.list.data.length; index++ ) {
+	        if ( this.list.data[index].unique ) {
+	            this.uniqueItem = {
+	                data: this.list.data[index],
+	                index: index
+	            };
+	
+	            break;
+	        }
+	    }
+	
+	    if ( this.uniqueItem && this.uniqueItem.data.state && this.list.checkedData.length > 1 ) {
+	        this.list.clearChecked();
+	        if ( this.uniqueItem.index < this.list.$node.children.length + this.list.viewIndex && this.uniqueItem.index < this.list.viewIndex ) {
+	            this.list.changeState(this.list.$node.children[this.uniqueItem.index - this.list.viewIndex]);
+	        } else {
+	            this.uniqueItem.data.state = true;
+	            this.list.checkedData.push(this.uniqueItem.data);
+	        }
+	    }
+	
+	    this.checkedData = this.list.checkedData;
+	
+	    config.children.push(this.list);
+	    config.children.push(this.scroll);
+	
+	
+	    // parent constructor call
+	    Modal.call(this, config);
+	
+	    if ( config.titleCounter ) {
+	        this.$header.appendChild(
+	            dom.tag(
+	                'div',
+	                {className: 'theme-icon'},
+	                dom.tag(
+	                    'div',
+	                    {className: 'theme-counter'},
+	                    self.$titleCount = dom.tag(
+	                        'div',
+	                        {},
+	                        this.list.data.length && self.uniqueItem ?  this.list.data.length - 1 :  this.list.data.length
+	                    )
+	                )
+	            )
+	        );
+	
+	        this.list.setData = function ( data ) {
+	            CheckList.prototype.setData.call(self.list, data);
+	            self.$titleCount.innerText = data.data.length && self.uniqueItem ? data.data.length - 1 : data.data.length;
+	        };
+	    }
+	
+	    if ( config.list.data && config.list.data.length ) {
+	        this.scroll.show();
+	        this.scroll.init({realSize: config.list.data.length, viewSize: config.list.size || 5});
+	    } else {
+	        this.scroll.hide();
+	    }
+	
+	    this.addListener('focus',
+	        /**
+	        * @this ModalCheckList
+	        */
+	        function () {
+	            this.list.focus();
+	        });
+	
+	    listClickEvents = this.list.events['click:item'] || [];
+	    this.list.events['click:item'] = [];
+	    this.list.addListener('click:item',
+	        /**
+	         * @param {Object} event click event
+	         *
+	         * @this ModalCheckList.list
+	         */
+	        function ( event ) {
+	            var $item   = event.$item,
+	                data = $item.data;
+	
+	            if ( self.uniqueItem ) {
+	                if ( data.unique && !data.state ) {
+	                    this.changeState($item);
+	
+	                    return;
+	                }
+	
+	                if ( data.unique ) {
+	                    this.clearChecked();
+	                    this.changeState($item);
+	                } else {
+	                    if ( self.uniqueItem.data.state ) {
+	                        index = self.uniqueItem.index - this.viewIndex;
+	                        if ( index < this.$node.children.length && index >= 0 ) {
+	                            this.changeState(this.$node.children[index]);
+	                        } else {
+	                            self.uniqueItem.data.state = false;
+	                            index = this.checkedData.indexOf(self.uniqueItem.data);
+	                            if ( index !== -1 ) {
+	                                this.checkedData.splice(index, 1);
+	                            }
+	                        }
+	                    }
+	
+	                    if ( this.checkedData.length === this.data.length - 1 ) {
+	                        this.clearChecked();
+	                        index = self.uniqueItem.index - this.viewIndex;
+	                        if ( index < this.$node.children.length && index >= 0 ) {
+	                            this.changeState(this.$node.children[index]);
+	                        } else {
+	                            self.uniqueItem.data.state = true;
+	                            this.checkedData.push(self.uniqueItem.data);
+	                        }
+	                    }
+	                }
+	            }
+	
+	            for ( index = 0; index < listClickEvents.length; index++ ) {
+	                listClickEvents[index].call(this, event);
+	            }
+	
+	            self.checkedData = this.checkedData;
+	
+	            self.emit('checked:change', {checkedData: this.checkedData});
+	        });
+	}
+	
+	
+	// inheritance
+	ModalCheckList.prototype = Object.create(Modal.prototype);
+	ModalCheckList.prototype.constructor = ModalCheckList;
+	
+	// set component name
+	ModalCheckList.prototype.name = 'mag-component-modal mag-component-modal-check-list';
+	
+	
+	/**
+	 * Reset data to default state and render inner structures and HTML.
+	 */
+	ModalCheckList.prototype.resetData = function () {
+	    this.list.resetData();
+	
+	    if ( this.uniqueItem && this.uniqueItem.data.state && this.list.checkedData.length > 1 ) {
+	        this.list.clearChecked();
+	        if ( this.uniqueItem.index < this.list.$node.children.length + this.list.viewIndex && this.uniqueItem.index < this.list.viewIndex ) {
+	            this.list.changeState(this.list.$node.children[this.uniqueItem.index - this.list.viewIndex]);
+	        } else {
+	            this.uniqueItem.data.state = true;
+	            this.list.checkedData.push(this.uniqueItem.data);
+	        }
+	    }
+	
+	    this.checkedData = this.list.checkedData;
+	    this.emit('checked:change', {checkedData: this.checkedData});
+	};
+	
+	
+	/**
+	 * Set all states to false and render inner structures and HTML.
+	 *
+	 * @param {number} focusIndex focus index
+	 */
+	ModalCheckList.prototype.clearChecked = function ( focusIndex ) {
+	    var state = this.uniqueItem && this.uniqueItem.data.defaultState;
+	
+	    this.list.clearChecked(focusIndex);
+	
+	    if ( state ) {
+	        this.uniqueItem.data.defaultState = state;
+	        if ( this.uniqueItem.index < this.list.$node.children.length + this.list.viewIndex && this.uniqueItem.index >= this.list.viewIndex ) {
+	            this.list.changeState(this.list.$node.children[this.uniqueItem.index - this.list.viewIndex]);
+	        } else {
+	            this.uniqueItem.data.state = true;
+	            this.list.checkedData.push(this.uniqueItem.data);
+	        }
+	    }
+	
+	    this.checkedData = this.list.checkedData;
+	    this.emit('checked:change', {checkedData: this.checkedData});
+	};
+	
+	
+	// public
+	module.exports = ModalCheckList;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-modal-check-list/index.js"))
+
+/***/ }),
+/* 48 */
+/*!*********************************************!*\
+  !*** ./~/mag-component-check-list/index.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Boris Aleynikov <aleynikov.boris@gmail.com>
+	 */
+	
+	'use strict';
+	
+	var List            = __webpack_require__(/*! mag-component-list */ 42),
+	    keys            = __webpack_require__(/*! stb-keys */ 34),
+	    classChecked    = 'checked',
+	    classIcon       = 'theme-icon theme-icon-checkbox',
+	    classIconActive = 'theme-icon theme-icon-checkbox-active';
+	
+	
+	/**
+	 * Base check list implementation
+	 *
+	 * @constructor
+	 * @extends List
+	 *
+	 * @param {Object} [config={}] init parameters (all inherited from the parent)
+	 * @param {string} [config.classIcon] icon default state class name
+	 * @param {string} [config.classIconActive] icon active state class name
+	 * @param {string} [config.classChecked] checked item class
+	 */
+	function CheckList ( config ) {
+	    /**
+	     * Checked data array
+	     */
+	    this.checkedData = [];
+	
+	    if ( config.classIcon ) {
+	        classIcon = config.classIcon;
+	    }
+	    if ( config.classIconActive ) {
+	        classIconActive = config.classIconActive;
+	    }
+	    if ( config.classChecked ) {
+	        classIcon = config.classChecked;
+	    }
+	
+	    List.call(this, config);
+	}
+	
+	
+	CheckList.prototype = Object.create(List.prototype);
+	CheckList.prototype.constructor = CheckList;
+	
+	// set component name
+	CheckList.prototype.name = 'mag-component-check-list';
+	
+	
+	/**
+	 * Set data and render inner structures and HTML.
+	 *
+	 * @param {Object} config init parameters (subset of constructor config params)
+	 */
+	CheckList.prototype.setData = function ( config ) {
+	    var index = 0;
+	
+	    List.prototype.setData.call(this, config);
+	    this.checkedData = [];
+	
+	    for ( index; index < this.data.length; index++ ) {
+	        this.data[index].defaultState = this.data[index].state;
+	        if ( this.data[index].state ) {
+	            this.checkedData.push(this.data[index]);
+	        }
+	    }
+	
+	    if ( this.$focusItem ) {
+	        this.defaultFocusIndex = this.$focusItem.index;
+	    } else {
+	        this.defaultFocusIndex = 0;
+	    }
+	};
+	
+	
+	/**
+	 * Reset data to default state and render inner structures and HTML.
+	 */
+	CheckList.prototype.resetData = function () {
+	    var index = 0;
+	
+	    for ( index; index < this.data.length; index++ ) {
+	        this.data[index].state = this.data[index].defaultState;
+	    }
+	
+	    this.setData({data: this.data, focusIndex: this.defaultFocusIndex});
+	};
+	
+	
+	/**
+	 * Set all states to false and render inner structures and HTML.
+	 *
+	 * @param {number} [focusIndex] focus index
+	 */
+	CheckList.prototype.clearChecked = function ( focusIndex ) {
+	    var index = 0;
+	
+	    for ( index; index < this.data.length; index++ ) {
+	        this.data[index].state = false;
+	    }
+	
+	    // no focusIndex, focusIndex may be 0
+	    if ( !focusIndex && focusIndex !== 0 ) {
+	        focusIndex = this.$focusItem ? this.$focusItem.index : 0;
+	    }
+	
+	    this.setData({data: this.data, focusIndex: focusIndex});
+	};
+	
+	
+	/**
+	 * CheckList of all default event callbacks.
+	 *
+	 * @type {Object.<string, function>}
+	 */
+	CheckList.prototype.defaultEvents = {
+	    /**
+	     * Default method to handle mouse wheel events.
+	     *
+	     * @param {Event} event generated event
+	     */
+	    mousewheel: List.prototype.defaultEvents.mousewheel,
+	
+	    /**
+	     * Default method to handle keyboard keydown events.
+	     *
+	     * @param {Object} event generated event
+	     */
+	    keydown: function ( event ) {
+	        switch ( event.code ) {
+	            case keys.up:
+	            case keys.down:
+	            case keys.right:
+	            case keys.left:
+	            case keys.pageUp:
+	            case keys.pageDown:
+	            case keys.home:
+	            case keys.end:
+	                event.stop = true;
+	                // cursor move only on arrow keys
+	                this.move(event.code);
+	                break;
+	            case keys.enter:
+	                this.changeState(this.$focusItem);
+	                // there are some listeners
+	                if ( this.events['click:item'] && this.$focusItem ) {
+	                    // notify listeners
+	                    this.emit('click:item', {$item: this.$focusItem, event: event});
+	                }
+	                break;
+	        }
+	    }
+	};
+	
+	
+	CheckList.prototype.changeState = function ( $item ) {
+	    var state = !$item.state,
+	        data = this.data[$item.index],
+	        index = -1;
+	
+	    $item.state = state;
+	    data.state = state;
+	    if ( state ) {
+	        $item.classList.add(classChecked);
+	        $item.checkBox.className = classIconActive;
+	    } else {
+	        $item.classList.remove(classChecked);
+	        $item.checkBox.className = classIcon;
+	    }
+	
+	    if ( state ) {
+	        this.checkedData.push(data);
+	    } else {
+	        index = this.checkedData.indexOf(data);
+	        if ( index !== -1 ) {
+	            this.checkedData.splice(index, 1);
+	        }
+	    }
+	
+	    if ( this.events['change:item'] ) {
+	        // notify listeners
+	        this.emit('change:item', {$item: $item, state: state});
+	    }
+	};
+	
+	
+	/**
+	 * Default render function
+	 *
+	 * @param {Element} $item in list
+	 * @param {Array} data to render layout element
+	 * @param {string} [data.title] title of checkbox
+	 * @param {boolean} [data.state] state of checkbox: checked or not
+	 * @param {string} [data.value] special value of item
+	 */
+	CheckList.prototype.renderItemDefault = function ( $item, data ) {
+	    var table, tr, td,
+	        check;
+	
+	    if ( $item.ready ) {
+	        $item.$title.innerText = data.title || '';
+	        if ( data.state ) {
+	            $item.classList.add(classChecked);
+	            $item.checkBox.className = classIconActive;
+	        } else {
+	            $item.classList.remove(classChecked);
+	            $item.checkBox.className = classIcon;
+	        }
+	
+	        $item.state = data.state;
+	        $item.value = data.value;
+	    } else {
+	        $item.innerHTML = '';
+	        table = document.createElement('table');
+	        tr = document.createElement('tr');
+	        td = document.createElement('td');
+	        check = document.createElement('div');
+	        if ( data.state ) {
+	            $item.classList.add(classChecked);
+	            check.className = classIconActive;
+	        } else {
+	            $item.classList.remove(classChecked);
+	            check.className = classIcon;
+	        }
+	
+	        table.appendChild(tr);
+	        td.appendChild(check);
+	
+	        td.className = 'checkBoxWrapper';
+	        tr.appendChild(td);
+	
+	        td = document.createElement('td');
+	        td.className = 'title';
+	        td.innerText = data.title || '';
+	        tr.appendChild(td);
+	
+	        $item.checkBox = check;
+	        $item.state = data.state;
+	        $item.value = data.value;
+	        $item.$title = td;
+	
+	        $item.appendChild(table);
+	
+	        $item.ready = true;
+	    }
+	};
+	
+	
+	CheckList.prototype.renderItem = CheckList.prototype.renderItemDefault;
+	
+	
+	// public
+	module.exports = CheckList;
+
+
+/***/ }),
+/* 49 */
+/*!********************************************!*\
+  !*** ./~/stb-component-scrollbar/index.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license The MIT License (MIT)
+	 * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	'use strict';
+	
+	// public
+	module.exports = __webpack_require__(/*! spa-component-scrollbar */ 50);
+	
+	// correct component name
+	module.exports.prototype.name = 'stb-component-scrollbar';
+
+
+/***/ }),
+/* 50 */
+/*!********************************************!*\
+  !*** ./~/spa-component-scrollbar/index.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @author Stanislav Kalashnik <darkpark.main@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var Component = __webpack_require__(/*! spa-component */ 32);
+	
+	
+	/**
+	 * Base scroll bar implementation.
+	 *
+	 * @constructor
+	 * @extends Component
+	 *
+	 * @param {Object} [config={}] init parameters (all inherited from the parent)
+	 * @param {number} [config.value=0] initial thumb position
+	 * @param {number} [config.realSize=100] actual scroll size
+	 * @param {number} [config.viewSize=10] visible area size
+	 * @param {number} [config.type] direction
+	 *
+	 * @example
+	 * var ScrollBar = require('stb/ui/scroll.bar'),
+	 *     scrollBar = new ScrollBar({
+	 *         viewSize: 5,
+	 *         realSize: 25,
+	 *         events: {
+	 *             done: function () {
+	 *                 debug.log('ScrollBar: done');
+	 *             },
+	 *             change: function ( data ) {
+	 *                 debug.log('ScrollBar: change to ' + data.curr + ' from ' + data.prev);
+	 *             }
+	 *         }
+	 *     });
+	 */
+	function ScrollBar ( config ) {
+	    // sanitize
+	    config = config || {};
+	
+	    if ( true ) {
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
+	        // init parameters checks
+	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
+	        }
+	        if ( config.type && Number(config.type) !== config.type ) {
+	            throw new Error(__filename + ': config.type must be a number');
+	        }
+	    }
+	
+	    /**
+	     * Visible area size.
+	     *
+	     * @type {number}
+	     */
+	    this.viewSize = 10;
+	
+	    /**
+	     * Scroll area actual height or width (if scroll is horizontal).
+	     *
+	     * @type {number}
+	     */
+	    this.realSize = 100;
+	
+	    /**
+	     * Scroll thumb position.
+	     *
+	     * @type {number}
+	     */
+	    this.value = 0;
+	
+	    /**
+	     * Component orientation.
+	     *
+	     * @type {number}
+	     */
+	    this.type = this.TYPE_VERTICAL;
+	
+	    /**
+	     * Geometry of the scroll thumb element.
+	     *
+	     * @type {ClientRect}
+	     */
+	    this.thumbRect = null;
+	
+	    /**
+	     * Geometry of the scroll track element.
+	     *
+	     * @type {ClientRect}
+	     */
+	    this.trackRect = null;
+	
+	    // can't accept focus
+	    config.focusable = config.focusable || false;
+	
+	    // set default className if classList property empty or undefined
+	    //config.className = 'scrollBar ' + (config.className || '');
+	
+	    // horizontal or vertical
+	    if ( config.type ) {
+	        // apply
+	        this.type = config.type;
+	    }
+	
+	    if ( this.type === this.TYPE_HORIZONTAL ) {
+	        config.className += ' horizontal';
+	    }
+	
+	    // parent constructor call
+	    Component.call(this, config);
+	
+	    // insert thumb line
+	    this.$thumb = this.$body.appendChild(document.createElement('div'));
+	
+	    // correct CSS class name
+	    this.$thumb.className = 'thumb';
+	
+	    // component setup
+	    this.init(config);
+	}
+	
+	
+	// inheritance
+	ScrollBar.prototype = Object.create(Component.prototype);
+	ScrollBar.prototype.constructor = ScrollBar;
+	
+	// set component name
+	ScrollBar.prototype.name = 'spa-component-scrollbar';
+	
+	ScrollBar.prototype.TYPE_VERTICAL   = 1;
+	ScrollBar.prototype.TYPE_HORIZONTAL = 2;
+	
+	
+	/**
+	 * Init or re-init realSize/viewSize/value parameters.
+	 *
+	 * @param {Object} config init parameters (subset of constructor config params)
+	 */
+	ScrollBar.prototype.init = function ( config ) {
+	    config = config || {};
+	
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) {
+	            throw new Error(__filename + ': wrong arguments number');
+	        }
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
+	    }
+	
+	    // set actual scroll size
+	    if ( config.realSize !== undefined ) {
+	        if ( true ) {
+	            if ( Number(config.realSize) !== config.realSize ) {
+	                throw new Error(__filename + ': config.realSize value must be a number');
+	            }
+	        }
+	
+	        // apply
+	        this.realSize = config.realSize;
+	    }
+	
+	    // set visible area size
+	    if ( config.viewSize !== undefined ) {
+	        if ( true ) {
+	            if ( Number(config.viewSize) !== config.viewSize ) {
+	                throw new Error(__filename + ': config.viewSize value must be a number');
+	            }
+	            if ( config.viewSize < 0 ) {
+	                throw new Error(__filename + ': config.viewSize value must be greater than 0');
+	            }
+	        }
+	
+	        // apply
+	        this.viewSize = config.viewSize;
+	    }
+	
+	    // show or hide thumb
+	    if ( this.viewSize >= this.realSize ) {
+	        this.$thumb.classList.add('hidden');
+	    } else {
+	        this.$thumb.classList.remove('hidden');
+	    }
+	
+	    // set thumb position
+	    if ( config.value !== undefined ) {
+	        // apply
+	        this.scrollTo(config.value);
+	    }
+	
+	    // set thumb size
+	    if ( this.type === this.TYPE_VERTICAL ) {
+	        this.$thumb.style.height = (this.viewSize / this.realSize * 100) + '%';
+	    } else {
+	        this.$thumb.style.width = (this.viewSize / this.realSize * 100) + '%';
+	    }
+	
+	    // geometry
+	    this.thumbRect = this.$thumb.getBoundingClientRect();
+	    this.trackRect = this.$node.getBoundingClientRect();
+	};
+	
+	
+	/**
+	 * Set position of the given value.
+	 * Does nothing in case when scroll is in the end and passed value is more than scroll bar length.
+	 *
+	 * @param {number} value new value to set
+	 * @return {boolean} operation result
+	 *
+	 * @fires module:stb/ui/scroll.bar~ScrollBar#done
+	 * @fires module:stb/ui/scroll.bar~ScrollBar#change
+	 */
+	ScrollBar.prototype.scrollTo = function ( value ) {
+	    if ( true ) {
+	        if ( arguments.length !== 1 ) {
+	            throw new Error(__filename + ': wrong arguments number');
+	        }
+	        if ( Number(value) !== value ) {
+	            throw new Error(__filename + ': value must be a number');
+	        }
+	        if ( this.realSize > this.viewSize && value > this.realSize - this.viewSize ) {
+	            throw new Error(__filename + ': value is greater than this.realSize-this.viewSize');
+	        }
+	        if ( value < 0 ) {
+	            throw new Error(__filename + ': value is less then 0');
+	        }
+	    }
+	
+	    // value has changed
+	    if ( this.value !== value ) {
+	        // track and thumb geometry was not set
+	        if ( this.thumbRect.height === 0 || this.thumbRect.width === 0 ) {
+	            // apply
+	            this.trackRect = this.$node.getBoundingClientRect();
+	            this.thumbRect = this.$thumb.getBoundingClientRect();
+	        }
+	
+	        // set scroll bar width
+	        if ( this.type === this.TYPE_VERTICAL ) {
+	            this.$thumb.style.marginTop = ((this.trackRect.height - this.thumbRect.height) * value / (this.realSize - this.viewSize)) + 'px';
+	        } else {
+	            this.$thumb.style.marginLeft = ((this.trackRect.width - this.thumbRect.width) * value / (this.realSize - this.viewSize)) + 'px';
+	        }
+	
+	        // there are some listeners
+	        if ( this.events['change'] ) {
+	            /**
+	             * Update scroll value.
+	             *
+	             * @event module:stb/ui/scroll.bar~ScrollBar#change
+	             *
+	             * @type {Object}
+	             * @property {number} prev old/previous scroll value
+	             * @property {number} curr new/current scroll value
+	             */
+	            this.emit('change', {curr: value, prev: this.value});
+	        }
+	
+	        // is it the end?
+	        if ( value >= this.realSize ) {
+	            value = this.realSize;
+	
+	            // there are some listeners
+	            if ( this.events['done'] ) {
+	                /**
+	                 * Set scroll to its maximum value.
+	                 *
+	                 * @event module:stb/ui/scroll.bar~ScrollBar#done
+	                 */
+	                this.emit('done');
+	            }
+	        }
+	
+	        // set new value
+	        this.value = value;
+	
+	        return true;
+	    }
+	
+	    // nothing was done
+	    return false;
+	};
+	
+	
+	// public
+	module.exports = ScrollBar;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/spa-component-scrollbar/index.js"))
+
+/***/ }),
+/* 51 */
+/*!**********************************************!*\
+  !*** ./~/mag-component-scroll-area/index.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__filename) {/**
+	 * @license The MIT License (MIT)
+	 * @copyright Boris Aleynikov <aleynikov.boris@gmail.com>
+	 */
+	
+	/* eslint no-path-concat: 0 */
+	
+	'use strict';
+	
+	var Component = __webpack_require__(/*! spa-component */ 32),
+	    keys      = __webpack_require__(/*! stb-keys */ 34);
+	
+	
+	/**
+	 * Scroll area implementation
+	 *
+	 * @constructor
+	 * @extends Component
+	 *
+	 * @param {Object} config object
+	 * @param {number} [config.step] step in % of screen height to scroll area
+	 */
+	function ScrollArea ( config ) {
+	
+	    config = config || {};
+	
+	    if ( true ) {
+	        if ( typeof config !== 'object' ) {
+	            throw new Error(__filename + ': wrong config type');
+	        }
+	        // init parameters checks
+	        if ( 'className' in config && (!config.className || typeof config.className !== 'string') ) {
+	            throw new Error(__filename + ': wrong or empty config.className');
+	        }
+	    }
+	
+	    config.$body = document.createElement('div');
+	    config.$body.className = 'body';
+	
+	    /**
+	     * Step to scroll area in % of screen height
+	     *
+	     * @type {number}
+	     */
+	    this.step = 5;
+	
+	    /**
+	     * Real height of scroll area
+	     *
+	     * @type {number}
+	     */
+	    this.realHeight = 0;
+	
+	    /**
+	     * Visible height of area
+	     *
+	     * @type {number}
+	     */
+	    this.viewHeight = 0;
+	
+	    /**
+	     * Top position of scroll container
+	     *
+	     * @type {number}
+	     */
+	    this.topPosition = 0;
+	
+	    /**
+	     * Associated ScrollBar component link.
+	     *
+	     * @type {ScrollBar}
+	     */
+	    this.scroll = null;
+	
+	    Component.call(this, config);
+	
+	    this.$node.appendChild(this.$body);
+	
+	    // component setup
+	    this.init(config);
+	}
+	
+	
+	ScrollArea.prototype = Object.create(Component.prototype);
+	ScrollArea.prototype.constructor = ScrollArea;
+	
+	// set component name
+	ScrollArea.prototype.name = 'mag-component-scroll-area';
+	
+	
+	/**
+	 * List of all default event callbacks.
+	 *
+	 * @type {Object.<string, function>}
+	 */
+	ScrollArea.prototype.defaultEvents = {
+	    /**
+	     * Default method to handle keyboard keydown events.
+	     *
+	     * @param {Object} event generated event
+	     */
+	    keydown: function ( event ) {
+	        switch ( event.code ) {
+	            case keys.up:
+	            case keys.down:
+	                this.move(event.code);
+	                break;
+	        }
+	    },
+	    mousewheel: function ( event ) {
+	        // scrolling by Y axis
+	        this.move(event.wheelDeltaY > 0 ? keys.up : keys.down);
+	    }
+	};
+	
+	
+	/**
+	 * Attempt to go beyond the edge of the list.
+	 *
+	 * @event
+	 *
+	 * @type {Object}
+	 * @property {number} direction key code initiator of movement
+	 */
+	
+	
+	/**
+	 * Move ScrollArea content
+	 *
+	 * @param {number} direction to move
+	 */
+	ScrollArea.prototype.move = function ( direction ) {
+	    var height = screen.height,
+	        delta  = this.viewHeight - this.realHeight;
+	
+	    // run logic only if it's reasonable to navigate
+	    if ( delta < 0 ) {
+	        switch ( direction ) {
+	            case keys.down:
+	                if ( this.topPosition - this.step * height / 100 < delta ) {
+	                    this.scroll.scrollTo(-delta);
+	                    this.$body.style.top = delta + 'px';
+	                    this.emit('overflow', {direction: direction});
+	
+	                    return;
+	                }
+	
+	                this.topPosition -= Math.ceil(this.step * height / 100);
+	
+	                if ( this.scroll ) {
+	                    this.scroll.scrollTo(-this.topPosition);
+	                }
+	                this.$body.style.top = this.topPosition + 'px';
+	                break;
+	            case keys.up:
+	                if ( this.topPosition + this.step * height / 100 > 0 ) {
+	                    this.scroll.scrollTo(0);
+	                    this.$body.style.top = '0px';
+	                    this.emit('overflow', {direction: direction});
+	
+	                    return;
+	                }
+	                this.topPosition += Math.ceil(this.step * height / 100);
+	
+	                if ( this.scroll ) {
+	                    this.scroll.scrollTo(-this.topPosition);
+	                }
+	                this.$body.style.top = this.topPosition + 'px';
+	                break;
+	        }
+	    } else {
+	        this.emit('overflow', {direction: direction});
+	    }
+	};
+	
+	
+	/**
+	 * Init or re-init of the component inner structures and HTML.
+	 *
+	 * @param {Object} config init parameters (subset of constructor config params)
+	 */
+	ScrollArea.prototype.init = function ( config ) {
+	
+	    config = config || {};
+	
+	    this.realHeight = this.$body.offsetHeight;
+	    this.viewHeight = this.$node.offsetHeight;
+	    this.topPosition = 0;
+	    this.$body.style.top = this.topPosition + 'px';
+	
+	    if ( config.scroll ) {
+	        this.scroll = config.scroll;
+	    }
+	
+	    if ( config.step ) {
+	        this.step = config.step;
+	    }
+	
+	    if ( this.scroll ) {
+	        this.scroll.init({
+	            realSize: this.realHeight,
+	            viewSize: this.viewHeight,
+	            value: this.topPosition
+	        });
+	    }
+	};
+	
+	module.exports = ScrollArea;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, "node_modules/mag-component-scroll-area/index.js"))
+
+/***/ }),
+/* 52 */
+/*!************************************!*\
+  !*** ./src/js/modules/app.exit.js ***!
+  \************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Exit from an app in three ways.
+	 *
+	 * @module app.exit
+	 * @author Yaroslav Surilov <y.surilov@infomir.com>
+	 */
+	
+	'use strict';
+	
+	var app  = __webpack_require__(/*! mag-app */ 1);
+	
+	
+	module.exports = {
+	    /**
+	     * Go back to Launcher from an app, app is saved in Task Manager's list.
+	     */
+	    goBack: function () {
+	        core.call('stop');
+	    },
+	
+	
+	    /**
+	     * Hide an app and exit to Launcher.
+	     */
+	    goHome: function () {
+	        core.call('hide');
+	    },
+	
+	
+	    /**
+	     * Exit from an app to Launcher, app isn't saved in Task Manager's list.
+	     * Destroy application instance.
+	     * If callback function provided, and callback returns boolean 'true', application will stay alive.
+	     *
+	     * @param {function} [callback] provide callback if you want to handle exit result, or cancel it
+	     */
+	    goExit: function ( callback ) {
+	        var ModalMessage  = __webpack_require__(/*! mag-component-modal */ 43),
+	            LayoutList    = __webpack_require__(/*! mag-component-layout-list */ 41),
+	            keys          = __webpack_require__(/*! stb-keys */ 34),
+	            previousFocus = app.activePage.activeComponent,
+	            exitModal;
+	
+	        app.activePage.add(exitModal = new ModalMessage({
+	            title: _('Exit'),
+	            events: {
+	                show: function () {
+	                    app.panelSet.blur();
+	                    this.children[0].focus();
+	                },
+	                hide: function () {
+	                    previousFocus.focus();
+	                }
+	            },
+	            children: [
+	                new LayoutList({
+	                    className: 'padded',
+	                    size: 2,
+	                    focusIndex: 0,
+	                    cycle: true,
+	                    data: [
+	                        {
+	                            items: [
+	                                {
+	                                    value: _('Exit')
+	                                }
+	                            ],
+	                            click: function () {
+	                                if ( typeof callback === 'function' ) {
+	                                    if ( callback(true) ) {
+	                                        exitModal.hide();
+	                                        exitModal.remove();
+	
+	                                        return;
+	                                    }
+	                                }
+	
+	                                exitModal.hide();
+	                                exitModal.remove();
+	                                core.call('exit');
+	                            }
+	                        },
+	                        {
+	                            items: [
+	                                {
+	                                    value: _('Cancel')
+	                                }
+	                            ],
+	                            click: function () {
+	                                if ( typeof callback === 'function' ) {
+	                                    callback(false);
+	                                }
+	                                exitModal.hide();
+	                                exitModal.remove();
+	                                app.panelSet.focus();
+	                            }
+	                        }
+	                    ],
+	                    events: {
+	                        keydown: function ( event ) {
+	                            LayoutList.prototype.defaultEvents.keydown.call(this, event);
+	                            if ( event.code === keys.back ) {
+	                                event.stop = true;
+	                                if ( typeof callback === 'function' ) {
+	                                    callback(false);
+	                                }
+	                                exitModal.hide();
+	                                exitModal.remove();
+	                                app.panelSet.focus();
+	                            }
+	                        }
+	                    }
+	                })
+	            ]
+	        }));
+	
+	        exitModal.show();
+	        exitModal.focus();
+	    }
+	};
+
+
+/***/ }),
+/* 53 */
+/*!********************************!*\
+  !*** ./src/js/modules/text.js ***!
+  \********************************/
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	module.exports = 'Extremity direction existence as dashwoods do up. Securing marianne led welcomed offended' +
+	    ' but offering six raptures. Conveying concluded newspaper rapturous oh at. Two indeed suffer saw beyond ' +
+	    'far former mrs remain. Occasional continuing possession we insensible an sentiments as is.' +
+	    ' Law but reasonably motionless principles she. Has six worse downs far blush rooms above stood.' +
+	    '<br>' +
+	    'Drawings me opinions returned absolute in. Otherwise therefore sex did are unfeeling something.' +
+	    ' Certain be ye amiable by exposed so. To celebrated estimating excellence do.' +
+	    ' Coming either suffer living her gay theirs. Furnished do otherwise daughters contented conveying attempted no.' +
+	    ' Was yet general visitor present hundred too brother fat arrival. Friend are day own either lively new.' +
+	    '<br>' +
+	    'Ignorant saw her her drawings marriage laughter. Case oh an that or away sigh do here upon.' +
+	    ' Acuteness you exquisite ourselves now end forfeited. Enquire ye without it garrets up himself.' +
+	    ' Interest our nor received followed was. Cultivated an up solicitude mr unpleasant.' +
+	    '<br>' +
+	    'In it except to so temper mutual tastes mother. Interested cultivated its continuing now yet are.' +
+	    ' Out interested acceptance our partiality affronting unpleasant why add. Esteem garden men yet shy course.' +
+	    ' Consulted up my tolerably sometimes perpetual oh. Expression acceptance imprudence particular had eat unsatiable.' +
+	    '<br>' +
+	    'Sentiments two occasional affronting solicitude travelling and one contrasted.' +
+	    ' Fortune day out married parties. Happiness remainder joy but earnestly for off.' +
+	    ' Took sold add play may none him few. If as increasing contrasted entreaties be.' +
+	    ' Now summer who day looked our behind moment coming. Pain son rose more park way that. An stairs as be lovers uneasy.' +
+	    '<br>' +
+	    'Is education residence conveying so so. Suppose shyness say ten behaved morning had.' +
+	    ' Any unsatiable assistance compliment occasional too reasonably advantages.' +
+	    ' Unpleasing has ask acceptance partiality alteration understood two.' +
+	    ' Worth no tiled my at house added. Married he hearing am it totally removal.' +
+	    ' Remove but suffer wanted his lively length. Moonlight two applauded conveying end direction old principle but.' +
+	    ' Are expenses distance weddings perceive strongly who age domestic.' +
+	    '<br>' +
+	    'Out believe has request not how comfort evident. Up delight cousins we feeling minutes. ' +
+	    'Genius has looked end piqued spring. Down has rose feel find man. ' +
+	    'Learning day desirous informed expenses material returned six the. ' +
+	    'She enabled invited exposed him another. Reasonably conviction solicitude me mr at discretion reasonable. Age out full gate bed day lose.' +
+	    '<br>' +
+	    'Questions explained agreeable preferred strangers too him her son. ' +
+	    'Set put shyness offices his females him distant. Improve has message besides shy himself cheered however how son. ' +
+	    'Quick judge other leave ask first chief her. Indeed or remark always silent seemed narrow be. ' +
+	    'Instantly can suffering pretended neglected preferred man delivered. Perhaps fertile brandon do imagine to cordial cottage.' +
+	    '<br>' +
+	    'Now residence dashwoods she excellent you. Shade being under his bed her. ' +
+	    'Much read on as draw. Blessing for ignorant exercise any yourself unpacked. ' +
+	    'Pleasant horrible but confined day end marriage. Eagerness furniture set preserved far recommend. ' +
+	    'Did even but nor are most gave hope. Secure active living depend son repair day ladies now.' +
+	    '<br>' +
+	    'So insisted received is occasion advanced honoured. Among ready to which up. Attacks smiling and may out assured moments man nothing outward.' +
+	    ' Thrown any behind afford either the set depend one temper.' +
+	    ' Instrument melancholy in acceptance collecting frequently be if. Zealously now pronounce existence add you instantly say offending.' +
+	    ' Merry their far had widen was. Concerns no in expenses raillery formerly.' +
+	    '<br>';
+
+
+/***/ })
 /******/ ]);
 //# sourceMappingURL=develop.map

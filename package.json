@@ -12,14 +12,25 @@
     },
     "scripts": {
         "start": "magsdk",
+        "debug": "DEBUG=* magsdk",
         "build": "magsdk build",
         "watch": "magsdk watch",
         "serve": "magsdk serve",
         "lint": "eslint .",
-        "test": "npm run lint"
+        "test": "npm run lint",
+        "gettext": "magsdk gettext"
     },
-    "dependencies": {},
+    "dependencies": {
+        "magcore-core": "^3.7.35",
+        "magcore-theme": "^1.4.1"
+    },
     "devDependencies": {
+        "mag-component-scroll-area": "^1.0.3",
+        "stb-component-scrollbar": "^1.0.0",
+        "mag-component-check-list": "^1.3.0",
+        "mag-component-modal-check-list": "^2.0.1",
+        "mag-component-layout": "^1.0.1",
+        "mag-component-radio-list": "^2.3.0",
         "mag-app": "^1.0.8",
         "mag-component-footer": "^2.0.9",
         "mag-component-layout-list": "^1.2.1",
@@ -31,6 +42,50 @@
         "stb-keys": "^1.4.4",
         "spa-dom": "^1.4.1",
         "spa-gettext": "^1.4.1"
+    },
+    "optionalDependencies": {
+        "magcore-app-player": "^3.7.0",
+        "magcore-osd-keyboard": "^2.0.0"
+    },
+    "config": {
+        "name": "Boilerplate",
+        "description": "Boilerplate for magsdk.",
+        "type": "app",
+        "category": "media",
+        "uris": {
+            "app": "app",
+            "entry": "index.html",
+            "icons": {
+                "480": {
+                    "logoNormal": "img/480/normal.png",
+                    "logoActive": "img/480/active.png",
+                    "primeLogoNormal": "img/480/prime-normal.png",
+                    "primeLogoActive": "img/480/prime-active.png"
+                },
+                "576": {
+                    "logoNormal": "img/576/normal.png",
+                    "logoActive": "img/576/active.png",
+                    "primeLogoNormal": "img/576/prime-normal.png",
+                    "primeLogoActive": "img/576/prime-active.png"
+                },
+                "720": {
+                    "logoNormal": "img/720/normal.png",
+                    "logoActive": "img/720/active.png",
+                    "primeLogoNormal": "img/720/prime-normal.png",
+                    "primeLogoActive": "img/720/prime-active.png"
+                },
+                "1080": {
+                    "logoNormal": "img/1080/normal.png",
+                    "logoActive": "img/1080/active.png",
+                    "primeLogoNormal": "img/1080/prime-normal.png",
+                    "primeLogoActive": "img/1080/prime-active.png"
+                }
+            }
+        },
+        "colors": {
+            "splashFont": "#fff",
+            "splashBackground": "#3cbb3c"
+        }
     },
     "license": "MIT"
 }

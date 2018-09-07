@@ -2,3 +2,22 @@
 
 // inherit all stb-app vars
 @import "../../../node_modules/mag-app/sass/vars/480";
+
+$safePadding: 20px;
+
+$posterW: 	105px;
+$posterH: 	160px;
+$posterML: 	60px;
+$mainInfoM: 5px;
+$mainInfoP: 5px;
+
+$modalItemW: 190px;
+
+$panelMain2xWidth:     430px;
+$panelTitleHeight:     40px;
+$panelMainWidth:       390px;
+$panelWidth:           230px;
+$panelHeight:          320px;
+$panelMainHeight:      360px;
+$panelMainTitleHeight: 45px;
+$scrollBarWidth:	   5px;

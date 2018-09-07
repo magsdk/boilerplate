@@ -1,1 +1,23 @@
 /* application: release */
+.mag-component-panel .mag-component-scroll-area {
+    height: 280px; }
+
+.mag-component-panel .stb-component-scrollbar {
+    position: absolute;
+    height: 280px;
+    right: 5px;
+    top: 40px; }
+
+.mag-component-panel.main .stb-component-scrollbar {
+    height: 315px;
+    top: 45px; }
+
+.mag-component-modal .body {
+    position: relative; }
+
+.mag-component-modal .stb-component-scrollbar {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    z-index: 3; }
