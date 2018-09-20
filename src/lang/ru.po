@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mag-boilerplate 1.1.1\n"
 "Report-Msgid-Bugs-To: darkpark.main@gmail.com\n"
-"POT-Creation-Date: 2018-08-29 10:57+0300\n"
+"POT-Creation-Date: 2018-09-20 18:06+0300\n"
 "PO-Revision-Date: 2018-08-29 10:57+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -27,12 +27,6 @@ msgid "Action 3"
 msgstr ""
 
 msgid "Action 4"
-msgstr ""
-
-msgid "Boilerplate"
-msgstr ""
-
-msgid "Boilerplate for magsdk."
 msgstr ""
 
 msgid "Cancel"

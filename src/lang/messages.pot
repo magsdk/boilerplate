@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mag-boilerplate 1.1.1\n"
 "Report-Msgid-Bugs-To: darkpark.main@gmail.com\n"
-"POT-Creation-Date: 2018-08-29 10:58+0300\n"
+"POT-Creation-Date: 2018-09-20 18:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,119 +17,150 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: src/js/pages/main.js
 msgid "Action 1"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Action 2"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Action 3"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Action 4"
 msgstr ""
 
-msgid "Boilerplate"
-msgstr ""
-
-msgid "Boilerplate for magsdk."
-msgstr ""
-
+#: src/js/modules/app.exit.js src/js/pages/main.js
 msgid "Cancel"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Close"
 msgstr ""
 
+#: src/js/modules/app.exit.js src/js/pages/main.js
 msgid "Exit"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Footer"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Hide"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Hide footer"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Modal check list"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Modal radio list"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Modals"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Notifications"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Ok"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Play"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Play audio file 1"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Play video file 1"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Play video file 2"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show confirm. Closed by button click or \"back\" press."
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show error alert. Closed by button click or \"back\" press."
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show error notification"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show footer"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show modal check list"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show modal check list. Used mag-component-modal-check-list."
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show modal radio list"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show modal with radio list. Used mag-component-modal and mag-component-radio-list."
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show success notification"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show warning notification"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Show warning notification. Closed by timeout."
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Some long text:"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Title text"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "Virtual keyboard"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "You may change url to your test file in code."
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "info"
 msgstr ""
 
+#: src/js/pages/main.js
 msgid "menu"
 msgstr ""

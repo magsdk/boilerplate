@@ -1,6 +1,6 @@
 {
     "name": "mag-boilerplate",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "Application template.",
     "author": {
         "name": "Stanislav Kalashnik",
@@ -11,37 +11,35 @@
         "url": "https://github.com/magsdk/boilerplate.git"
     },
     "scripts": {
-        "start": "magsdk",
-        "debug": "DEBUG=* magsdk",
-        "build": "magsdk build",
-        "watch": "magsdk watch",
-        "serve": "magsdk serve",
+        "runner": "runner",
+        "tizen": "PLATFORM=TIZEN npm run runner",
+        "webos": "PLATFORM=WEBOS npm run runner",
         "lint": "eslint .",
-        "test": "npm run lint",
-        "gettext": "magsdk gettext"
+        "test": "npm run lint"
     },
     "dependencies": {
         "magcore-core": "^3.7.35",
         "magcore-theme": "^1.4.1"
     },
     "devDependencies": {
-        "mag-component-scroll-area": "^1.0.3",
-        "stb-component-scrollbar": "^1.0.0",
-        "mag-component-check-list": "^1.3.0",
-        "mag-component-modal-check-list": "^2.0.1",
-        "mag-component-layout": "^1.0.1",
-        "mag-component-radio-list": "^2.3.0",
         "mag-app": "^1.0.8",
+        "mag-component-check-list": "^1.3.0",
         "mag-component-footer": "^2.0.9",
+        "mag-component-layout": "^1.0.1",
         "mag-component-layout-list": "^1.2.1",
         "mag-component-modal": "^1.0.12",
+        "mag-component-modal-check-list": "^2.0.1",
         "mag-component-panel": "^1.0.6",
         "mag-component-panel-set": "^1.0.4",
+        "mag-component-radio-list": "^2.3.0",
+        "mag-component-scroll-area": "^1.0.3",
         "mag-eslint": "^1.0.1",
-        "stb-component-page": "^1.4.1",
-        "stb-keys": "^1.4.4",
+        "mag-runner": "github:magsdk/runner",
         "spa-dom": "^1.4.1",
-        "spa-gettext": "^1.4.1"
+        "spa-gettext": "^1.4.1",
+        "stb-component-page": "^1.4.1",
+        "stb-component-scrollbar": "^1.0.0",
+        "stb-keys": "^1.4.4"
     },
     "optionalDependencies": {
         "magcore-app-player": "^3.7.0",
