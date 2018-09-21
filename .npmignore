@@ -1,1 +1,2 @@
 .eslintignore
+build/**/*.map
