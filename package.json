@@ -22,7 +22,7 @@
         "magcore-theme": "^1.4.1"
     },
     "devDependencies": {
-        "mag-app": "^1.0.8",
+        "mag-app": "^1.0.9",
         "mag-component-check-list": "^1.3.0",
         "mag-component-footer": "^2.0.9",
         "mag-component-layout": "^1.0.1",
