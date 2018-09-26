@@ -17,6 +17,7 @@ var generate = require('mag-runner'),
 
 
 generate({
+    type: 'app',
     vars: vars,
     package: packages[vars.TARGET]
 });
