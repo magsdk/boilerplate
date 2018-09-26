@@ -18,7 +18,7 @@
         "test": "npm run lint"
     },
     "dependencies": {
-        "magcore-core": "^3.7.35",
+        "magcore-core": "^3.7.86",
         "magcore-theme": "^1.4.1"
     },
     "devDependencies": {
