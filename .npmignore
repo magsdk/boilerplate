@@ -1,3 +1,4 @@
 .eslintignore
 build/**/*.map
+build/**/readme.md
 src
