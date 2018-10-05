@@ -1,5 +1,5 @@
 /**
- * Application geometry options.
+ * Application resolution specific options.
  * Automatically loaded on application initialization and available as app.metrics.
  */
 
