@@ -51,7 +51,7 @@
         "type": "app",
         "category": "media",
         "uris": {
-            "app": "app",
+            "app": "/",
             "entry": "index.html",
             "icons": {
                 "480": {
