@@ -5,10 +5,11 @@
 'use strict';
 
 var generate = require('mag-runner'),
+    target   = config.vars.TARGET || (config.vars.PLATFORM || 'TARGET').toLowerCase(),
     vars     = {
-        DEVELOP:  process.env.DEVELOP,
+        DEVELOP: process.env.DEVELOP,
         PLATFORM: process.env.PLATFORM,
-        TARGET:   process.env.TARGET
+        TARGET: target
     },
     packages = {
         webos: {},
@@ -19,5 +20,5 @@ var generate = require('mag-runner'),
 generate({
     type: 'app',
     vars: vars,
-    package: packages[vars.TARGET]
+    package: packages[target]
 });
