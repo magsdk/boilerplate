@@ -3,13 +3,9 @@ html
     head
         title=package.name
         meta(charset="utf-8")
-        meta(name="description" content=package.description)
+        meta(name="description", content=package.description)
         link(rel="icon", type="image/png", href="img/favicon.png")
-
-        if develop
-            script(type="text/javascript", src="js/develop.js")
-        else
-            script(type="text/javascript", src="js/release.js")
+        script(type="text/javascript", src="js/main.js")
 
     body
         include pages/main
