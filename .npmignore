@@ -2,3 +2,4 @@
 *.map
 build
 src
+**/readme.md
