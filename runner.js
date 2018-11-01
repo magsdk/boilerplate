@@ -4,7 +4,7 @@
 
 'use strict';
 
-var generate = require('mag-runner'),
+var generate = require('../../tasks'),
     vars     = {
         DEVELOP:  process.env.DEVELOP,
         PLATFORM: process.env.PLATFORM,
