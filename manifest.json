@@ -1,0 +1,50 @@
+{
+    "config": {
+        "name": "Boilerplate",
+        "description": "Boilerplate for magsdk.",
+        "type": "app",
+        "category": "media",
+        "uris": {
+            "app": "app",
+            "entry": "index.html",
+            "icons": {
+                "480": {
+                    "logoNormal": "img/480/normal.png",
+                    "logoActive": "img/480/active.png",
+                    "primeLogoNormal": "img/480/prime-normal.png",
+                    "primeLogoActive": "img/480/prime-active.png"
+                },
+                "576": {
+                    "logoNormal": "img/576/normal.png",
+                    "logoActive": "img/576/active.png",
+                    "primeLogoNormal": "img/576/prime-normal.png",
+                    "primeLogoActive": "img/576/prime-active.png"
+                },
+                "720": {
+                    "logoNormal": "img/720/normal.png",
+                    "logoActive": "img/720/active.png",
+                    "primeLogoNormal": "img/720/prime-normal.png",
+                    "primeLogoActive": "img/720/prime-active.png"
+                },
+                "1080": {
+                    "logoNormal": "img/1080/normal.png",
+                    "logoActive": "img/1080/active.png",
+                    "primeLogoNormal": "img/1080/prime-normal.png",
+                    "primeLogoActive": "img/1080/prime-active.png"
+                }
+            }
+        },
+        "colors": {
+            "splashFont": "#fff",
+            "splashBackground": "#3cbb3c"
+        }
+    },
+    "dependencies": {
+        "magcore-core": "^3.7.86",
+        "magcore-theme": "^1.4.1"
+    },
+    "optionalDependencies": {
+        "magcore-app-player": "^3.7.0",
+        "magcore-osd-keyboard": "^2.0.0"
+    }
+}
