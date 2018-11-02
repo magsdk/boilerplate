@@ -17,7 +17,6 @@ var generate = require('../../tasks/app'),
 
 
 generate({
-    type: 'app',
     vars: vars,
     package: packages[vars.TARGET]
 });
