@@ -6,10 +6,6 @@
         "name": "Stanislav Kalashnik",
         "email": "darkpark.main@gmail.com"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/magsdk/boilerplate.git"
-    },
     "scripts": {
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
@@ -64,6 +60,5 @@
         "stb-component-page": "^1.4.1",
         "stb-component-scrollbar": "^1.0.0",
         "stb-keys": "^1.4.4"
-    },
-    "license": "MIT"
+    }
 }
