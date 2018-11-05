@@ -7,12 +7,13 @@
         "email": "darkpark.main@gmail.com"
     },
     "scripts": {
-        "lint": "eslint .",
-        "lint:fix": "eslint --fix .",
-        "test": "npm run lint",
-
         "mocha": "../../node_modules/.bin/mocha",
+        "eslint": "../../node_modules/.bin/eslint",
         "runner": "../../node_modules/.bin/runner",
+
+        "lint": "npm run eslint .",
+        "lint:fix": "npm run eslint --fix .",
+        "test": "npm run lint",
 
         "android-app": "PLATFORM=ANDROID-APP npm run runner",
         "android-app:build": "npm run android-app build",
