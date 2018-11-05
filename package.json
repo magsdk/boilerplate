@@ -15,11 +15,11 @@
         "lint:fix": "npm run eslint --fix .",
         "test": "npm run lint",
 
-        "android-app": "PLATFORM=ANDROID-APP npm run runner",
+        "android-app": "PLATFORM=ANDROIDAPP npm run runner",
         "android-app:build": "npm run android-app build",
         "android-app:develop": "DEVELOP=true npm run android-app",
 
-        "android-stb": "PLATFORM=ANDROID-STB npm run runner",
+        "android-stb": "PLATFORM=ANDROIDSTB npm run runner",
         "android-stb:build": "npm run android-stb build",
         "android-stb:develop": "DEVELOP=true npm run android-stb",
 
