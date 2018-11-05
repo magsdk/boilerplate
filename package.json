@@ -60,5 +60,11 @@
         "stb-component-page": "^1.4.1",
         "stb-component-scrollbar": "^1.0.0",
         "stb-keys": "^1.4.4"
-    }
+    },
+    "keywords": [
+        "magcore",
+        "application",
+        "ministra",
+        "boilerplate"
+    ]
 }
