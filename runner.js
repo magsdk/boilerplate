@@ -4,7 +4,7 @@
 
 'use strict';
 
-var generate = require('../../tasks/app'),
+var generate = require('../../tasks/package'),
     vars     = {
         DEVELOP:  process.env.DEVELOP,
         PLATFORM: process.env.PLATFORM,
