@@ -10,38 +10,29 @@
         "mocha": "../../node_modules/.bin/mocha",
         "eslint": "../../node_modules/.bin/eslint",
         "runner": "../../node_modules/.bin/runner",
-
         "lint": "npm run eslint .",
         "lint:fix": "npm run eslint --fix .",
         "test": "npm run lint",
-
         "android-app": "PLATFORM=ANDROIDAPP npm run runner",
         "android-app:build": "npm run android-app build",
         "android-app:develop": "DEVELOP=true npm run android-app develop",
-
         "android-stb": "PLATFORM=ANDROIDSTB npm run runner",
         "android-stb:build": "npm run android-stb build",
         "android-stb:develop": "DEVELOP=true npm run android-stb develop",
-
         "smarttv": "PLATFORM=SMARTTV npm run runner",
         "smarttv:build": "npm run smarttv build",
         "smarttv:develop": "DEVELOP=true npm run smarttv develop",
-
         "mag": "PLATFORM=MAG npm run runner",
         "mag:build": "npm run mag build",
         "mag:develop": "DEVELOP=true npm run mag develop",
-
         "tizen": "PLATFORM=TIZEN npm run runner",
         "tizen:build": "npm run tizen build",
         "tizen:develop": "DEVELOP=true npm run tizen develop",
-
         "webos": "PLATFORM=WEBOS npm run runner",
         "webos:build": "npm run webos build",
         "webos:develop": "DEVELOP=true npm run webos develop",
-
         "build": "npm run android-app build & npm run android-stb build & npm run smarttv build & npm run mag build & npm run tizen build & npm run webos build",
         "build:develop": "npm run android-app:develop build & npm run android-stb:develop build & npm run smarttv:develop build & npm run mag:develop build & npm run tizen:develop build & npm run webos:develop build",
-
         "start": "npm run mag:develop"
     },
     "dependencies": {
